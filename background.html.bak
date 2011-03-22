@@ -1,0 +1,19 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 5.0 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+ <head>
+  <title> New Document </title>
+  <meta name="Generator" content="EditPlus">
+  <meta name="Author" content="">
+  <meta name="Keywords" content="">
+  <meta name="Description" content="">
+  <script type="text/javascript" src="lib/jquery.min.js"></script>
+  <script type="text/javascript">
+		
+  </script>
+ </head>
+ <body>
+	<audio id="radio" autoplay="true"></audio>
+	<script type="text/javascript" src="scripts/radio.js"></script>	
+ </body>
+</html>
+

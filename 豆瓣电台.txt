@@ -1,0 +1,202 @@
+豆瓣音乐规则：
+1.获取列表的条数是随机的
+2.正常播放完毕将从本地一获取的播放列表中获取曲目
+3.本地播放列表播放完后在最后一首曲目播放获取新的播放列表
+4.除正常播放外对歌曲的任何操作都会触发更新播放列表
+
+获取列表API
+
+1.基本URL: http://douban.fm/j/mine/playlist 
+	HTTP Method: GET (基于性能原因, POST不采用也不必测试) 
+	参数 
+		type: [benpsur], RPC函数指示: 
+		b: bye(?), 播放以删除终止. 长报告 
+		e: end, 返回:'"OK"', 报告歌曲播放完毕, 短报告 
+		n: new, 返回新播放列表, 无其余必备参数(uid?). 长报告 
+		p: playing(?), 单首歌曲播放开始且播放列表已空时发送, 长报告, 疑似是专门为平淡地获取播放列表而设定的. 
+		s: skip, 用户点击”下一首“时即时报告 
+		u: unlike, 将sid的歌曲取消喜欢 
+		r: rated(?), 喜欢一首歌时即时报告 
+		uid: 用户在豆瓣的UID, 如果与请求中的cookie所带uid值不同可能会收到回复{"r":1,/*...这里忘记了...*/} 
+		r: random, JavaScript中Math.random()自然产生的随机数 
+		h: history, 格式为'|'分割的 sid + ':' + /[psbr]/ 避免短时间内出现重复 
+		sid: Song ID 
+		aid: Album ID 
+		rest: '|'分割的sid. 已获取的播放列表中尚未播放的曲目, 避免短时间内出现重复. 
+		status: 播放器状态, 'p'代表正在播放中. 
+		du: 用户持续无操作时间, 疑似用于下发广告. 
+	示例
+		http://douban.fm/j/mine/playlist? type=e &status=p &uid=4556698 &sid=963365 
+
+		http://douban.fm/j/mine/playlist? 
+			r=0.04031559219583869 
+			&type=p 
+			&sid=1383292 
+			&uid=4556698 
+			&h=1386894:s|444482:p|460268:s|48180:s|1027376:s|188257:s|1395422:p|758931:p|
+			1395431:p|515558:p|963365:p|983355:p|743104:p|983362:p|1028233:p|11439:p|252496:p|757298:p|743093:p|695596:p 
+			&du=55 
+			&rest= 
+			&aid=1404386type=[bnsur]报告格式同上. 
+
+	特别细节
+		type=s报告时所跳过歌曲的sid不一定要出现在h字段里面. 
+
+		历史(h字段)长度限定为20项以内, 豆瓣依据长报告的h字段来记录最近听过的歌曲.(那短报告是干什么用的?) 
+
+	返回数据
+		播放列表返回为JSON格式. 样例: 
+		{ 
+			"r": 0,  //类似shell程序返回值, 0代表运行正常 
+			 "song": [  //数组, 歌曲信息 
+			 { 
+				"album": "/subject/1394549/", 
+				"picture": "http://t.douban.com/mpic/s3268875.jpg", 
+				"like": "0",  //字符串1或0. 需parseInt预处理成整数再转至boolean型. 
+				"title": "1234567", 
+				"url": "http://n.douban.com/view/song/small/p1022939.mp3?key=20100224172930e456fb5a9afa93f83c83994da22e67fc", 
+				"company": "\u6efe\u77f3\u5531\u7247", 
+				"artist": "\u9648\u7eee\u8d1e", 
+				"rating_avg": 4.56435, 
+				"subtype": "", 
+				"public_time": "2002-08-02", 
+				"sid": "1022939", 
+				"aid": "1394549", 
+				"albumtitle": "Groupies \u5409\u4ed6\u624b" 
+			}, 
+		 ... 
+		 ] 
+		}
+		如果请求不含cookie那么返回值如下： 
+		{ 
+		  "r": 1, 
+		  "err": "wronguser" 
+		}
+		
+		对某首歌表示喜欢时的请求包括一个type=r的长请求和一个type=e&status=r的短请求, 但是在其后的历史字段中仍标记为p而不是r.
+		而且真正起到记录作用的是长请求. 
+
+Workaround?
+请求 http://douban.fm/radio, 豆瓣会从用户cookie中读取uid等数据并写入到script标签, 进而传递给flash播放器. 在返回的html页面中的script标签中搜索flashvars = {uid:'4556698', autoplay:1, host:'http://douban.fm'}或类似字样可以获取当前用户uid, 
+ 
+
+$.ajaxSetup({ async: false });
+	var radio=function(){
+			 //设置同步
+			var songs=[],c_song={},heared='',stored_channel=0,audio=$("#radio")[0],power=false,onChangeSong;
+			var getPlayList=function(t,skip){//t-->type歌曲类型 --获取新的播放列表--长报告		
+				try{
+				chrome.cookies.get({
+					 url: "http://douban.com",
+					 name: "dbcl2"
+				}, function(b) {
+					 b && chrome.cookies.set({
+					 url: "http://douban.fm",
+					 name: "dbcl2",
+					 value: b.value
+					});
+				});//get-end
+				//alert("cookie set")
+				$.getJSON("http://douban.fm/j/mine/playlist",{
+							type:t,
+							channel:0,
+							h:heared,
+							sid:c_song ? c_song.sid:'',
+							r:Math.random(),
+							uid:4343387
+						},//end params
+						function(data){
+							//alert("data reading...")
+							s=data.song;
+							for(d in s)
+							{
+								songs[d]=s[d];
+							}
+							if(skip){
+								changeSong(t);
+							}
+							//alert("data readed");
+				});//end getJSON
+				//alert(aa.readyState);
+				}catch(err){
+					alert(err);
+				}
+			};
+			var report=function(){//短报告
+				 temp = heared.split("|");
+				temp.push(c_song.sid + ":" + "p");
+				heared = temp.slice(-20).join("|");
+				$.get("http://douban.fm/j/mine/playlist",{
+						type:'e',
+						sid:c_song.sid,
+						channel:stored_channel
+				});
+			}	
+			var operate=function(t){
+				switch(t){
+				case "b":
+				case "s":
+				case "n":
+						songs=[];//清空播放列表
+						getPlayList(t,true);
+						break;
+				case "e":
+						report();//发出播放完毕报告
+						changeSong("p");
+						if(songs.length<=0){
+							getPlayList("p",false);//曲目播放后列表以空，需要获取列表
+						}
+						break;			
+				case "r":
+				case "u":
+						getPlayList(t,false)
+						break;
+				default:
+						break;
+				}//switch end
+			};
+			var changeSong=function(t){
+				audio.pause();
+				c_song=songs.shift();
+				if(t!='n'){
+					h_songs = heared.split("|");
+					h_songs.push(c_song.sid + ":" + t);
+					heared = h_songs.slice(-20).join("|");
+				}
+				temp=(c_song.url.split('/'))[8];
+				audio.src="http://otho.douban.com/view/song/small/"+temp;
+				audio.play();
+				//chrome.browserAction.setPopup({popup:"new.html"})
+				if(songs.length==0){
+					operate("p");
+				}
+			};
+			return {
+					play: function(){										
+						audio.addEventListener("ended", function() {
+							alert("ended");
+							operate("e")
+						});
+						power=true;
+						operate("n");
+					},
+					skip: function(){
+						operate("s");
+					},
+					like: function(){
+						operate("r");
+					},
+					ulike:function(){
+						operate("u");
+					},
+					del:function(){
+						operate("b");
+					},
+					next:function(){
+						operate("s");
+					},
+					getSong: function(){
+						return c_song
+					}
+				}
+		}();	

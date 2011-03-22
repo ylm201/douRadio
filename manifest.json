@@ -1,0 +1,19 @@
+{
+  "name": "doubanFMExt",
+  "version": "1.0",
+  "description": "The first extension that I made.",
+  "browser_action": {
+    "popup": "popup.html",
+    "default_icon": "icon.png"
+  },
+  "permissions": [
+        "notifications",
+	"tabs",
+        "cookies",
+	"background",
+        "http://*.douban.fm/*",
+        "http://*.douban.com/*",
+	"http://api.fanfou.com/*"
+    ],
+   "background_page":"background.html"
+}
