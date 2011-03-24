@@ -8,12 +8,12 @@
   },
   "permissions": [
         "notifications",
-	"tabs",
+		"tabs",
         "cookies",
-	"background",
+		"background",
         "http://*.douban.fm/*",
         "http://*.douban.com/*",
-	"http://api.fanfou.com/*"
+		"http://api.fanfou.com/*"
     ],
    "background_page":"background.html"
 }

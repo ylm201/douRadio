@@ -1,7 +1,7 @@
 $.ajaxSetup({ async: false });	
 var radio=function(){
 var songs=[],c_song={},heared='',stored_channel=0,audio=$("#radio")[0],t_power=false,uid;
-var getPlayList=function(t,skip){//t-->type¸èÇúÀàÐÍ --»ñÈ¡ÐÂµÄ²¥·ÅÁÐ±í--³¤±¨¸æ		
+var getPlayList=function(t,skip){
 	$.getJSON("http://douban.fm/j/mine/playlist",{
 		type:t,
 		channel:0,
@@ -21,7 +21,7 @@ var getPlayList=function(t,skip){//t-->type¸èÇúÀàÐÍ --»ñÈ¡ÐÂµÄ²¥·ÅÁÐ±í--³¤±¨¸æ
 		}
 	});//end getJSON
 };
-var report=function(){//¶Ì±¨¸æ
+var report=function(){
 	temp = heared.split("|");
 	temp.push(c_song.sid + ":" + "p");
 	heared = temp.slice(-20).join("|");
@@ -36,14 +36,14 @@ var report=function(){//¶Ì±¨¸æ
 				case "b":
 				case "s":
 				case "n":
-						songs=[];//Çå¿Õ²¥·ÅÁÐ±í
+						songs=[];
 						getPlayList(t,true);
 						break;
 				case "e":
-						report();//·¢³ö²¥·ÅÍê±Ï±¨¸æ
+						report();
 						changeSong("p");
 						if(songs.length<=0){
-							getPlayList("p",false);//ÇúÄ¿²¥·ÅºóÁÐ±íÒÔ¿Õ£¬ÐèÒª»ñÈ¡ÁÐ±í
+							getPlayList("p",false);
 						}
 						break;			
 				case "r":
@@ -56,27 +56,30 @@ var report=function(){//¶Ì±¨¸æ
 			};
 			var changeSong=function(t){
 				c_song=songs.shift();
-				if(t!='n'){
+				if(t!='n'){//è®°å½•æ”¶å¬è¿‡çš„æ­Œæ›²(ä¸è®ºæ­£å¸¸æ”¶å¬è¿˜æ˜¯è·³è¿‡)
 					h_songs = heared.split("|");
 					h_songs.push(c_song.sid + ":" + t);
 					heared = h_songs.slice(-20).join("|");
 				};
 				temp=(c_song.url.split('/'))[8];
 				audio.pause();
-				setTimeout(function(){				
-					audio.src="http://otho.douban.com/view/song/small/"+temp;
+				audio.src="http://otho.douban.com/view/song/small/"+temp;
+				try{//å¦‚æžœæ­Œæ›²ä¸ºå¹¿å‘Šå°†æ— æ³•æ’­æ”¾ï¼Œåˆ™åˆ·æ–°æ’­æ”¾åˆ—è¡¨èŽ·å–æ–°æ­Œæ›²
 					audio.load()
-					audio.play()},1000)
-				if(songs.length==0){
-					operate("p");
-				}
+					audio.play()
+					if(songs.length==0){
+						operate("p")
+					}
+				}catch(err){
+					operate("s")
+				}	
 			};
 			audio.addEventListener("ended", function() {
                                 operate("e")
                                 var notification = webkitNotifications.createHTMLNotification('notification.html');
                                 notification.show();
-             });
-			 chrome.cookies.get({
+            });
+			chrome.cookies.get({
 					url: "http://douban.com",
 					name: "dbcl2"
 				}, function(b) {
@@ -88,14 +91,6 @@ var report=function(){//¶Ì±¨¸æ
 				uid=b.value.split(":")[0]
 			});//get-end
 			return {
-					play: function(){										
-						audio.addEventListener("ended", function() {
-							operate("e")
-							var notification = webkitNotifications.createHTMLNotification('notification.html');
-							notification.show();
-						});
-						operate("n");
-					},
 					skip: function(){
 						operate("s");
 					},
