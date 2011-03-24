@@ -64,7 +64,8 @@ var report=function(){//¶Ì±¨¸æ
 				temp=(c_song.url.split('/'))[8];
 				audio.pause();
 				setTimeout(function(){				
-					audio.src="http://otho.douban.com/view/song/small/"+temp;
+					//audio.src="http://otho.douban.com/view/song/small/"+temp;
+					audio.src=c_song.url
 					audio.load()
 					audio.play()},1000)
 				if(songs.length==0){
