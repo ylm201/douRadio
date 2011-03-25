@@ -44,7 +44,7 @@
 				url : "http://api.fanfou.com/statuses/update.json",
 				type : "POST",
 				data:{
-					status:' #¶¹°êµçÌ¨# '+radio.getSong().artist+'--'+radio.getSong().title+' '+value
+					status:' #è±†ç“£ç”µå°# '+radio.getSong().artist+'--'+radio.getSong().title+' '+value
 				},
 				beforeSend : function(req) {
 				req.setRequestHeader('Authorization', make_base_auth('ylm201@126.com','58814023'));
