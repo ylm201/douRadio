@@ -34,9 +34,17 @@
 			return false;
 	});
 	$("#like").bind("click",function(){
-			//radio.like();
-			comment();
+			if(radio.getSong().like==0){
+				radio.like();
+				comment();
+			}else{
+				radio.unlike();
+			}
 			return false;
+	});
+	$("#delete").bind("click",function(){
+		radio.del();
+		return false;
 	});
 	$('#submit').bind("click",function(){
 		var value=$("#comment")[0].value;
@@ -53,7 +61,7 @@
 					alert(XMLHttpRequest);
 				}
 		});
-		radio.like();
+		//radio.like();
 		var $comment=$('#comment');
 		var $submit=$('#submit');
 		$comment.addClass("dd");
