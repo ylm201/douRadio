@@ -55,7 +55,7 @@
 					status:' #豆瓣电台# '+radio.getSong().artist+'--'+radio.getSong().title+' '+value
 				},
 				beforeSend : function(req) {
-				req.setRequestHeader('Authorization', make_base_auth('ylm201@126.com','58814023'));
+				req.setRequestHeader('Authorization', make_base_auth('****','****'));//暂时修复密码泄露、使用后饭否直接登录问题
 				},
 				error:function(XmlHttpRequest,textStatus,errortown){
 					alert(XMLHttpRequest);
