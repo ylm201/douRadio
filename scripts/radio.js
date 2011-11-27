@@ -1,130 +1,127 @@
-$.ajaxSetup({ async: false });	
-var radio=function(){
-	var songs=[],c_song={},heared='',stored_channel=0,audio=$("#radio")[0],t_power=false,uid;
-	var getPlayList=function(t,skip){
-		$.getJSON("http://douban.fm/j/mine/playlist",{
-			type:t,
-			channel:0,
-			h:heared,
-			sid:c_song ? c_song.sid:'',
-			r:Math.random(),
-			uid:uid
-		},//end params
-		function(data){
-			s=data.song;
-			for(d in s){
-				songs[d]=s[d];								
-			}
-			if(skip){
-				changeSong(t);
-			}
-		});//end getJSON
-	};
-	var report=function(){
-		temp = heared.split("|");
-		temp.push(c_song.sid + ":" + "p");
-		heared = temp.slice(-20).join("|");
-		$.get("http://douban.fm/j/mine/playlist",{
-			type:'e',
-			sid:c_song.sid,
-			channel:stored_channel
-		});
-	};	
-	var operate=function(t){
-		switch(t){
-			case "b":
-			case "s":
-			case "n":
-				songs=[];
-				getPlayList(t,true);
-				break;
-			case "e":
-				report();
-				changeSong("p");
-				break;			
-			case "r":
-			case "u":
-				getPlayList(t,false)
-				break;
-			default:
-				break;
-		}//switch end
-	};
-	var changeSong=function(t){
-		c_song=songs.shift();
-		if(t!='n'){//记录收听过的歌曲(不论正常收听还是跳过)
-			h_songs = heared.split("|");
-			h_songs.push(c_song.sid + ":" + t);
-			heared = h_songs.slice(-20).join("|");
-		};
-		temp=(c_song.url.split('/'))[8];
-		audio.pause();
-		console.log("get next song:"+c_song.sid)
-		try{//如果歌曲为广告将无法播放，则刷新播放列表获取新歌曲
-			audio.src=c_song.url
-			//audio.src="http://otho.douban.com/view/song/small/"+temp;
-			audio.load()
-			audio.play()
-			if(songs.length==0){
-				console.log("get new song list")
-				getPlayList("p",false)
-			}
-		}catch(err){
-			console.log("load music error:"+err)
-			getPlayList("p",false)
-		}	
-	};
-	audio.addEventListener("ended", function() {
-		operate("e")
-		var notification = webkitNotifications.createHTMLNotification('notification.html');
-		notification.show();
-	});
-	chrome.cookies.get({
-		url: "http://douban.com",
-		name: "dbcl2"
-	}, function(b) {
-		b && chrome.cookies.set({
-			url: "http://douban.fm",
-		  name: "dbcl2",
-		  value: b.value
-		});
-		uid=b.value.split(":")[0]
-	});//get-end
+/**
+ * 封装radio操作
+ * */
+var Radio=function(){
+	this.c_song={};
+	this.song_list=[];
+	this.channel=0;
+	this.power=false;
+	this.audio=null;
+	this.power=false;
+	this.uid='';
+	this.heared='';
+}
+
+/**
+ *初始化播放器
+ * */
+Radio.init=function(audio){
+	$.ajaxSetup({async:false})
+	console.log("init radio...")
+	var radio=new Radio()
+	radio.audio=audio
+	radio.channel=localStorage['channel']?localStorage['channel']:0	
+	audio.addEventListener("ended",function(){
+		radio.reportEnd()
+		radio.changeSong("p")
+	})
 	
-	return {
-			skip: function(){
-				operate("s");
-			},
-			like: function(){
-				operate("r");
-			},
-			ulike:function(){
-				operate("u");
-			},
-			del:function(){
-				operate("b");
-			},
-			next:function(){
-				 operate("s");
-			},
-			getSong: function(){
-				return c_song;
-			},
-			power:function(){
-				return t_power;
-			},
-			open:function(){
-				t_power=true;
-				operate("n");
-			},
-			close:function(){
-				audio.pause();
-				audio.src='';
-				c_song={};
-				t_power=false;
-			},
-			doSomething:function(s){
-				doSomething=s
+	//获取douban.com上的cookie，添加到douban.fm上
+	chrome.cookies.get({
+		url:"http://douban.com",
+		name:"dbcl2"	
+	},function(b){
+		if(b){
+			chrome.cookies.set({
+				url:"http://douban.fm",
+				name:"dbcl2",
+				value:b.value
+			})
+			radio.uid=b.value.split(":")[0]
+		}
+	})
+	return radio	
+}
+
+/**
+ *获取播放列表
+ * */
+Radio.prototype.getPlayList=function(t,skip){
+	var self =this
+	$.getJSON("http://douban.fm/j/mine/playlist",{
+			type:t,
+			channel:this.channel,
+			h:this.heared,
+			sid:this.c_song? this.c_song.sid:'',
+			r:Math.random(),
+			uid:this.uid
+		},function(data){
+			var songs=data.song
+			for(s in songs){
+				self.song_list[s]=songs[s]
 			}
+		})
+	if(skip){
+		this.changeSong(t)
 	}
-}();
+}
+
+Radio.prototype.onGetPlayList=function(data){
+	console.log(this)
+}
+
+
+Radio.prototype.reportEnd=function(){
+	temp=this.heared.split("|")
+	temp.push(this.c_song.sid+":"+"p")
+	this.heared=temp.slice(-20).join("|")
+	$.get("http://douban.fm/j/mine/playlist",{
+			type:'e',
+			sid:this.c_song.sid,
+			channel:this.channel	
+		})		
+}
+
+Radio.prototype.changeSong=function(t){
+	this.c_song=this.song_list.shift();
+	if(t!='n'){
+		h_songs=this.heared.split("|");
+		h_songs.push(this.c_song.sid+":"+t);
+		this.heared=h_songs.slice(-20).join("|")
+	}
+	this.audio.pause()
+	console.log("get next song: "+this.c_song.sid)
+	this.audio.src=this.c_song.url
+	this.audio.load()
+	this.audio.play()
+	if(this.song_list.length<=0){
+		console.log("get new song list")
+		this.getPlayList("p",false)
+	}
+}
+
+Radio.prototype.skip=function(){
+	this.getPlayList("s",true)	
+}
+
+Radio.prototype.like=function(){
+	this.getPlayList("r",false)
+}
+
+Radio.prototype.unlike=function(){
+	this.getPlayList("u",false)
+}
+
+Radio.prototype.del=function(){
+	this.getPlayList("b",true)
+}
+
+Radio.prototype.powerOn=function(){
+	this.power=true
+	this.getPlayList("n",true)
+}
+
+Radio.prototype.powerOff=function(){
+	this.power=false
+	this.audio.pause()
+}

@@ -4,7 +4,7 @@
   "description": "Douban Radio Extension",
   "browser_action": {
     "popup": "popup.html",
-    "default_icon": "icon.png"
+    "default_icon": "img/icon-r.png"
   },
   "permissions": [
         "notifications",
@@ -14,7 +14,9 @@
         "http://*.douban.fm/*",
         "http://*.douban.com/*",
 		"http://api.fanfou.com/*",
-		"http://fanfou.com/*"
+		"http://fanfou.com/*",
+		"http://*",
+		"https://*"
     ],
    "background_page":"background.html",
    "options_page":"options.html"

@@ -1,14 +1,22 @@
 	var radio=chrome.extension.getBackgroundPage().radio;
+	console.log(radio)
 	var showSong=function(){
-			var data=radio.getSong();
-			$("#result1").setTemplateElement("template");	
-			$("#result1").processTemplate(data);
-			if(data.like==0){
-				$("#like").html("like");
+			var data=radio.c_song;
+			console.log(radio)
+			if(data.like==1){
+				$("#like").attr("src","/img/rated.png")
 			}else{
-				$("#like").html("unlike");
+				$("#like").attr("src","/img/unrated.png")
 			}
-			$("#play").html(radio.power()==true?"off":"on")
+			if(radio.power==true){
+				$("#power").attr("src","img/off.png")
+			}else{
+				$("#power").attr("src","img/on.png")
+			}
+			if(data.title){
+				$("#song_title").html(data.title+"--"+data.artist)
+			}
+
 	};
 	
 	//构造签名头部
@@ -48,25 +56,26 @@
 			showSong();
 			return false;
 	});
-	$("#play").bind("click",function(){
-			if(radio.power()===false){
-				radio.open();
-				$(this).html("off")
+	$("#power").bind("click",function(){
+			if(radio.power===false){
+				radio.powerOn();
+				$(this).attr("src","img/off.png")
 				showSong();
 			}else{
-				radio.close();
-				$("#result1").setTemplateElement("template");	
-				$("#result1").processTemplate({});
-				$(this).html("on")
+				radio.powerOff();
+				$(this).attr("src","img/on.ong")
 			}
 			return false;
 	});
 	$("#like").bind("click",function(){
-			if(radio.getSong().like==0){
+			if(radio.c_song.like==0){
 				radio.like();
-				comment();
+				$("#like").attr("src","/img/rated.png")
+				radio.c_song.like=1
 			}else{
 				radio.unlike();
+				$("#like").attr("src","/img/unrated.png")
+				radio.c_song.like=0
 			}
 			return false;
 	});
@@ -76,7 +85,7 @@
 	});
 	$('#submit').bind("click",function(){
 		var value=$("#comment")[0].value;
-		var content=' #豆瓣电台# '+radio.getSong().artist+'--'+radio.getSong().title+' '+value
+		var content=' #豆瓣电台# '+radio.c_song.artist+'--'+radio.c_song.title+' '+value
 
 		$.ajax({
 				url : "http://api.fanfou.com/statuses/update.json",
@@ -98,9 +107,12 @@
 		$submit.addClass("dd");
 	});
 	var comment=function(){
-		var $comment=$('#comment');
-		var $submit=$('#submit');
-		$comment.removeClass("dd");
-		$submit.removeClass("dd");
+		//var $comment=$('#comment');
+		//var $submit=$('#submit');
+		//$comment.removeClass("dd");
+		//$submit.removeClass("dd");
+		//chrome.tabs.executeScript(null, {file: "lib/jquery.min.js"});
+		//chrome.tabs.executeScript(null, {file: "scripts/content_scripts.js"});
 	}
+	//radio.powerOn()
 	showSong();

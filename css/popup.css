@@ -1,0 +1,21 @@
+#main{height:65px;min-width:260px;padding: 10px auto auto 10px }
+#power {float:right;width:20px;margin-top:2px}
+#power:hover{opacity:0.7}
+#song_title {white-space:nowrap;font-size:15px;color:#3B5343;display:inline-block;overflow:hidden;width:230px}
+#display{margin-top:5px}
+#timer{margin-top:10px;font-size:10px;color:#777}
+#switcher{float:right;margin-bottom:1px}
+#switcher img{width:20px;}
+#switcher img:hover{opacity:0.7}
+#wrapper{padding-top: 10px;}
+#operation{width:120px;float:left}
+.button {margin-right:10px;cursor:pointer;width:20px;height:20px}
+.button:hover{opacity:0.6}
+#share{width:40px;float:right;padding-top:5px}
+#share img{width:16px;height:16px;opacity:0.4;float-left:3px;float: bottom;}
+#share img:hover{opacity:1.0}
+.clear{clear:both}
+#channel_popup{background-color:#E9F4E9;height:80px;;width:100%;overflow-y:scroll;position:absolute;z-index:999;left:0;top:0;display:none}	
+#channels{list-style-type:none;list-style-position:outside;}
+#channels li{background-color:#fff;opacity:0.7;margin-bottom:5px;margin-left:-20px;width:100px}
+#channels li:hover{opacity:0.5;cursor:pointer}
