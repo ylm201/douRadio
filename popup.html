@@ -8,14 +8,27 @@
 		<script src="scripts/oauth_util/sha1.js" type="text/javascript"></script>
 		<script src="scripts/oauth_util/oauth.js" type="text/javascript"></script>
 	</head>
-	<body
+	<body>
+
 		<div id="main">
+			<div id="comment_popup" style="display:none">
+				<textarea  id="comment_input" ></textarea>
+				<img src="img/close.png" id="comment_close"/>
+				<input type="button" value="发送" id="comment_commit" />
+				<img src="img/fanfou.jpg" class="comment_button"/><img src="img/sina.png" class="comment_button"/>
+				<div class="clear"></div>
+			</div>
+
 			<div>
-				<span id="song_title" alt="豆瓣电台">豆瓣电台--douban.fm Hello World</span>
+				<span id="song_title" title="豆瓣电台">豆瓣电台--douban.fm</span>
 				<img id="power" src="img/on.png"/>
 			</div>
 			<div id="display">
-				<span id="timer">3:23/3:47</span>
+				<div id="timer">
+					<span class="timer" id="current">0:00</span>
+					<span class="timer">-</span>
+					<span class="timer" id="total">0:00</span>
+				</div>
 				<span id="switcher"><img src="img/channel.png"/></span>
 			</div>
 			<div id="wrapper">
@@ -25,19 +38,29 @@
 					<img src="img/skip.png"  class="button"  id="skip" />
 				</div>
 				<div id="share">
-					<img src="img/fanfou.jpg"/>
-					<img src="img/sina.png"/>
+					<img src="img/fanfou.jpg" id="share_fanfou"/>
+					<img src="img/sina.png" id="share_sina"/>
 				</div>
 				<div class="clear"></div>
 			</div>
 		</div>
-	<!--	<div id="channel_popup">
+		<div id="channel_popup">
 			<ul id="channels">
-				<li>私人MHz</li>
-				<li>华语MHz</li>
-				<li>粤语MHz</li>
+				<li id="0">私人MHz</li><li id="1">华语MHz</li>
+				<li id="6">粤语MHz</li><li id="2">欧美</li>
+				<li id="22">法语</li><li id="17">日语</li>
+				<li id="18">韩语</li><li id="8">民谣</li>
+				<li id="7">摇滚</li><li id="13">爵士</li>
+				<li id="27">古典</li><li id="9">轻音乐</li>
+				<li id="14">电子乐</li><li id="16">rb</li>
+				<li id="15">说唱</li><li id="10">电影原声</li>
+				<li id="3">70年代</li><li id="4">80年代</li>
+				<li id="5">90年代</li><li id="26">豆瓣音乐人</li>
+				<li id="20">女声</li><li id="28">动漫</li>
+				<li id="32">雀巢</li><li id="52">乐混翻唱</li>
+				<li id="54">格调卡撒帝</li>
 			</ul>
-		</div>-->
-		<script type="text/javascript" src="scripts/player.js"></script>
+		</div>
+			<script type="text/javascript" src="scripts/player.js"></script>
 	</body>
 </html>

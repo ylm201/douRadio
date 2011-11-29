@@ -5,86 +5,19 @@
 	<script type="text/javascript" src="lib/jquery.base64.js"></script>
 	<body>
 		<h3>设置</h3>
-	</body>
-	<script type="text/javascript">
-		var api_key = "327fe47f56d57ead9539c3498772fc3d";
-		var api_key_secret = "688edd10e5a2c923cf9421a644240e70";
-		var request_token = "";
-		var request_token_secret = "";
-		var access_token = "";
-		var access_token_secret = "";
-
-		var signature_method = "HMAC-SHA1";
-
-		var request_token_uri = "http://fanfou.com/oauth/request_token";
-		var access_token_uri = "http://fanfou.com/oauth/access_token";
-		var authorization_uri = "http://fanfou.com/oauth/authorize?oauth_token=";	
-		
-		function getRequestToken(){
-			var message = {
-			    method: "GET",
-			    action: request_token_uri,
-			    parameters: {
-				oauth_consumer_key: api_key,
-				oauth_signature_method: signature_method,
-				oauth_signature: "",
-				oauth_timestamp: "",
-				oauth_nonce: ""
-			    }
-  			}
-			  // 签名
-			OAuth.setTimestampAndNonce(message);
-			OAuth.SignatureMethod.sign(message, {
-			      consumerSecret: api_key_secret
-			 })
-			
-			$.get(message.action,message.parameters,function(response){
-				var responseObj = OAuth.getParameterMap(OAuth.decodeForm(response));				
-				request_token = responseObj.oauth_token
-			        request_token_secret = responseObj.oauth_token_secret
-				localStorage["fanfou_request_token"]=request_token
-				localStorage["fanfou_request_token_secret"]=request_token_secret
-				alert(request_token)
-				alert(request_token_secret)
-				window.location.href=authorization_uri + request_token+"&oauth_callback="+encodeURI(window.location.href);		
-			})									
-		}
-		
-		function getAccessToken(){
-			var message = {
-				method: "GET",
-				action: access_token_uri,
-				parameters: {
-				    oauth_consumer_key: api_key,
-				    oauth_token: localStorage["fanfou_request_token"],
-				    oauth_signature_method: signature_method,
-				    oauth_signature: "",
-				    oauth_timestamp: "",
-				    oauth_nonce: ""
-				}
-    			}
-			OAuth.setTimestampAndNonce(message);
-			OAuth.SignatureMethod.sign(message, {
-				consumerSecret: api_key_secret,
-				tokenSecret: localStorage["fanfou_request_token_secret"],
-			});
-			$.get(access_token_uri,message.parameters,function(response){
-				var responseObj = OAuth.getParameterMap(OAuth.decodeForm(response));
-				alert(responseObj)	          		
-				access_token = responseObj.oauth_token
-	          		access_token_secret = responseObj.oauth_token_secret
-				localStorage["fanfou_access_token"]=access_token
-				localStorage["fanfou_access_token_secret"]=access_token_secret			
-			})		
-		}
-		if(localStorage["fanfou_request_token"]==null||localStorage["fanfou_request_token"]==""){		
-			getRequestToken()
-		}else{
-			alert("已认证")
-			//alert(window.location.href)
-			getAccessToken()	
-		}
-			
-	</script>
-	<a href="javascript:getRequestToken()">认证</a>
+		<a href="#" id="fanfou">饭否</a>
+		<a href="#" id="sina">新浪</a>
+		<script type="text/javascript">
+			var fanfou={
+			  request_token_url: "http://fanfou.com/oauth/request_token",
+			  access_token_url:  "http://fanfou.com/oauth/access_token",
+			  authorization_url: "http://fanfou.com/oauth/authorize?oauth_token=",
+			  api_key:"",
+			  api_key_secret:"",
+			  prefix:"fanfou" 
+			}
+			OAuthHelper helper=new OAuthHelper(fanfou);
+			helper.auth()
+		</script>
+</body>
 </html>
