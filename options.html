@@ -2,22 +2,23 @@
 	<script src="scripts/oauth_util/sha1.js" type="text/javascript"></script>
 	<script src="scripts/oauth_util/oauth.js" type="text/javascript"></script>
 	<script type="text/javascript" src="lib/jquery.min.js"></script>
-	<script type="text/javascript" src="lib/jquery.base64.js"></script>
+	<script type="text/javascript" src="scripts/oauth_helper.js"></script>
 	<body>
 		<h3>设置</h3>
-		<a href="#" id="fanfou">饭否</a>
-		<a href="#" id="sina">新浪</a>
+		<a href="javascript: doAuth()" id="fanfou">饭否</a>
 		<script type="text/javascript">
-			var fanfou={
-			  request_token_url: "http://fanfou.com/oauth/request_token",
-			  access_token_url:  "http://fanfou.com/oauth/access_token",
-			  authorization_url: "http://fanfou.com/oauth/authorize?oauth_token=",
-			  api_key:"",
-			  api_key_secret:"",
-			  prefix:"fanfou" 
+			function doAuth(){
+				var fanfou={
+				  request_token_url: "http://fanfou.com/oauth/request_token",
+				  access_token_url:  "http://fanfou.com/oauth/access_token",
+				  authorization_url: "http://fanfou.com/oauth/authorize?oauth_token=",
+				  api_key:"327fe47f56d57ead9539c3498772fc3d",
+				  api_key_secret:"688edd10e5a2c923cf9421a644240e70",
+				  prefix:"fanfou" 
+				}
+				var helper=new OAuthHelper(fanfou);
+				helper.auth()
 			}
-			OAuthHelper helper=new OAuthHelper(fanfou);
-			helper.auth()
 		</script>
 </body>
 </html>
