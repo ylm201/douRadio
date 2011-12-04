@@ -14,7 +14,7 @@
 			access_secret:secret, 
 			onSuccess:function(data){
 				console.log(data)
-				localStorage[data.id+"|fanfou"]=token+","+secret;
+				localStorage["fanfou"]=token+","+secret;
 				if(localStorage["users"]){
 					localStorage["users"]=localStorage["users"]+","+data.id+"|"+data.name+"|"+"fanfou"
 				}else{
@@ -41,9 +41,9 @@ var douban={
 			access_secret:secret, 
 			onSuccess:function(data){
 				console.log(data)
-				localStorage[data["db:uid"].$t+"|douban"]=token+","+secret;
+				localStorage["douban"]=token+","+secret;
 				if(localStorage["users"]){
-					localStorage["users"]=localStorage["users"]+data["db:uid"].$t+"|"+data["title"].$t+"|"+"douban"
+					localStorage["users"]=localStorage["users"]+","+data["db:uid"].$t+"|"+data["title"].$t+"|"+"douban"
 				}else{
 					localStorage["users"]=data["db:uid"].$t+"|"+data["title"].$t+"|"+"douban"
 				}

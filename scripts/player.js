@@ -59,29 +59,59 @@ $("#delete").bind("click",function(){
 
 $("#comment_commit").bind("click",function(){
 	var nodes=$(".comment_button")
+	content=$("#comment_input").val()
 	$.each(nodes,function(index,value){
 		var isSelected=$(value).attr("selected")
 		if(isSelected=="true"){
-			doComment($(value).attr("id"),$("#comment_input").val())
+			doComment($(value).attr("id"),content)
 		}
 	})
 });
 
 function doComment(id,content){
+	
 	var s=localStorage[id]
 	var ts=s.split(",")
-	sendApiRequest({
-		url:"http://api.fanfou.com/statuses/update.json",
-		method:"POST",
-		content:{status:content},
-		consumer_key:"327fe47f56d57ead9539c3498772fc3d",
-		consumer_secret:"688edd10e5a2c923cf9421a644240e70",
-		access_token:ts[0],
-		access_secret:ts[1],
-		onSuccess:function(data){
-			console.log(data)
-		}
-	})
+	if(id=="fanfou"){
+		sendApiRequest({
+			url:"http://api.fanfou.com/statuses/update.json",
+			method:"POST",
+			content:{status:content},
+			consumer_key:"327fe47f56d57ead9539c3498772fc3d",
+			consumer_secret:"688edd10e5a2c923cf9421a644240e70",
+			access_token:ts[0],
+			access_secret:ts[1],
+			onSuccess:function(data){
+				console.log(data)
+				$("#comment_popup").slideUp("slow",function(){
+					$("#notify").fadeIn("slow").fadeOut("slow")
+				})
+			}
+		})
+	}
+
+	if(id=="douban"){
+		console.log("content:"+content)	
+	    var request_body = "<entry xmlns:ns0=\"http://www.w3.org/2005/Atom\" xmlns:db=\"http://www.douban.com/xmlns/\">";
+		request_body += "<content>"+content+"</content>";
+		request_body += "</entry>";		
+		sendApiRequest({
+			url:"http://api.douban.com/miniblog/saying",
+			method:"POST",
+			content:request_body,
+			consumer_key:"0458f5fa0cd49e2a0d0ae1ee267dda7e",
+			consumer_secret:"8670104fb9f59f9d",
+			access_token:ts[0],
+			access_secret:ts[1],
+			contentType:"application/atom+xml;charset=utf-8",
+			onSuccess:function(data){
+				console.log(data)
+				$("#comment_popup").slideUp("slow",function(){
+					$("#notify").fadeIn("slow").fadeOut("slow")
+				})
+			}
+		})
+	}
 }
 
 $("#comment_close").bind("click",function(){
@@ -156,6 +186,16 @@ audio.addEventListener("timeupdate",function(){
 
 audio.addEventListener("play",function(){
 })
+
+var shares=localStorage["users"]
+if(shares){
+	$.each(shares.split(","),function(index,value){
+		$("."+value.split("|")[2]).show()
+		$("#"+value.split("|")[2]).show()
+	})
+}
+
 if(radio.power){
 	showSong();
 }
+

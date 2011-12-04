@@ -13,9 +13,10 @@ function getRequestHeader(data){
 		}
 	}
 	// 签名
-	if(data.content){
+	console.log(typeof data.content)
+	if(data.content&&typeof data.content!='string'){
 		$.extend(message.parameters,data.content)
-		console.log(message)
+		console.log("message:"+message)
 	}
 	OAuth.setTimestampAndNonce(message);
 	console.log("sign:"+data.consumer_secret+","+data.access_secret)
@@ -49,11 +50,13 @@ function sendApiRequest(data){
 		url : data.url,
 		type : data.method,
 		data:data.content?data.content:null,
+		dataType:"xml",
+		contentType:data.contentType?data.contentType:"application/x-www-form-urlencoded",
 		beforeSend : function(req) {
 			req.setRequestHeader('Authorization',getRequestHeader(data));
-			if(data.contentType){
-				req.setRequestHeader('Content-Type',data.contentType)
-			}
+			//if(data.contentType){
+			//	req.setRequestHeader('content-type',data.contentType)
+			//}
 		},
 		error:function(XmlHttpRequest,textStatus,errortown){
 			console.log("请求时发生错误发生错误",errortown)
