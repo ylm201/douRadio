@@ -57,16 +57,57 @@ $("#delete").bind("click",function(){
 	return false;
 });
 
-$("#share_submit").bind("click",function(){
-		
+$("#comment_commit").bind("click",function(){
+	var nodes=$(".comment_button")
+	$.each(nodes,function(index,value){
+		var isSelected=$(value).attr("selected")
+		if(isSelected=="true"){
+			doComment($(value).attr("id"),$("#comment_input").val())
+		}
+	})
 });
+
+function doComment(id,content){
+	var s=localStorage[id]
+	var ts=s.split(",")
+	sendApiRequest({
+		url:"http://api.fanfou.com/statuses/update.json",
+		method:"POST",
+		content:{status:content},
+		consumer_key:"327fe47f56d57ead9539c3498772fc3d",
+		consumer_secret:"688edd10e5a2c923cf9421a644240e70",
+		access_token:ts[0],
+		access_secret:ts[1],
+		onSuccess:function(data){
+			console.log(data)
+		}
+	})
+}
 
 $("#comment_close").bind("click",function(){
 	$("#comment_popup").slideUp()
+	})
+
+$(".comment_button").bind("click",function(){
+	var isSelected=$(this).attr("selected")
+	if(isSelected=="true"){
+		$(this).attr("selected","false")
+		$(this).css("opacity","0.4")
+	}else{
+		$(this).attr("selected","true")
+		$(this).css("opacity","1.0")
+	}	
 })
 
 $("#share img").bind("click",function(){
 	$("#comment_popup").slideDown("slow")
+	var c= $(this).attr("class")
+	$("#"+c).css("opacity","1.0")
+			.attr("selected","true")
+	var content=$("#song_title").attr("title")
+	content="#豆瓣电台#"+content
+	console.log(content)
+	$("#comment_input").val(content)
 })
 
 $("#switcher").bind("click",function(){

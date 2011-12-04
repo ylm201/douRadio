@@ -3,20 +3,24 @@
 	<script src="scripts/oauth_util/oauth.js" type="text/javascript"></script>
 	<script type="text/javascript" src="lib/jquery.min.js"></script>
 	<script type="text/javascript" src="scripts/oauth_helper.js"></script>
+	<script type="text/javascript" src="scripts/api.js"></script>
+	<script type="text/javascript" src="scripts/auth_list.js"></script>
 	<body>
 		<h3>设置</h3>
-		<a href="javascript: doAuth()" id="fanfou">饭否</a>
+		<a href="javascript: doAuth('fanfou')" id="fanfou">饭否</a>
+		<a href="javascript: doAuth('douban')" id="douban">豆瓣</a>
 		<script type="text/javascript">
-			function doAuth(){
-				var fanfou={
-				  request_token_url: "http://fanfou.com/oauth/request_token",
-				  access_token_url:  "http://fanfou.com/oauth/access_token",
-				  authorization_url: "http://fanfou.com/oauth/authorize?oauth_token=",
-				  api_key:"327fe47f56d57ead9539c3498772fc3d",
-				  api_key_secret:"688edd10e5a2c923cf9421a644240e70",
-				  prefix:"fanfou" 
+			function doAuth(obj){
+				var o;
+				if(obj=="fanfou"){
+					o=fanfou
 				}
-				var helper=new OAuthHelper(fanfou);
+				
+				if(obj=="douban"){
+					o=douban
+				}
+				
+				var helper=new OAuthHelper(o);
 				helper.auth()
 			}
 		</script>

@@ -7,6 +7,7 @@
 		<script type="text/javascript" src="lib/jquery-jtemplates.js"></script>
 		<script src="scripts/oauth_util/sha1.js" type="text/javascript"></script>
 		<script src="scripts/oauth_util/oauth.js" type="text/javascript"></script>
+		<script type="text/javascript" src="scripts/api.js"></script>
 	</head>
 	<body>
 
@@ -15,7 +16,9 @@
 				<textarea  id="comment_input" ></textarea>
 				<img src="img/close.png" id="comment_close"/>
 				<input type="button" value="发送" id="comment_commit" />
-				<img src="img/fanfou.jpg" class="comment_button"/><img src="img/sina.png" class="comment_button"/>
+				<img src="img/fanfou.jpg"   class="comment_button"  id="piaoliu123|fanfou"/>
+				<img src="img/sina.png" class="comment_button" id="share_sina"/>
+				<img src="img/douban.png" class="comment_button" id="share_douban"/>
 				<div class="clear"></div>
 			</div>
 
@@ -38,12 +41,14 @@
 					<img src="img/skip.png"  class="button"  id="skip" />
 				</div>
 				<div id="share">
-					<img src="img/fanfou.jpg" id="share_fanfou"/>
-					<img src="img/sina.png" id="share_sina"/>
+					<img src="img/fanfou.jpg" class="piaoliu123|fanfou"/>
+					<img src="img/sina.png" class="share_sina"/>
+					<img src="img/douban.png" class="share_douban"/>
 				</div>
 				<div class="clear"></div>
 			</div>
 		</div>
+	
 		<div id="channel_popup">
 			<ul id="channels">
 				<li id="0">私人MHz</li><li id="1">华语MHz</li>

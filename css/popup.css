@@ -12,8 +12,8 @@ body{margin:6px 4px 6px 04px}
 #operation{width:120px;float:left}
 .button {margin-right:10px;cursor:pointer;width:20px;height:20px}
 .button:hover{opacity:0.6}
-#share{width:40px;float:right;padding-top:5px}
-#share img{width:16px;height:16px;opacity:0.4;float-left:3px;float: bottom;}
+#share{float:right;padding-top:5px}
+#share img{width:16px;height:16px;opacity:0.4;margin-left:3px;float:right;}
 #share img:hover{opacity:1.0}
 .clear{clear:both}
 #channel_popup{background-color:#fff;height:100%;width:100%;overflow-y:scroll;position:absolute;z-index:999;left:0;top:0;padding:0px;opacity:0.95;display:none}
@@ -22,7 +22,7 @@ body{margin:6px 4px 6px 04px}
 #channels li:hover{cursor:pointer;background-color:#3B5343;color:#fff}
 #channels .channel_selected{background-color:#3B5345;color:#fff}
 #comment_popup{margin-bottom:5px}
-#comment_input{width:100%;height:45px;border-radius:5px;border-color:#3B5343}
+#comment_input{width:100%;height:60px;border-radius:5px;border-color:#3B5343}
 #comment_commit{float:right;border-radius:5px;width:75px;height:23px;border:none;margin-top:4px;color:#3B5343;background:	-webkit-gradient(
 	    linear,
 		left bottom,

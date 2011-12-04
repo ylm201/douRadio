@@ -249,9 +249,11 @@ OAuth.setProperties(OAuth.SignatureMethod.prototype, // instance members
     /** Add a signature to the message. */
     sign: function sign(message) {
         var baseString = OAuth.SignatureMethod.getBaseString(message);
-        var signature = this.getSignature(baseString);
-        OAuth.setParameter(message, "oauth_signature", signature);
-        return signature; // just in case someone's interested
+        //add
+		console.log("baseString :"+baseString)
+		var signature = this.getSignature(baseString);
+		OAuth.setParameter(message, "oauth_signature", signature);
+		return signature; // just in case someone's interested
     }
 ,
     /** Set the key string for signing. */
@@ -419,7 +421,9 @@ OAuth.SignatureMethod.registerMethodClass(["HMAC-SHA1", "HMAC-SHA1-Accessor"],
     OAuth.SignatureMethod.makeSubclass(
         function getSignature(baseString) {
             b64pad = '=';
-            var signature = b64_hmac_sha1(this.key, baseString);
+            //add
+			console.log(this.key)
+			var signature = b64_hmac_sha1(this.key, baseString);
             return signature;
         }
     ));

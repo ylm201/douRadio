@@ -2,24 +2,29 @@
 function getRequestHeader(data){
 	var message = {
 		method: data.method,
-		action: data.auth_url,	
+		action: data.url,	
 		parameters: {
 			oauth_consumer_key: data.consumer_key,
-			oauth_token: data.access_key,
+			oauth_token: data.access_token,
 			oauth_signature_method: "HMAC-SHA1",
 			oauth_signature: "",
 			oauth_timestamp: "",
-			oauth_nonce: "",
-			status:data.content
+			oauth_nonce: ""
 		}
 	}
 	// 签名
+	if(data.content){
+		$.extend(message.parameters,data.content)
+		console.log(message)
+	}
 	OAuth.setTimestampAndNonce(message);
+	console.log("sign:"+data.consumer_secret+","+data.access_secret)
 	OAuth.SignatureMethod.sign(message, {
-		consumerSecret: data.comsumerP_key,
-		tokenSecret: data.access_token,
+		consumerSecret: data.consumer_secret,
+		tokenSecret: data.access_secret
 	});
-
+	console.log("sign parameters")
+	console.log(message)
 	//构造OAuth头部
 	var oauth_header = "OAuth realm=\"\", oauth_consumer_key=";
 	oauth_header += message.parameters.oauth_consumer_key + ', oauth_nonce=';
@@ -31,19 +36,30 @@ function getRequestHeader(data){
 }
 
 /**
- *发送评论
+ *发送Api请求
+ @method POST/GET
+ @url Api请求的URL
+ @consumer_key 
+ @access_token
+ @consumer_secret
+ @access_secret
  * */
-function sendComment(data){
+function sendApiRequest(data){
 	$.ajax({
-		url : data.post_url,
-		type : "POST",
-		data:{data.content}
+		url : data.url,
+		type : data.method,
+		data:data.content?data.content:null,
 		beforeSend : function(req) {
 			req.setRequestHeader('Authorization',getRequestHeader(data));
+			if(data.contentType){
+				req.setRequestHeader('Content-Type',data.contentType)
+			}
 		},
 		error:function(XmlHttpRequest,textStatus,errortown){
-			console.log("评论时发生错误",errortown)
+			console.log("请求时发生错误发生错误",errortown)
+		},
+		success:function(obj){
+			data.onSuccess(obj)
 		}
-	};
+	});
 }
-
