@@ -50,7 +50,6 @@ function sendApiRequest(data){
 		url : data.url,
 		type : data.method,
 		data:data.content?data.content:null,
-		dataType:"xml",
 		contentType:data.contentType?data.contentType:"application/x-www-form-urlencoded",
 		beforeSend : function(req) {
 			req.setRequestHeader('Authorization',getRequestHeader(data));

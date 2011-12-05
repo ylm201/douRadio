@@ -72,6 +72,7 @@ function doComment(id,content){
 	
 	var s=localStorage[id]
 	var ts=s.split(",")
+	
 	if(id=="fanfou"){
 		sendApiRequest({
 			url:"http://api.fanfou.com/statuses/update.json",
@@ -91,7 +92,6 @@ function doComment(id,content){
 	}
 
 	if(id=="douban"){
-		console.log("content:"+content)	
 	    var request_body = "<entry xmlns:ns0=\"http://www.w3.org/2005/Atom\" xmlns:db=\"http://www.douban.com/xmlns/\">";
 		request_body += "<content>"+content+"</content>";
 		request_body += "</entry>";		
@@ -135,7 +135,7 @@ $("#share img").bind("click",function(){
 	$("#"+c).css("opacity","1.0")
 			.attr("selected","true")
 	var content=$("#song_title").attr("title")
-	content="#豆瓣电台#"+content
+	content="#豆瓣电台# "+content
 	console.log(content)
 	$("#comment_input").val(content)
 })

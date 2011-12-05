@@ -7,22 +7,70 @@
 	<script type="text/javascript" src="scripts/auth_list.js"></script>
 	<body>
 		<h3>设置</h3>
-		<a href="javascript: doAuth('fanfou')" id="fanfou">饭否</a>
-		<a href="javascript: doAuth('douban')" id="douban">豆瓣</a>
+		<ul>
+			<li>
+				<img src="img/fanfou.jpg"/>
+				<a href="#"  class="add" id="fanfou">饭否</a>
+				<a href="#"  class="rm" id="rm_fanfou" style="display:none">取消授权</a>
+			</li>
+			<li>
+				<img src="img/douban.png"/>
+				<a href="#" class="add" id="douban">豆瓣</a>
+				<a href="#" class="rm"  id="rm_douban" style="display:none">取消授权</a>
+			</li>
+		</ul>
 		<script type="text/javascript">
-			function doAuth(obj){
-				var o;
-				if(obj=="fanfou"){
-					o=fanfou
-				}
-				
-				if(obj=="douban"){
-					o=douban
-				}
-				
-				var helper=new OAuthHelper(o);
-				helper.auth()
+			
+			function init(){ 
+				$.each($(".rm"),function(index,value){
+					var key=$(value).attr("id").split("_")[1]
+					if(localStorage[key]){
+						$(value).show()
+						$("#"+key).hide()
+					}else{
+						$(value).hide()
+						$("#"+key).show()
+					}		
+				})
 			}
+			
+			$(".add").bind("click",function(){
+				var key=$(this).attr("id")
+				var obj
+				if(key=="fanfou"){
+					obj=fanfou
+				}
+				if(key=="douban"){
+					obj=douban
+				}
+				var helper=new OAuthHelper(obj)
+				helper.auth()
+				//window.location.reload()
+			})
+
+			$(".rm").bind("click",function(){
+				var key=$(this).attr("id").split("_")[1]
+				localStorage.removeItem(key)
+				var users=localStorage["users"]
+				var newUsers
+				$.each(users.split(","),function(index,value){
+					if(value.split("|")[2]!=key){
+						if(newUsers){
+							newUsers=newUsers+","+value
+						}else{
+							newUsers=value
+						}
+					}	
+				})
+				localStorage["users"]=newUsers
+				if(localStorage[key]){
+					$(value).show()
+					$("#"+key).hide()
+				}
+				window.location.reload()
+			})
+			init()
+
 		</script>
 </body>
 </html>

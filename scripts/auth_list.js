@@ -20,6 +20,7 @@
 				}else{
 					localStorage["users"]=data.id+"|"+data.name+"|"+"fanfou"
 				}
+				init()
 			}	
 		})
 	} 
@@ -47,6 +48,7 @@ var douban={
 				}else{
 					localStorage["users"]=data["db:uid"].$t+"|"+data["title"].$t+"|"+"douban"
 				}
+				init()
 			}	
 		})
 	}

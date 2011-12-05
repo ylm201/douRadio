@@ -46,26 +46,29 @@ OAuthHelper.prototype.getRequestToken=function(){
 		self.request_token_secret = responseObj.oauth_token_secret
 		console.log("request token: "+self.request_token)
 		console.log("request token secret: "+self.request_token_secret)
-		var url=self.authorization_uri + self.request_token+"&oauth_callback="+encodeURI(window.location.origin+"/oauth_callback.htm");	
-		console.log(url)
+		var random=Math.random()
+		var url=self.authorization_uri + self.request_token+"&oauth_callback="+encodeURI(window.location.origin+"/oauth_callback.htm")+"?r="+random;	
 		window.open(url,'','width=600px,height=400px')
-		self.onAuthorized()	
+		self.onAuthorized(random)	
 	})									
 }
 
 /**
  * 用户授权后回调方法
  * */
-OAuthHelper.prototype.onAuthorized=function(){
+OAuthHelper.prototype.onAuthorized=function(random){
 	var self=this
-	chrome.tabs.onUpdated.addListener(function(tabId,info,tab){	
+	function doEvent(tabId,info,tab){
+		console.log("do event..................")
 		var b=tab.url.indexOf(self.authorization_uri)
-		if(info.status=="loading"&&tab.url.indexOf("oauth_callback.htm")>-1&&tab.url.indexOf(self.authorization_uri)<0){
+		if(info.status=="loading"&&tab.url.indexOf("oauth_callback.htm")>-1&&tab.url.indexOf(self.authorization_uri)<0
+			&&tab.url.indexOf(random)>-1){
 			console.log("updated....."+tab.url)
-			chrome.tabs.onUpdated.removeListener()
 			self.getAccessToken()
+			chrome.tabs.onUpdated.removeListener(doEvent);
 		}
-	})
+	}
+	chrome.tabs.onUpdated.addListener(doEvent)
 }
 
 /**
