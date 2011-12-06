@@ -26,20 +26,6 @@ Radio.init=function(audio){
 		radio.changeSong("p")
 	})
 	
-	//获取douban.com上的cookie，添加到douban.fm上
-	chrome.cookies.get({
-		url:"http://douban.com",
-		name:"dbcl2"	
-	},function(b){
-		if(b){
-			chrome.cookies.set({
-				url:"http://douban.fm",
-				name:"dbcl2",
-				value:b.value
-			})
-			radio.uid=b.value.split(":")[0]
-		}
-	})
 	return radio	
 }
 
@@ -54,7 +40,8 @@ Radio.prototype.getPlayList=function(t,skip){
 			h:this.heared,
 			sid:this.c_song? this.c_song.sid:'',
 			r:Math.random(),
-			uid:this.uid
+			uid:this.uid,
+			from:"mainsite"
 		},function(data){
 			var songs=data.song
 			for(s in songs){
@@ -78,7 +65,8 @@ Radio.prototype.reportEnd=function(){
 	$.get("http://douban.fm/j/mine/playlist",{
 			type:'e',
 			sid:this.c_song.sid,
-			channel:this.channel	
+			channel:this.channel,
+			from:"mainsite"	
 		})		
 }
 

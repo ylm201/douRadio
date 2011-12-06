@@ -2,6 +2,9 @@
   "name": "doubanFMExt",
   "version": "1.0",
   "description": "Douban Radio Extension",
+  "icons":{
+    "128": "img/icon_128.png"
+  },
   "browser_action": {
     "popup": "popup.html",
     "default_icon": "img/icon-r.png"
@@ -10,7 +13,6 @@
         "notifications",
 		"tabs",
         "cookies",
-		"background",
         "http://*.douban.fm/*",
         "http://*.douban.com/*",
 		"http://api.fanfou.com/*",

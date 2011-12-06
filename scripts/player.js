@@ -151,6 +151,7 @@ $("#switcher").bind("click",function(){
 $("#channels li").bind("click",function(){
 	var sc=$(this).attr("id")
 	localStorage["channel"]=sc
+	radio.channel=sc
 	$(this).addClass("channel_selected")
 		.siblings().removeClass("channel_selected")
 	$("#channel_popup").fadeOut("slow")
