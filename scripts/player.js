@@ -3,7 +3,6 @@ console.log(radio);
 
 function showSong(){
 	var data=radio.c_song;
-	console.log(radio);
 	if(data&&data.like==1){
 		$("#like").attr("src","img/rated.png")
 	}else{
@@ -15,8 +14,10 @@ function showSong(){
 		$("#power").attr("src","img/on.png")
 	}
 	if(data.title){
-		$("#song_title").html(data.title+"--"+data.artist)
-		$("#song_title").attr("title",data.title+"--"+data.artist)	
+		$("#song_title").html(data.title)
+		$("#song_title").attr("title",data.title)	
+		$("#song_artist").html(data.artist)
+		$("#song_artist").attr("title",data.artist)
 	}
 };
 
@@ -34,6 +35,8 @@ $("#power").bind("click",function(){
 	}else{
 		radio.powerOff();
 		$(this).attr("src","img/on.png")
+		$("#song_title").html("豆瓣电台")
+		$("#song_title").attr("title","豆瓣电台")
 	}
 	return false;
 });
@@ -67,6 +70,22 @@ $("#comment_commit").bind("click",function(){
 		}
 	})
 });
+
+$("#range")[0].addEventListener("input",function(){
+	var d=$(this).val()
+	var len=$(this).val()/100*50
+	$("#volume_bar").css("width",len+"px")
+	var a=radio.audio.volume=$(this).val()/100
+})
+
+$("#volume img").toggle(function(){
+	$("#range").show()
+	$("#volume_bar").show()
+},function(){
+	$("#range").hide()
+	$("#volume_bar").hide()
+})
+
 
 function doComment(id,content){
 	
@@ -116,7 +135,7 @@ function doComment(id,content){
 
 $("#comment_close").bind("click",function(){
 	$("#comment_popup").slideUp()
-	})
+})
 
 $(".comment_button").bind("click",function(){
 	var isSelected=$(this).attr("selected")
@@ -161,9 +180,30 @@ $("#channels li").bind("click",function(){
 	}
 })
 
+$("#close_c").bind("click",function(){
+	$("#channel_popup").fadeOut("slow")
+})
+
+
+$("#pause").bind("click",function(){
+	radio.audio.pause()
+	$("#mask").show()
+})
+
+$("#mask").bind("click",function(){
+	radio.audio.play()
+	$("#mask").hide()
+})
+
 var audio=radio.audio
+audio.addEventListener("ended",function(){
+	showSong()	
+})
+
 audio.addEventListener("timeupdate",function(){
-	var min=0;
+	var t=(this.currentTime/this.duration)*230
+	$("#played").css("width",t+"px")
+	var min=0
 	var second=0
 	var current=this.currentTime
 	min=parseInt(current/60)
@@ -171,9 +211,8 @@ audio.addEventListener("timeupdate",function(){
 	if(second<10){
 		second="0"+second
 	}
-	$("#current").text(min+":"+second)
-
-	min=0;
+	var c=min+":"+second
+	min=0
 	second=0
 	total=this.duration
 	min=parseInt(total/60)
@@ -181,11 +220,9 @@ audio.addEventListener("timeupdate",function(){
 	if(second<10){
 		second="0"+second
 	}
-	$("#total").text(min+":"+second)
+	var t=min+":"+second
+	$("#timer").text(c+"/"+t)
 
-})
-
-audio.addEventListener("play",function(){
 })
 
 var shares=localStorage["users"]
@@ -198,5 +235,8 @@ if(shares){
 
 if(radio.power){
 	showSong();
+	if(radio.audio.paused){
+		$("#mask").show()
+	}
 }
 

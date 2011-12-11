@@ -24,8 +24,22 @@ Radio.init=function(audio){
 	audio.addEventListener("ended",function(){
 		radio.reportEnd()
 		radio.changeSong("p")
+		console.log("song end")
 	})
 	
+	//douban.fm的cookie是session级别，从豆瓣主站获取dbcl2的cookie到
+	chrome.cookies.get({
+		url:"http://douban.com",
+		name:"dbcl2"	
+	},function(b){
+		if(b){
+			chrome.cookies.set({
+				url:"http://douban.fm",
+				name:"dbcl2",
+				value:b.value
+			})
+		}
+	})
 	return radio	
 }
 
@@ -34,13 +48,15 @@ Radio.init=function(audio){
  * */
 Radio.prototype.getPlayList=function(t,skip){
 	var self =this
+	if(skip){
+		this.audio.pause()
+	}
 	$.getJSON("http://douban.fm/j/mine/playlist",{
 			type:t,
 			channel:this.channel,
 			h:this.heared,
 			sid:this.c_song? this.c_song.sid:'',
 			r:Math.random(),
-			uid:this.uid,
 			from:"mainsite"
 		},function(data){
 			var songs=data.song
@@ -77,10 +93,9 @@ Radio.prototype.changeSong=function(t){
 		h_songs.push(this.c_song.sid+":"+t);
 		this.heared=h_songs.slice(-20).join("|")
 	}
-	this.audio.pause()
+	//this.audio.pause()
 	console.log("get next song: "+this.c_song.sid)
 	this.audio.src=this.c_song.url
-	this.audio.load()
 	this.audio.play()
 	if(this.song_list.length<=0){
 		console.log("get new song list")

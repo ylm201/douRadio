@@ -7,18 +7,16 @@
   },
   "browser_action": {
     "popup": "popup.html",
-    "default_icon": "img/icon-r.png"
+    "default_icon": "img/icon_128.png"
   },
   "permissions": [
         "notifications",
 		"tabs",
-        "cookies",
+		"cookies",
         "http://*.douban.fm/*",
         "http://*.douban.com/*",
 		"http://api.fanfou.com/*",
-		"http://fanfou.com/*",
-		"http://*",
-		"https://*"
+		"http://fanfou.com/*"
     ],
    "background_page":"background.html",
    "options_page":"options.html"
