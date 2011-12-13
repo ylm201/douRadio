@@ -63,7 +63,11 @@
 						}
 					}	
 				})
-				localStorage["users"]=newUsers
+				if(newUsers){
+					localStorage["users"]=newUsers
+				}else{
+					localStorage.removeItem("users")	
+				}
 				if(localStorage[key]){
 					$(value).show()
 					$("#"+key).hide()

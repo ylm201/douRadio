@@ -1,6 +1,7 @@
 var radio=chrome.extension.getBackgroundPage().radio;
 console.log(radio);
 
+
 function showSong(){
 	var data=radio.c_song;
 	if(data&&data.like==1){
@@ -35,8 +36,11 @@ $("#power").bind("click",function(){
 	}else{
 		radio.powerOff();
 		$(this).attr("src","img/on.png")
-		$("#song_title").html("豆瓣电台")
-		$("#song_title").attr("title","豆瓣电台")
+		$("#song_title").html("--")
+		$("#song_title").attr("title","")
+		$("#song_artist").html("豆瓣电台")
+		$("#song_artist").attr("title","豆瓣电台")
+
 	}
 	return false;
 });
@@ -76,6 +80,7 @@ $("#range")[0].addEventListener("input",function(){
 	var len=$(this).val()/100*50
 	$("#volume_bar").css("width",len+"px")
 	var a=radio.audio.volume=$(this).val()/100
+	localStorage["volume"]=$(this).val()/100
 })
 
 $("#volume img").toggle(function(){
@@ -153,7 +158,7 @@ $("#share img").bind("click",function(){
 	var c= $(this).attr("class")
 	$("#"+c).css("opacity","1.0")
 			.attr("selected","true")
-	var content=$("#song_title").attr("title")
+	var content=$("#song_artist").attr("title")+"--"+$("#song_title").attr("title")
 	content="#豆瓣电台# "+content
 	console.log(content)
 	$("#comment_input").val(content)
@@ -201,7 +206,7 @@ audio.addEventListener("ended",function(){
 })
 
 audio.addEventListener("timeupdate",function(){
-	var t=(this.currentTime/this.duration)*230
+	var t=(this.currentTime/this.duration)*240
 	$("#played").css("width",t+"px")
 	var min=0
 	var second=0
@@ -239,4 +244,12 @@ if(radio.power){
 		$("#mask").show()
 	}
 }
+var vol=localStorage["volume"]
+if(!vol){
+	vol=0.8
+}
+$("#range").val(vol*100)
+$("#volume_bar").css("width",vol*50+"px")
+audio.volume=vol
+
 

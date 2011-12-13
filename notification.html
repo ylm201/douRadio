@@ -1,48 +1,29 @@
-<?xml version="1.0" encoding="UTF-8"?> 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd"> 
-<!-- Not Valid XHTML 1.1 ! --> 
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en"> 
+<html> 
 <head> 
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
   <script type="text/javascript" src="lib/jquery.min.js"></script>
-  <script type="text/javascript" src="lib/jquery.base64.js"></script>
-  <script type="text/javascript" src="lib/jquery-jtemplates.js"></script>
-  <script type="text/javascript"> 
-  </script> 
-  <style type="text/css"> 
-	    .jTemplatesTest {
-			background: #DDD;
-			width: 250px;
-		}
-		.jTemplatesTest * {
-			padding: 4px;
-			margin: 2px auto;
-		}
-		.jTemplatesTest td,tr {
-			background: #EEE;
-			border: 1px solid black;
-		}
- </style> 
+    <style type="text/css"> 
+	  #main{margin:2px;width:220px}
+	  #title {white-space:nowrap;font-size:10px;color:#3B5343;display:inline-block;overflow:hidden;width:208px;margin-left:2px}
+	  #artist {white-space:nowrap;font-size:15px;color:#3B5343;font-weight:bold;display:inline-block;overflow:hidden;width:208px}
+  </style> 
 	
 </head> 
  
 <body> 
-	<!-- Template content --> 
-	<textarea id="template" style="display:none"> 
-		<strong>{$T.title}-{$T.artist}</strong>
-	</textarea> 
-	<!-- Output elements --> 
-	<div id="result1" class="jTemplatesTest"></div> 
-	<script type="text/javascript">
-	var radio=chrome.extension.getBackgroundPage().radio;
-	var showSong=function(){
-			var data=radio.getSong();
-			// attach the template
-			$("#result1").setTemplateElement("template");	
-			// process the template
-			$("#result1").processTemplate(data);
-	}
-	showSong();
-	setTimeout("window.close()",1000)
-	</script>
+	<div id="main">
+		<span id="artist">豆瓣电台</span>
+		<span id="title">--</span>
+	</div>
+	<script type="text/javascript"> 
+		setTimeout(function(){
+				window.close()
+		},2000)
+		var radio=chrome.extension.getBackgroundPage().radio;
+		var song=radio.c_song
+		$("#artist").text(song.artist)
+		$("#title").text(song.title)
+	</script> 
+
 </body> 
 </html> 
