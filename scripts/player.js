@@ -23,6 +23,9 @@ function showSong(){
 };
 
 $("#skip").bind("click",function(){
+	if(!radio.power){
+		return false;
+	}
 	radio.skip();
 	showSong();
 	return false;
@@ -46,6 +49,9 @@ $("#power").bind("click",function(){
 });
 
 $("#like").bind("click",function(){
+	if(!radio.power){
+		return false;
+	}
 	if(radio.c_song.like==0){
 		radio.like();
 		$("#like").attr("src","img/rated.png");
@@ -59,6 +65,9 @@ $("#like").bind("click",function(){
 });
 
 $("#delete").bind("click",function(){
+	if(!radio.power){
+		return false;
+	}
 	radio.del();
 	showSong()
 	return false;
@@ -191,6 +200,9 @@ $("#close_c").bind("click",function(){
 
 
 $("#pause").bind("click",function(){
+	if(!radio.power){
+		return false;
+	}
 	radio.audio.pause()
 	$("#mask").show()
 })

@@ -3,7 +3,7 @@ span{font-family: 微软雅黑;}
 #main{width:280px;padding:7px 4px 7px 4px;height:95px;overflow:hidden;}
 #power {float:right;width:20px;margin-top:8px;clear:both}
 #power:hover{opacity:0.7}
-#song_title {white-space:nowrap;font-size:10px;color:#3B5343;display:inline-block;overflow:hidden;width:238px;line-height:13px}
+#song_title {white-space:nowrap;font-size:10px;color:#3B5343;display:inline-block;overflow:hidden;width:238px;line-height:14px;margin-bottom:1px}
 #song_artist {white-space:nowrap;font-size:15px;color:#3B5343;font-weight:bold;display:inline-block;overflow:hidden;width:238px;line-height:15px}
 #display{margin-top:5px;width:240px;}
 #loaded{height:3px;background-color:#E9F4E9;width:240px;opacity:0.8;margin-top:2px}
