@@ -10,6 +10,7 @@ var Radio=function(){
 	this.power=false;
 	this.uid='';
 	this.heared='';
+	this.red=new Red()
 }
 
 /**
@@ -34,7 +35,8 @@ Radio.init=function(audio){
 	chrome.cookies.get({
 		url:"http://douban.com",
 		name:"dbcl2"	
-	},function(b){
+	},function(b){	
+
 		if(b){
 			chrome.cookies.set({
 				url:"http://douban.fm",
@@ -54,18 +56,25 @@ Radio.prototype.getPlayList=function(t,skip){
 	if(skip){
 		this.audio.pause()
 	}
+	if(localStorage.channel=="-1"&&skip){
+		this.song_list=this.red.getSongList()
+		this.changeSong(t)
+		return
+	}
 	var self=this
 	$.getJSON("http://douban.fm/j/mine/playlist",{
 			type:t,
-			channel:this.channel,
+			channel:this.channel=="-1"?0:this.channel,
 			h:this.heared,
 			sid:this.c_song? this.c_song.sid:'',
 			r:Math.random(),
 			from:"mainsite"
 		},function(data){
 			var songs=data.song
-			for(s in songs){
-				self.song_list[s]=songs[s]
+			if(localStorage.channel!="-1"){
+				for(s in songs){
+					self.song_list[s]=songs[s]
+				}
 			}
 			if(skip){
 				self.changeSong(t)
@@ -124,6 +133,7 @@ Radio.prototype.del=function(){
 
 Radio.prototype.powerOn=function(){
 	this.power=true
+	this.red.init()
 	this.getPlayList("n",true)
 }
 
