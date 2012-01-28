@@ -7,7 +7,7 @@
   },
   "browser_action": {
     "popup": "popup.html",
-    "default_icon": "img/icon_128.png"
+    "default_icon": "img/icon_48.png"
   },
   "permissions": [
         "notifications",
@@ -16,7 +16,8 @@
         "http://*.douban.fm/*",
         "http://*.douban.com/*",
 		"http://api.fanfou.com/*",
-		"http://fanfou.com/*"
+		"http://fanfou.com/*",
+		"http://api.t.sina.com.cn/*"
     ],
    "background_page":"background.html",
    "options_page":"options.html"

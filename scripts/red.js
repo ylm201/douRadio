@@ -17,7 +17,7 @@ Red.prototype.init=function(){
 Red.prototype.getSongList=function(){
 	var page=Math.round(Math.random()*this.total)
 	page=parseInt(page/15)*15	
-	console.log("page:"+page)
+	console.log("get red songs from page:"+page)
 	return this.getSongs(page)
 }
 

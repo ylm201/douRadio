@@ -145,6 +145,24 @@ function doComment(id,content){
 			}
 		})
 	}
+
+	if(id="sina"){
+		sendApiRequest({
+			url:"http://api.t.sina.com.cn/statuses/update.json",
+			method:"POST",
+			content:{status:content,source:"694135578"},
+			consumer_key:"694135578",
+			consumer_secret:"683f9dd0a5d78c5488b7460a42e654c3",
+			access_token:ts[0],
+			access_secret:ts[1],
+			onSuccess:function(data){
+				console.log(data)
+				$("#comment_popup").slideUp("slow",function(){
+					$("#notify").fadeIn("slow").fadeOut("slow")
+				})
+			}
+		})
+	}
 }
 
 $("#comment_close").bind("click",function(){

@@ -54,3 +54,32 @@ var douban={
 	}
 }
 
+var sina={
+	api_key:"694135578",
+	api_key_secret:"683f9dd0a5d78c5488b7460a42e654c3",
+	request_token_url:"http://api.t.sina.com.cn/oauth/request_token",
+	access_token_url:"http://api.t.sina.com.cn/oauth/access_token",
+	authorization_url:"http://api.t.sina.com.cn/oauth/authorize?oauth_token=",
+	callback:function(token,secret){
+		sendApiRequest({
+			url:"http://api.t.sina.com.cn/account/verify_credentials.json?source="+this.api_key,
+			method:"GET",
+			consumer_key:this.api_key,
+			consumer_secret:this.api_key_secret,
+			access_token:token,
+			access_secret:secret,
+			onSuccess:function(data){
+				console.log(data)
+				localStorage["sina"]=token+","+secret;
+				if(localStorage["users"]){
+					localStorage["users"]=localStorage["users"]+","+data.id+"|"+data.name+"|"+"sina"
+				}else{
+					localStorage["users"]=data.id+"|"+data.name+"|"+"sina"
+				}
+				init()
+
+			}
+		})
+	}	
+} 
+

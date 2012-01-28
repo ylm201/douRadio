@@ -59,11 +59,13 @@ OAuthHelper.prototype.getRequestToken=function(){
 OAuthHelper.prototype.onAuthorized=function(random){
 	var self=this
 	function doEvent(tabId,info,tab){
-		console.log("do event..................")
 		var b=tab.url.indexOf(self.authorization_uri)
 		if(info.status=="loading"&&tab.url.indexOf("oauth_callback.htm")>-1&&tab.url.indexOf(self.authorization_uri)<0
 			&&tab.url.indexOf(random)>-1){
-			console.log("updated....."+tab.url)
+			console.log("callback url:"+tab.url)
+			var oauth_verify = tab.url.match(new RegExp("[\?\&]oauth_verifier=([^\&]*)(\&?)","i"));
+			console.log("oauth_verifier:"+oauth_verify[1])
+			self.oauth_verify=oauth_verify[1]
 			self.getAccessToken()
 			chrome.tabs.onUpdated.removeListener(doEvent);
 		}
@@ -86,6 +88,10 @@ OAuthHelper.prototype.getAccessToken=function(){
 			oauth_timestamp: "",
 			oauth_nonce: ""
 		}
+	}
+	if(this.oauth_verify){
+		console.log("has oauth_verifier")
+		$.extend(message.parameters,{oauth_verifier:this.oauth_verify})	
 	}
 	OAuth.setTimestampAndNonce(message);
 	console.log(this.api_key_secret)

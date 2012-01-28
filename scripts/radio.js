@@ -56,11 +56,11 @@ Radio.prototype.getPlayList=function(t,skip){
 	if(skip){
 		this.audio.pause()
 	}
-	if(localStorage.channel=="-1"&&skip){
+	/* if(localStorage.channel=="-1"&&skip){
 		this.song_list=this.red.getSongList()
 		this.changeSong(t)
 		return
-	}
+	} */
 	var self=this
 	$.getJSON("http://douban.fm/j/mine/playlist",{
 			type:t,
@@ -75,6 +75,8 @@ Radio.prototype.getPlayList=function(t,skip){
 				for(s in songs){
 					self.song_list[s]=songs[s]
 				}
+			}else{
+				self.song_list=self.red.getSongList()
 			}
 			if(skip){
 				self.changeSong(t)

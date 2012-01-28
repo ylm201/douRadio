@@ -19,6 +19,12 @@
 				<a href="#" class="add" id="douban">豆瓣</a>
 				<a href="#" class="rm"  id="rm_douban" style="display:none">取消授权</a>
 			</li>
+			<li>
+				<img src="img/douban.png"/>
+				<a href="#" class="add" id="sina">新浪</a>
+				<a href="#" class="rm"  id="rm_sina" style="display:none">取消授权</a>
+			</li>
+
 		</ul>
 		<script type="text/javascript">
 			
@@ -43,6 +49,9 @@
 				}
 				if(key=="douban"){
 					obj=douban
+				}
+				if(key=="sina"){
+					obj=sina
 				}
 				var helper=new OAuthHelper(obj)
 				helper.auth()
