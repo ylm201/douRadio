@@ -64,8 +64,9 @@ OAuthHelper.prototype.onAuthorized=function(random){
 			&&tab.url.indexOf(random)>-1){
 			console.log("callback url:"+tab.url)
 			var oauth_verify = tab.url.match(new RegExp("[\?\&]oauth_verifier=([^\&]*)(\&?)","i"));
-			console.log("oauth_verifier:"+oauth_verify[1])
-			self.oauth_verify=oauth_verify[1]
+			console.log("oauth_verifier:"+oauth_verify)
+			if(oauth_verify&&oauth_verify.length>=2)
+				self.oauth_verify=oauth_verify[1]
 			self.getAccessToken()
 			chrome.tabs.onUpdated.removeListener(doEvent);
 		}
