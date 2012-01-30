@@ -11,13 +11,14 @@
   },
   "permissions": [
         "notifications",
-		"tabs",
-		"cookies",
+	"tabs",
+	"cookies",
         "http://*.douban.fm/*",
         "http://*.douban.com/*",
-		"http://api.fanfou.com/*",
-		"http://fanfou.com/*",
-		"http://api.t.sina.com.cn/*"
+	"http://api.fanfou.com/*",
+	"http://fanfou.com/*",
+	"http://api.t.sina.com.cn/*",
+	"http://dwz.cn/*"
     ],
    "background_page":"background.html",
    "options_page":"options.html"

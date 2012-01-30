@@ -13,7 +13,8 @@ var OAuthHelper=function(arg){
 	this.access_token_uri = arg.access_token_url
 	this.authorization_uri = arg.authorization_url
 	this.prefix=arg.prefix
-	this.callback=arg.callback	
+	this.callback=arg.callback
+	this.type=arg.type	
 }
 
 
@@ -92,7 +93,8 @@ OAuthHelper.prototype.getAccessToken=function(){
 	}
 	if(this.oauth_verify){
 		console.log("has oauth_verifier")
-		$.extend(message.parameters,{oauth_verifier:this.oauth_verify})	
+		$.extend(message.parameters,{oauth_verifier:this.oauth_verify})
+
 	}
 	OAuth.setTimestampAndNonce(message);
 	console.log(this.api_key_secret)
@@ -108,6 +110,8 @@ OAuthHelper.prototype.getAccessToken=function(){
 		access_token_secret = responseObj.oauth_token_secret
 		console.log("access_token:"+access_token)
 		console.log("access_token_secret:"+access_token_secret)
+		localStorage[self.type]=access_token+","+access_token_secret;
 		self.callback&&self.callback(access_token,access_token_secret)
 	})		
 }
+

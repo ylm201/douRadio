@@ -1,11 +1,11 @@
 //构造签名头部
-function getRequestHeader(data){
+function getRequestHeader(data,api){
 	var message = {
 		method: data.method,
 		action: data.url,	
 		parameters: {
-			oauth_consumer_key: data.consumer_key,
-			oauth_token: data.access_token,
+			oauth_consumer_key: api.api_key,
+			oauth_token: api.access_token,
 			oauth_signature_method: "HMAC-SHA1",
 			oauth_signature: "",
 			oauth_timestamp: "",
@@ -19,10 +19,10 @@ function getRequestHeader(data){
 		console.log("message:"+message)
 	}
 	OAuth.setTimestampAndNonce(message);
-	console.log("sign:"+data.consumer_secret+","+data.access_secret)
+	console.log("sign:"+api.consumer_secret+","+api.access_secret)
 	OAuth.SignatureMethod.sign(message, {
-		consumerSecret: data.consumer_secret,
-		tokenSecret: data.access_secret
+		consumerSecret: api.api_key_secret,
+		tokenSecret: api.access_secret
 	});
 	console.log("sign parameters")
 	console.log(message)
@@ -36,7 +36,8 @@ function getRequestHeader(data){
 	return oauth_header		
 }
 
-/**
+/**,
+
  *发送Api请求
  @method POST/GET
  @url Api请求的URL
@@ -46,16 +47,14 @@ function getRequestHeader(data){
  @access_secret
  * */
 function sendApiRequest(data){
+	var t=getRequestMeta(data.type)
 	$.ajax({
 		url : data.url,
 		type : data.method,
 		data:data.content?data.content:null,
 		contentType:data.contentType?data.contentType:"application/x-www-form-urlencoded",
 		beforeSend : function(req) {
-			req.setRequestHeader('Authorization',getRequestHeader(data));
-			//if(data.contentType){
-			//	req.setRequestHeader('content-type',data.contentType)
-			//}
+			req.setRequestHeader('Authorization',getRequestHeader(data,t));
 		},
 		error:function(XmlHttpRequest,textStatus,errortown){
 			console.log("请求时发生错误发生错误",errortown)
@@ -64,4 +63,15 @@ function sendApiRequest(data){
 			data.onSuccess(obj)
 		}
 	});
+}
+/**
+ *获取api_secret等请求信息
+ @type api类型（fanfou,sina,douban）
+ * **/
+function getRequestMeta(type){
+	var api_meta=api_list[type];
+	var s=localStorage[type].split(",");
+	api_meta.access_token=s[0];
+	api_meta.access_secret=s[1];
+	return api_meta;
 }

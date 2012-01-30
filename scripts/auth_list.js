@@ -1,4 +1,5 @@
 ﻿var fanfou={
+	type:"fanfou",
 	request_token_url: "http://fanfou.com/oauth/request_token",
 	access_token_url:  "http://fanfou.com/oauth/access_token",
 	authorization_url: "http://fanfou.com/oauth/authorize?oauth_token=",
@@ -6,15 +7,11 @@
 	api_key_secret:"688edd10e5a2c923cf9421a644240e70",
 	callback:function(token,secret){
 		sendApiRequest({
+			type:"fanfou",
 			url:"http://api.fanfou.com/account/verify_credentials.json",
 			method:"GET",
-			consumer_key:this.api_key,
-			consumer_secret:this.api_key_secret,
-			access_token:token, 
-			access_secret:secret, 
 			onSuccess:function(data){
 				console.log(data)
-				localStorage["fanfou"]=token+","+secret;
 				if(localStorage["users"]){
 					localStorage["users"]=localStorage["users"]+","+data.id+"|"+data.name+"|"+"fanfou"
 				}else{
@@ -27,6 +24,7 @@
 }
 
 var douban={
+	type:"douban",
 	api_key:"0458f5fa0cd49e2a0d0ae1ee267dda7e",
 	api_key_secret:"8670104fb9f59f9d",
 	request_token_url:"http://www.douban.com/service/auth/request_token",
@@ -34,15 +32,11 @@ var douban={
 	access_token_url:"http://www.douban.com/service/auth/access_token",
 	callback:function(token,secret){//http://api.douban.com/people/@me
 		sendApiRequest({
+			type:"douban",
 			url:"http://api.douban.com/people/%40me?alt=json",
 			method:"GET",
-			consumer_key:this.api_key,
-			consumer_secret:this.api_key_secret,
-			access_token:token, 
-			access_secret:secret, 
 			onSuccess:function(data){
 				console.log(data)
-				localStorage["douban"]=token+","+secret;
 				if(localStorage["users"]){
 					localStorage["users"]=localStorage["users"]+","+data["db:uid"].$t+"|"+data["title"].$t+"|"+"douban"
 				}else{
@@ -55,6 +49,7 @@ var douban={
 }
 
 var sina={
+	type:"sina",
 	api_key:"694135578",
 	api_key_secret:"683f9dd0a5d78c5488b7460a42e654c3",
 	request_token_url:"http://api.t.sina.com.cn/oauth/request_token",
@@ -62,15 +57,11 @@ var sina={
 	authorization_url:"http://api.t.sina.com.cn/oauth/authorize?oauth_token=",
 	callback:function(token,secret){
 		sendApiRequest({
+			type:"sina",
 			url:"http://api.t.sina.com.cn/account/verify_credentials.json?source="+this.api_key,
 			method:"GET",
-			consumer_key:this.api_key,
-			consumer_secret:this.api_key_secret,
-			access_token:token,
-			access_secret:secret,
 			onSuccess:function(data){
 				console.log(data)
-				localStorage["sina"]=token+","+secret;
 				if(localStorage["users"]){
 					localStorage["users"]=localStorage["users"]+","+data.id+"|"+data.name+"|"+"sina"
 				}else{
@@ -81,5 +72,9 @@ var sina={
 			}
 		})
 	}	
-} 
+}
 
+var api_list={}
+api_list["fanfou"]=fanfou
+api_list["douban"]=douban
+api_list["sina"]=sina
