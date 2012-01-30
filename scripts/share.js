@@ -1,6 +1,5 @@
 function doComment(id,content){
 	$.ajaxSetup({async:false})
-	content=content+" "+url
 	if(id=="fanfou"){
 		sendApiRequest({
 			type:"fanfou",
@@ -37,9 +36,12 @@ function doComment(id,content){
 	}
 	
 	if(id=="sina"){
-		var song=radio.c_song
-		var channel=localStorage["channel"]=="-1"?"0":localStorage["channel"]
-		var url="http://douban.fm/?start="+song.sid+"g"+song.ssid+"g"+channel+"&cid="+channel
+		if(localStorage.channel!="-1"){
+			var song=radio.c_song
+			var channel=localStorage["channel"]=="-1"?"0":localStorage["channel"]
+			var url="http://douban.fm/?start="+song.sid+"g"+song.ssid+"g"+channel+"&cid="+channel
+			content=content+" "+url
+		}
 		sendApiRequest({
 			type:"sina",
 			url:"http://api.t.sina.com.cn/statuses/update.json",
