@@ -50,15 +50,15 @@ var douban={
 
 var sina={
 	type:"sina",
-	api_key:"694135578",
-	api_key_secret:"683f9dd0a5d78c5488b7460a42e654c3",
+	api_key:"2454233639",
+	api_key_secret:"254c387e705f582a28f21e92bf8d892c",
 	request_token_url:"http://api.t.sina.com.cn/oauth/request_token",
 	access_token_url:"http://api.t.sina.com.cn/oauth/access_token",
 	authorization_url:"http://api.t.sina.com.cn/oauth/authorize?oauth_token=",
 	callback:function(token,secret){
 		sendApiRequest({
 			type:"sina",
-			url:"http://api.t.sina.com.cn/account/verify_credentials.json?source="+this.api_key,
+			url:"http://api.t.sina.com.cn/account/verify_credentials.json",
 			method:"GET",
 			onSuccess:function(data){
 				console.log(data)

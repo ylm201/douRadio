@@ -14,7 +14,22 @@
  * limitations under the License.
  */
 
-// Here's some JavaScript software that's useful for implementing OAuth.
+/* Here's some JavaScript software for implementing OAuth.
+
+   This isn't as useful as you might hope.  OAuth is based around
+   allowing tools and websites to talk to each other.  However,
+   JavaScript running in web browsers is hampered by security
+   restrictions that prevent code running on one website from
+   accessing data stored or served on another.
+
+   Before you start hacking, make sure you understand the limitations
+   posed by cross-domain XMLHttpRequest.
+
+   On the bright side, some platforms use JavaScript as their
+   language, but enable the programmer to access other web sites.
+   Examples include Google Gadgets, and Microsoft Vista Sidebar.
+   For those platforms, this library should come in handy.
+*/
 
 // The HMAC-SHA1 signature method calls b64_hmac_sha1, defined by
 // http://pajhome.org.uk/crypt/md5/sha1.js
@@ -36,13 +51,26 @@
    GET /path?p=x%20y HTTP/1.0
    (This isn't a valid OAuth request, since it lacks a signature etc.)
    Note that the object "x y" is transmitted as x%20y.  To encode
-   parameters, you can call OAuth.addToURL or OAuth.formEncode.
+   parameters, you can call OAuth.addToURL, OAuth.formEncode or
+   OAuth.getAuthorization.
 
    This message object model harmonizes with the browser object model for
    input elements of an form, whose value property isn't percent encoded.
    The browser encodes each value before transmitting it. For example,
    see consumer.setInputs in example/consumer.js.
  */
+
+/* This script needs to know what time it is. By default, it uses the local
+   clock (new Date), which is apt to be inaccurate in browsers. To do
+   better, you can load this script from a URL whose query string contains
+   an oauth_timestamp parameter, whose value is a current Unix timestamp.
+   For example, when generating the enclosing document using PHP:
+
+   <script src="oauth.js?oauth_timestamp=<?=time()?>" ...
+
+   Another option is to call OAuth.correctTimestamp with a Unix timestamp.
+ */
+
 var OAuth; if (OAuth == null) OAuth = {};
 
 OAuth.setProperties = function setProperties(into, from) {
@@ -64,7 +92,7 @@ OAuth.setProperties(OAuth, // utility functions
             var e = "";
             for (var i = 0; i < s.length; ++s) {
                 if (e != "") e += '&';
-                e += percentEncode(s[i]);
+                e += OAuth.percentEncode(s[i]);
             }
             return e;
         }
@@ -73,22 +101,30 @@ OAuth.setProperties(OAuth, // utility functions
         // encodeURIComponent ignores: - _ . ! ~ * ' ( )
         // OAuth dictates the only ones you can ignore are: - _ . ~
         // Source: http://developer.mozilla.org/en/docs/Core_JavaScript_1.5_Reference:Global_Functions:encodeURIComponent
-        s = s.replace("!", "%21", "g");
-        s = s.replace("*", "%2A", "g");
-        s = s.replace("'", "%27", "g");
-        s = s.replace("(", "%28", "g");
-        s = s.replace(")", "%29", "g");
+        s = s.replace(/\!/g, "%21");
+        s = s.replace(/\*/g, "%2A");
+        s = s.replace(/\'/g, "%27");
+        s = s.replace(/\(/g, "%28");
+        s = s.replace(/\)/g, "%29");
         return s;
     }
 ,
-    decodePercent: decodeURIComponent
+    decodePercent: function decodePercent(s) {
+        if (s != null) {
+            // Handle application/x-www-form-urlencoded, which is defined by
+            // http://www.w3.org/TR/html4/interact/forms.html#h-17.13.4.1
+            s = s.replace(/\+/g, " ");
+        }
+        return decodeURIComponent(s);
+    }
 ,
+    /** Convert the given parameters to an Array of name-value pairs. */
     getParameterList: function getParameterList(parameters) {
         if (parameters == null) {
             return [];
         }
         if (typeof parameters != "object") {
-            return decodeForm(parameters + "");
+            return OAuth.decodeForm(parameters + "");
         }
         if (parameters instanceof Array) {
             return parameters;
@@ -100,12 +136,13 @@ OAuth.setProperties(OAuth, // utility functions
         return list;
     }
 ,
+    /** Convert the given parameters to a map from name to value. */
     getParameterMap: function getParameterMap(parameters) {
         if (parameters == null) {
             return {};
         }
         if (typeof parameters != "object") {
-            return getParameterMap(decodeForm(parameters + ""));
+            return OAuth.getParameterMap(OAuth.decodeForm(parameters + ""));
         }
         if (parameters instanceof Array) {
             var map = {};
@@ -118,6 +155,19 @@ OAuth.setProperties(OAuth, // utility functions
             return map;
         }
         return parameters;
+    }
+,
+    getParameter: function getParameter(parameters, name) {
+        if (parameters instanceof Array) {
+            for (var p = 0; p < parameters.length; ++p) {
+                if (parameters[p][0] == name) {
+                    return parameters[p][1]; // first value wins
+                }
+            }
+        } else {
+            return OAuth.getParameterMap(parameters)[name];
+        }
+        return null;
     }
 ,
     formEncode: function formEncode(parameters) {
@@ -138,7 +188,7 @@ OAuth.setProperties(OAuth, // utility functions
         var nvps = form.split('&');
         for (var n = 0; n < nvps.length; ++n) {
             var nvp = nvps[n];
-            if (nvp == '') {
+            if (nvp == "") {
                 continue;
             }
             var equals = nvp.indexOf('=');
@@ -186,6 +236,35 @@ OAuth.setProperties(OAuth, // utility functions
         }
     }
 ,
+    /** Fill in parameters to help construct a request message.
+        This function doesn't fill in every parameter.
+        The accessor object should be like:
+        {consumerKey:'foo', consumerSecret:'bar', accessorSecret:'nurn', token:'krelm', tokenSecret:'blah'}
+        The accessorSecret property is optional.
+     */
+    completeRequest: function completeRequest(message, accessor) {
+        if (message.method == null) {
+            message.method = "GET";
+        }
+        var map = OAuth.getParameterMap(message.parameters);
+        if (map.oauth_consumer_key == null) {
+            OAuth.setParameter(message, "oauth_consumer_key", accessor.consumerKey || "");
+        }
+        if (map.oauth_token == null && accessor.token != null) {
+            OAuth.setParameter(message, "oauth_token", accessor.token);
+        }
+        if (map.oauth_version == null) {
+            OAuth.setParameter(message, "oauth_version", "1.0");
+        }
+        if (map.oauth_timestamp == null) {
+            OAuth.setParameter(message, "oauth_timestamp", OAuth.timestamp());
+        }
+        if (map.oauth_nonce == null) {
+            OAuth.setParameter(message, "oauth_nonce", OAuth.nonce(6));
+        }
+        OAuth.SignatureMethod.sign(message, accessor);
+    }
+,
     setTimestampAndNonce: function setTimestampAndNonce(message) {
         OAuth.setParameter(message, "oauth_timestamp", OAuth.timestamp());
         OAuth.setParameter(message, "oauth_nonce", OAuth.nonce(6));
@@ -205,9 +284,46 @@ OAuth.setProperties(OAuth, // utility functions
         return newURL;
     }
 ,
+    /** Construct the value of the Authorization header for an HTTP request. */
+    getAuthorizationHeader: function getAuthorizationHeader(realm, parameters) {
+        var header = 'OAuth realm="' + OAuth.percentEncode(realm) + '"';
+        var list = OAuth.getParameterList(parameters);
+        for (var p = 0; p < list.length; ++p) {
+            var parameter = list[p];
+            var name = parameter[0];
+            if (name.indexOf("oauth_") == 0) {
+                header += ',' + OAuth.percentEncode(name) + '="' + OAuth.percentEncode(parameter[1]) + '"';
+            }
+        }
+        return header;
+    }
+,
+    /** Correct the time using a parameter from the URL from which the last script was loaded. */
+    correctTimestampFromSrc: function correctTimestampFromSrc(parameterName) {
+        parameterName = parameterName || "oauth_timestamp";
+        var scripts = document.getElementsByTagName('script');
+        if (scripts == null || !scripts.length) return;
+        var src = scripts[scripts.length-1].src;
+        if (!src) return;
+        var q = src.indexOf("?");
+        if (q < 0) return;
+        parameters = OAuth.getParameterMap(OAuth.decodeForm(src.substring(q+1)));
+        var t = parameters[parameterName];
+        if (t == null) return;
+        OAuth.correctTimestamp(t);
+    }
+,
+    /** Generate timestamps starting with the given value. */
+    correctTimestamp: function correctTimestamp(timestamp) {
+        OAuth.timeCorrectionMsec = (timestamp * 1000) - (new Date()).getTime();
+    }
+,
+    /** The difference between the correct time and my clock. */
+    timeCorrectionMsec: 0
+,
     timestamp: function timestamp() {
-        var d = new Date();
-        return Math.floor(d.getTime()/1000);
+        var t = (new Date()).getTime() + OAuth.timeCorrectionMsec;
+        return Math.floor(t / 1000);
     }
 ,
     nonce: function nonce(length) {
@@ -249,11 +365,9 @@ OAuth.setProperties(OAuth.SignatureMethod.prototype, // instance members
     /** Add a signature to the message. */
     sign: function sign(message) {
         var baseString = OAuth.SignatureMethod.getBaseString(message);
-        //add
-		console.log("baseString :"+baseString)
-		var signature = this.getSignature(baseString);
-		OAuth.setParameter(message, "oauth_signature", signature);
-		return signature; // just in case someone's interested
+        var signature = this.getSignature(baseString);
+        OAuth.setParameter(message, "oauth_signature", signature);
+        return signature; // just in case someone's interested
     }
 ,
     /** Set the key string for signing. */
@@ -325,7 +439,7 @@ OAuth.setProperties(OAuth.SignatureMethod, // class members
         var superClass = OAuth.SignatureMethod;
         var subClass = function() {
             superClass.call(this);
-        }; 
+        };
         subClass.prototype = new superClass();
         // Delete instance variables from prototype:
         // delete subclass.prototype... There aren't any.
@@ -379,34 +493,39 @@ OAuth.setProperties(OAuth.SignatureMethod, // class members
            http://stevenlevithan.com/demo/parseuri/js/assets/parseuri.js
          */
         var o = {key: ["source","protocol","authority","userInfo","user","password","host","port","relative","path","directory","file","query","anchor"],
-                 parser: {strict: /^(?:([^:\/?#]+):)?(?:\/\/((?:(([^:@]*):?([^:@]*))?@)?([^:\/?#]*)(?::(\d*))?))?((((?:[^?#\/]*\/)*)([^?#]*))(?:\?([^#]*))?(?:#(.*))?)/ }};
+                 parser: {strict: /^(?:([^:\/?#]+):)?(?:\/\/((?:(([^:@\/]*):?([^:@\/]*))?@)?([^:\/?#]*)(?::(\d*))?))?((((?:[^?#\/]*\/)*)([^?#]*))(?:\?([^#]*))?(?:#(.*))?)/ }};
         var m = o.parser.strict.exec(str);
         var uri = {};
         var i = 14;
-	while (i--) uri[o.key[i]] = m[i] || "";
-	return uri;
+        while (i--) uri[o.key[i]] = m[i] || "";
+        return uri;
     }
 ,
     normalizeParameters: function normalizeParameters(parameters) {
         if (parameters == null) {
             return "";
         }
-        var norm = [];
         var list = OAuth.getParameterList(parameters);
+        var sortable = [];
         for (var p = 0; p < list.length; ++p) {
             var nvp = list[p];
             if (nvp[0] != "oauth_signature") {
-                norm.push(nvp);
+                sortable.push([ OAuth.percentEncode(nvp[0])
+                              + " " // because it comes before any character that can appear in a percentEncoded string.
+                              + OAuth.percentEncode(nvp[1])
+                              , nvp]);
             }
         }
-        norm.sort(function(a,b) {
-                      if (a[0] < b[0]) return -1;
-                      if (a[0] > b[0]) return 1;
-                      if (a[1] < b[1]) return  -1;
-                      if (a[1] > b[1]) return 1;
-                      return 0;
-                  });
-        return OAuth.formEncode(norm);
+        sortable.sort(function(a,b) {
+                          if (a[0] < b[0]) return  -1;
+                          if (a[0] > b[0]) return 1;
+                          return 0;
+                      });
+        var sorted = [];
+        for (var s = 0; s < sortable.length; ++s) {
+            sorted.push(sortable[s][1]);
+        }
+        return OAuth.formEncode(sorted);
     }
 });
 
@@ -421,9 +540,12 @@ OAuth.SignatureMethod.registerMethodClass(["HMAC-SHA1", "HMAC-SHA1-Accessor"],
     OAuth.SignatureMethod.makeSubclass(
         function getSignature(baseString) {
             b64pad = '=';
-            //add
-			console.log(this.key)
-			var signature = b64_hmac_sha1(this.key, baseString);
+            var signature = b64_hmac_sha1(this.key, baseString);
             return signature;
         }
     ));
+
+try {
+    OAuth.correctTimestampFromSrc();
+} catch(e) {
+}

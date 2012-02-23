@@ -9,7 +9,8 @@ function getRequestHeader(data,api){
 			oauth_signature_method: "HMAC-SHA1",
 			oauth_signature: "",
 			oauth_timestamp: "",
-			oauth_nonce: ""
+			oauth_nonce: "",
+			oauth_version:"1.0"
 		}
 	}
 	// 签名
@@ -27,12 +28,7 @@ function getRequestHeader(data,api){
 	console.log("sign parameters")
 	console.log(message)
 	//构造OAuth头部
-	var oauth_header = "OAuth realm=\"\", oauth_consumer_key=";
-	oauth_header += message.parameters.oauth_consumer_key + ', oauth_nonce=';
-	oauth_header += message.parameters.oauth_nonce + ', oauth_timestamp=';
-	oauth_header += message.parameters.oauth_timestamp + ', oauth_signature_method=HMAC-SHA1, oauth_signature=';
-	oauth_header += message.parameters.oauth_signature + ', oauth_token=';
-	oauth_header += message.parameters.oauth_token;	
+	var oauth_header =OAuth.getAuthorizationHeader(null,message.parameters) 	
 	return oauth_header		
 }
 
