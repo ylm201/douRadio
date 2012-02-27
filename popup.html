@@ -12,79 +12,89 @@
 	</head>
 	<body>
 
-		<div id="main">
-			<div id="mask" style="width:100%;height:100%;position:absolute;top:0;left:0;z-index:1001;opacity:0.5;display:none;background-color:#fff"></div>
-			<!--歌曲分享页面-->
-			<div id="comment_popup" style="display:none">
-				<textarea  id="comment_input" ></textarea>
-				<img src="img/close.png" id="comment_close"/>
-				<input type="button" value="发送" id="comment_commit" />
-				<img src="img/fanfou.jpg"   class="comment_button"  id="fanfou"/>
-				<img src="img/douban.png" class="comment_button" id="douban"/>
-				<img src="img/sina.png" class="comment_button" id="sina"/>
-				<div class="clear"></div>
-			</div>
-			
-			<!--分享成功通知-->
-			<div id="notify" style="display:none">
-				<span>发送成功</span>
-			</div>
+	<div id="main">
+		<script>
+			var _gaq = _gaq || [];
+			_gaq.push(['_setAccount', 'UA-27166419-1']);
+			_gaq.push(['_trackPageview']);
+			(function() {
+				var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+				ga.src = 'https://ssl.google-analytics.com/ga.js';
+				var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+			})();
+		</script>
+		<div id="mask" style="width:100%;height:100%;position:absolute;top:0;left:0;z-index:1001;opacity:0.5;display:none;background-color:#fff"></div>
+		<!--歌曲分享页面-->
+		<div id="comment_popup" style="display:none">
+			<textarea  id="comment_input" ></textarea>
+			<img src="img/close.png" id="comment_close"/>
+			<input type="button" value="发送" id="comment_commit" />
+			<img src="img/fanfou.jpg"   class="comment_button"  id="fanfou"/>
+			<img src="img/douban.png" class="comment_button" id="douban"/>
+			<img src="img/sina.png" class="comment_button" id="sina"/>
+			<div class="clear"></div>
+		</div>
 
-			<!--主页面-->
-			<div>
-				<span id="song_artist" title="豆瓣电台">豆瓣电台</span>
-				<img id="pause" src="img/pause.png"/>
-				<img id="power" src="img/on.png"/>
-				<img id="switcher" img src="img/channel.png"/>
+		<!--分享成功通知-->
+		<div id="notify" style="display:none">
+			<span>发送成功</span>
+		</div>
+
+		<!--主页面-->
+		<div>
+			<span id="song_artist" title="豆瓣电台">豆瓣电台</span>
+			<img id="pause" src="img/pause.png"/>
+			<img id="power" src="img/on.png"/>
+			<img id="switcher" img src="img/channel.png"/>
+		</div>
+		<div id="display">
+			<span id="song_title">--</span>
+			<div id="loaded">
+				<div id="played"></div>
 			</div>
-			<div id="display">
-				<span id="song_title">--</span>
-				<div id="loaded">
-					<div id="played"></div>
-				</div>
-				<div id="volume">
-					<img src="img/volume.png"/>
-					<input type="range" id="range" style="display:none"/>
-					<div id="volume_bar" style="display:none"></div>
-					<div class="clear"></div>
-				</div>
-				<span id="timer">0:00/0:00</span>
+			<div id="volume">
+				<img src="img/volume.png"/>
+				<input type="range" id="range" style="display:none"/>
+				<div id="volume_bar" style="display:none"></div>
 				<div class="clear"></div>
 			</div>
-			<div id="wrapper">
-				<div id="operation">
-					<img src="img/rated.png"  class="button" id="like" />
-					<img src="img/delete.png"  class="button"  id="delete" />
-					<img src="img/skip.png"  class="button"  id="skip" />
-				</div>
-				<div id="share">
-					<img src="img/fanfou.jpg" class="fanfou" style="display:none" />
-					<img src="img/douban.png" class="douban" style="display:none"/>
-					<img src="img/sina.png"   class="sina"   style="display:none"/>
-				</div>
-				<div class="clear"></div>
+			<span id="timer">0:00/0:00</span>
+			<div class="clear"></div>
+		</div>
+		<div id="wrapper">
+			<div id="operation">
+				<img src="img/rated.png"  class="button" id="like" />
+				<img src="img/delete.png"  class="button"  id="delete" />
+				<img src="img/skip.png"  class="button"  id="skip" />
 			</div>
+			<div id="share">
+				<img src="img/fanfou.jpg" class="fanfou" style="display:none" />
+				<img src="img/douban.png" class="douban" style="display:none"/>
+				<img src="img/sina.png"   class="sina"   style="display:none"/>
+			</div>
+			<div class="clear"></div>
 		</div>
-	
-		<div id="channel_popup">
-			<img src="img/close_c.png" id="close_c"/>
-			<ul id="channels">
-				<li id="-1">红心兆赫</li>
-				<li id="0">私人MHz</li><li id="1">华语MHz</li>
-				<li id="6">粤语MHz</li><li id="2">欧美</li>
-				<li id="22">法语</li><li id="17">日语</li>
-				<li id="18">韩语</li><li id="8">民谣</li>
-				<li id="7">摇滚</li><li id="13">爵士</li>
-				<li id="27">古典</li><li id="9">轻音乐</li>
-				<li id="14">电子乐</li><li id="16">rb</li>
-				<li id="15">说唱</li><li id="10">电影原声</li>
-				<li id="3">70年代</li><li id="4">80年代</li>
-				<li id="5">90年代</li><li id="26">豆瓣音乐人</li>
-				<li id="20">女声</li><li id="28">动漫</li>
-				<li id="32">雀巢</li><li id="52">乐混翻唱</li>
-				<li id="54">格调卡撒帝</li>
-			</ul>
-		</div>
-		<script type="text/javascript" src="scripts/player.js"></script>
-	</body>
+	</div>
+
+	<div id="channel_popup">
+		<img src="img/close_c.png" id="close_c"/>
+		<ul id="channels">
+			<li id="-1">红心兆赫</li>
+			<li id="0">私人MHz</li><li id="1">华语MHz</li>
+			<li id="6">粤语MHz</li><li id="2">欧美</li>
+			<li id="22">法语</li><li id="17">日语</li>
+			<li id="18">韩语</li><li id="8">民谣</li>
+			<li id="7">摇滚</li><li id="13">爵士</li>
+			<li id="27">古典</li><li id="9">轻音乐</li>
+			<li id="14">电子乐</li><li id="16">rb</li>
+			<li id="15">说唱</li><li id="10">电影原声</li>
+			<li id="3">70年代</li><li id="4">80年代</li>
+			<li id="5">90年代</li><li id="26">豆瓣音乐人</li>
+			<li id="20">女声</li><li id="28">动漫</li>
+			<li id="32">雀巢</li><li id="52">乐混翻唱</li>
+			<li id="54">格调卡撒帝</li>
+		</ul>
+	</div>
+	<script type="text/javascript" src="scripts/player.js"></script>
+</body>
 </html>
