@@ -102,6 +102,7 @@ Radio.prototype.reportEnd=function(){
 }
 
 Radio.prototype.changeSong=function(t){
+	_gaq.push(['_trackEvent', 'channel' + localStorage.channel, 'played']);	
 	this.c_song=this.song_list.shift();
 	if(t!='n'){
 		h_songs=this.heared.split("|");
