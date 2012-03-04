@@ -215,7 +215,7 @@ audio.addEventListener("timeupdate",function(){
 	min=parseInt(total/60)
 	second=parseInt(total%60)
 	min=isNaN(min)?0:min
-	second=isNam(min)?0:second
+	second=isNaN(second)?0:second
 	if(second<10){
 		second="0"+second
 	}
