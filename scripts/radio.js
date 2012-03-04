@@ -56,11 +56,6 @@ Radio.prototype.getPlayList=function(t,skip){
 	if(skip){
 		this.audio.pause()
 	}
-	/* if(localStorage.channel=="-1"&&skip){
-		this.song_list=this.red.getSongList()
-		this.changeSong(t)
-		return
-	} */
 	var self=this
 	$.getJSON("http://douban.fm/j/mine/playlist",{
 			type:t,
@@ -83,11 +78,6 @@ Radio.prototype.getPlayList=function(t,skip){
 			}
 		})
 }
-
-Radio.prototype.onGetPlayList=function(data){
-	console.log(this)
-}
-
 
 Radio.prototype.reportEnd=function(){
 	temp=this.heared.split("|")
