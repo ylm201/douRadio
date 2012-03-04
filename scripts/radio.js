@@ -21,7 +21,7 @@ Radio.init=function(audio){
 	console.log("init radio...")
 	var radio=new Radio()
 	radio.audio=audio
-	radio.channel=localStorage['channel']?localStorage['channel']:0	
+	radio.channel=localStorage['channel']?localStorage['channel']:1	
 	audio.addEventListener("ended",function(){
 		radio.reportEnd()
 		radio.changeSong("p")
@@ -102,7 +102,8 @@ Radio.prototype.reportEnd=function(){
 }
 
 Radio.prototype.changeSong=function(t){
-	_gaq.push(['_trackEvent', 'channel' + localStorage.channel, 'played']);	
+	var c=localStorage.channel?localStorage.channel:"0"
+	_gaq.push(['_trackEvent', 'channel' + c, 'played']);	
 	this.c_song=this.song_list.shift();
 	if(t!='n'){
 		h_songs=this.heared.split("|");

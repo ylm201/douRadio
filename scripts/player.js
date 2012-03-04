@@ -120,9 +120,12 @@ $(".comment_button").bind("click",function(){
 $("#share img").bind("click",function(){
 	var song=radio.c_song;
 	var channel=localStorage.channel?localStorage.channel:"0";
-	var content="分享"+song.artist+"的单曲《"+song.title+"》";
-	var url="http://douban.fm/?start="+song.sid+"g"+song.ssid+"g"+channel+"&cid="+channel
-	var pic=song.picture&&song.picture.replace("mpic","lpic")
+	var content="分享"+song.artist+"的单曲《"+song.title+"》(来自@豆瓣FM)";
+	var url=""
+	if(radio.channel!="-1"){
+		url="http://douban.fm/?start="+song.sid+"g"+song.ssid+"g"+channel+"&cid="+channel
+	}
+	var pic=song.picture&&song.picture.replace(/mpic|spic/,"lpic")
 	if(this.id=="sina"){
 	window.open("http://service.weibo.com/share/share.php?url=" 
 		+ encodeURIComponent(url) + "&appkey=694135578" 

@@ -33,6 +33,7 @@ Red.prototype.getSongs=function(page){
 			var album=$(this).find(".source a").text()
 			var title=$(this).find(".song_title").text()
 		        var performer=$(this).find(".performer").text()
+			var pic=$(this).find("img").attr("src")
 			var song={
 				sid:songId,
 				url:url,
@@ -40,7 +41,8 @@ Red.prototype.getSongs=function(page){
 				albumUrl:albumUrl,
 				artist:performer,
 				title:title,
-				like:1	
+				like:1,
+				picture:pic	
 			}
 			redSongs.push(song)
 		})
