@@ -152,7 +152,7 @@ chrome.extension.onRequest.addListener(function(request,sender,callback){
 		return;
 	}
 	if(!radio.power){return}
-	if(request.type="skip"){
+	if(request.type=="skip"){
 		radio.skip(callback)
 		return
 	}
@@ -162,6 +162,11 @@ chrome.extension.onRequest.addListener(function(request,sender,callback){
 	}
 	if(request.type=="like"){
 		radio.c_song.like==0?radio.like():radio.unlike()
+		if(radio.c_song.like==0){
+			radio.c_song.like=1
+		}else{
+			radio.c_song=0
+		}
 		callback(radio.c_song)
 		return
 	}

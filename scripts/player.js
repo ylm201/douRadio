@@ -51,21 +51,28 @@ showSong=function(data){
 		$("#song_artist").html(data.artist)
 		$("#song_artist").attr("title",data.artist)
 	}
+	hideLoading()
 },sendRequest=function(t){//后台交互事件
 	chrome.extension.sendRequest({type:t},function(song){
 		showSong(song)
 	})
+},showLoading=function(){
+	$("#notify").fadeIn()
+},hideLoading=function(){
+	$("#notify").fadeOut()
 }
 
 //播放事件绑定
 $("#skip").bind("click",function(){
-	sendRequest("skip")
+	showLoading();
+	sendRequest("skip");
 	return false;
 });
 
 $("#power").bind("click",function(){
 	sendRequest("on_off")
 	power=!power
+	power&&showLoading()
 	return false;
 });
 
@@ -75,6 +82,7 @@ $("#like").bind("click",function(){
 });
 
 $("#delete").bind("click",function(){
+	showLoading()
 	sendRequest("delete")
 	return false;
 });
