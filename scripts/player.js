@@ -115,7 +115,7 @@ $("#channels li").bind("click",function(){
 	$(this).addClass("channel_selected")
 		.siblings().removeClass("channel_selected")
 	$("#channel_popup").fadeOut("slow")
-	chrome.extension.sendRequest({type:"switch"})
+	sendRequest({type:"switch"})
 })
 
 $("#close_c").bind("click",function(){

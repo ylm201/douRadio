@@ -49,7 +49,7 @@ Radio.prototype.getPlayList=function(t,skip,callback){
 	var self=this
 	$.getJSON("http://douban.fm/j/mine/playlist",{
 			type:t,
-			channel:this.channel=="-1"?0:this.channel,
+			channel:localStorage.channel=="-1"?0:localStorage.channel,
 			h:this.heared,
 			sid:this.c_song? this.c_song.sid:'',
 			r:Math.random(),
@@ -169,19 +169,8 @@ chrome.extension.onRequest.addListener(function(request,sender,callback){
 		radio.skip(callback)
 		return
 	}
-	if(request.type=="update"){
-		radio.audio.addEventListener("timeupdate",function(){
-			callback(radioaudio.currentTime,radio.audio.duration)
-		})
-		return
-	}
-	if(request.type=="end"){
-		radio.audio.addEventListener("end",function(){
-			radio.reportEnd()
-			radio.changeSong("p",callback)
-			var notification = webkitNotifications.createHTMLNotification('notification.html');
-			notification.show();
-		})
+	if(request.type="switch"){
+		radio.powerOn(callback)
 	}
 	return;
 })
