@@ -17,20 +17,10 @@ var Radio=function(){
  *初始化播放器
  * */
 Radio.init=function(audio){
-	$.ajaxSetup({async:false})
 	console.log("init radio...")
 	var radio=new Radio()
 	radio.audio=audio
-	radio.channel=localStorage['channel']?localStorage['channel']:1	
-	audio.addEventListener("ended",function(){
-		radio.reportEnd()
-		radio.changeSong("p")
-		console.log("song end")
-		var notification = webkitNotifications.createHTMLNotification('notification.html');
-		notification.show();
-
-	})
-	
+	radio.channel=localStorage['channel']?localStorage['channel']:1		
 	//douban.fm的cookie是session级别，从豆瓣主站获取dbcl2的cookie到
 	chrome.cookies.get({
 		url:"http://douban.com",
@@ -51,7 +41,7 @@ Radio.init=function(audio){
 /**
  *获取播放列表
  * */
-Radio.prototype.getPlayList=function(t,skip){
+Radio.prototype.getPlayList=function(t,skip,callback){
 	var self =this
 	if(skip){
 		this.audio.pause()
@@ -74,7 +64,7 @@ Radio.prototype.getPlayList=function(t,skip){
 				self.song_list=self.red.getSongList()
 			}
 			if(skip){
-				self.changeSong(t)
+				self.changeSong(t,callback)
 			}
 		})
 }
@@ -91,7 +81,7 @@ Radio.prototype.reportEnd=function(){
 		})		
 }
 
-Radio.prototype.changeSong=function(t){
+Radio.prototype.changeSong=function(t,callback){
 	var c=localStorage.channel?localStorage.channel:"0"
 	_gaq.push(['_trackEvent', 'channel' + c, 'played']);	
 	this.c_song=this.song_list.shift();
@@ -100,17 +90,16 @@ Radio.prototype.changeSong=function(t){
 		h_songs.push(this.c_song.sid+":"+t);
 		this.heared=h_songs.slice(-20).join("|")
 	}
-	console.log("get next song: "+this.c_song.sid)
 	this.audio.src=this.c_song.url
 	this.audio.play()
+	callback(this.c_song)
 	if(this.song_list.length<=0){
-		console.log("get new song list")
 		this.getPlayList("p",false)
 	}
 }
 
-Radio.prototype.skip=function(){
-	this.getPlayList("s",true)	
+Radio.prototype.skip=function(c){
+	this.getPlayList("s",true,c)	
 }
 
 Radio.prototype.like=function(){
@@ -122,16 +111,78 @@ Radio.prototype.unlike=function(){
 }
 
 Radio.prototype.del=function(){
-	this.getPlayList("b",true)
+	this.getPlayList("b",true,c)
 }
 
-Radio.prototype.powerOn=function(){
+Radio.prototype.powerOn=function(c){
 	this.power=true
 	this.red.init()
-	this.getPlayList("n",true)
+	this.getPlayList("n",true,c)
 }
 
 Radio.prototype.powerOff=function(){
 	this.power=false
 	this.audio.pause()
 }
+
+var radio=Radio.init(document.getElementById("radio"));
+radio.audio.addEventListener("ended",function(){
+	radio.reportEnd()
+	radio.changeSong("p",function(song){
+		chrome.extension.sendRequest({song:song,type:"end"})
+	})
+	var notification = webkitNotifications.createHTMLNotification('notification.html');
+	notification.show();
+})
+
+radio.audio.addEventListener("timeupdate",function(){
+	chrome.extension.sendRequest({type:"timeUpdate",
+		c:this.currentTime,
+		d:this.duration
+	})
+})
+chrome.extension.onRequest.addListener(function(request,sender,callback){
+	console.log("type:"+request.type)
+	if(request.type=="init"){
+		callback({song:radio.c_song,power:radio.power})
+		return
+	}
+	if(request.type=="on_off"){
+		radio.power?radio.powerOff():radio.powerOn(callback)
+		return;
+	}
+	if(!radio.power){return}
+	if(request.type="skip"){
+		radio.skip(callback)
+		return
+	}
+	if(request.type=="delete"){
+		radio.del(callback)
+		return
+	}
+	if(request.type=="like"){
+		radio.c_song.like==0?radio.like():radio.unlike()
+		callback(radio.c_song)
+		return
+	}
+	if(request.type=="skip"){
+		radio.skip(callback)
+		return
+	}
+	if(request.type=="update"){
+		radio.audio.addEventListener("timeupdate",function(){
+			callback(radioaudio.currentTime,radio.audio.duration)
+		})
+		return
+	}
+	if(request.type=="end"){
+		radio.audio.addEventListener("end",function(){
+			radio.reportEnd()
+			radio.changeSong("p",callback)
+			var notification = webkitNotifications.createHTMLNotification('notification.html');
+			notification.show();
+		})
+	}
+	return;
+})
+

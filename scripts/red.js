@@ -5,7 +5,7 @@ var Red=function(){
 
 Red.prototype.init=function(){
 	//初始化加心歌曲总数
-	$.ajaxSetup({async:false})
+	//$.ajaxSetup({async:false})
 	var self=this
 	$.get("http://douban.fm/mine",{start:0,type:'liked'},function(content){
 		var total=$(content).find(".stat-liked i").text()
