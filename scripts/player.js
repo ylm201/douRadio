@@ -1,26 +1,38 @@
 var c_song={}
 var power=false
-//初始化
-chrome.extension.sendRequest({type:"init"},function(data){
-	power=data.power
-	data.power&&showSong(data.song)
-})
 
-//时间轴事件
-chrome.extension.onRequest.addListener(function(req,sender){
-	if(req.type=="timeUpdate"){
-		updateTime(req.c,req.d)
+var port=chrome.extension.connect({name:"douRadio"})
+port.onMessage.addListener(function(msg){
+	if(msg.type=="timeUpdate"){
+		updateTime(msg.c,msg.d)
 	}
-	if(req.type=="end"){
-		showSong(req.song)
+	if(msg.type=="song"){
+		showSong(msg.song)
 	}
-	if(req.type=="loadingList"){
+	if(msg.type=="loadingList"){
 		showLoading()
 	}
-	if(req.type=="loadedList"){
+	if(msg.type=="loadedList"){
 		hideLoading()
 	}
+	if(msg.type=="rate"){
+		if(msg.like==1){
+			$("#like").attr("src","img/rated.png")
+		}else{
+			$("#like").attr("src","img/unrated.png")
+		}
+	}
+	if(msg.type=="init"){
+		power=msg.power
+		showSong(msg.song)
+		console.log(msg)
+		msg.pause&&$("#mask").show()
+		updateTime(msg.c,msg.d)
+		var len=msg.volume*50
+		$("#volume_bar").css("width",len+"px")
+	}
 })
+
 var changeToTime=function(time){
 	var min=0
 	var second=0
@@ -34,7 +46,6 @@ var changeToTime=function(time){
 	return min+":"+second
 },updateTime=function(c,d){
 	var t=(c/d)*240
-	console.log(c+" "+d)
 	if(!c||!d||c==0||d==0){
 		$("#timer").html("<img src='img/loading.gif'/>")
 		$("#played").css("width","0px")
@@ -46,7 +57,6 @@ var changeToTime=function(time){
 
 //显示当前歌曲
 showSong=function(data){
-	c_song=data
 	if(data&&data.like==1){
 		$("#like").attr("src","img/rated.png")
 	}else{
@@ -62,12 +72,13 @@ showSong=function(data){
 		$("#song_title").attr("title",data.title)	
 		$("#song_artist").html(data.artist)
 		$("#song_artist").attr("title",data.artist)
+	}else{
+		$("#song_artist").html("豆瓣电台")
+		$("#song_title").html("--")
 	}
 	power&&$("#timer").html("<img src='img/loading.gif'/>")
 },sendRequest=function(t){//后台交互事件
-	chrome.extension.sendRequest({type:t},function(song){
-		showSong(song)
-	})
+	port.postMessage({type:t})
 },showLoading=function(){
 	$("#notify").fadeIn()
 },hideLoading=function(){
@@ -94,12 +105,18 @@ $("#like").bind("click",function(){
 $("#delete").bind("click",function(){
 	showLoading()
 	sendRequest("delete")
+
 	return false;
 });
 
 $("#pause").bind("click",function(){
 	power&&sendRequest("pause")
-	power&&($("#mask").show())
+	pause&&$("#mask").show()
+})
+
+$("#mask").bind("click",function(){
+	power&&sendRequest("pause")
+	$("#mask").hide()
 })
 
 //音量按钮
@@ -107,10 +124,9 @@ $("#range")[0].addEventListener("input",function(){
 	var d=$(this).val()
 	var len=$(this).val()/100*50
 	$("#volume_bar").css("width",len+"px")
-	var v=radio.audio.volume=$(this).val()/100
-	chrome.extension.sendRequest({volume:v})
+	var v=$(this).val()/100
+	port.postMessage({type:"volume",vol:v})
 })
-
 $("#volume img").toggle(function(){
 	$("#range").show()
 	$("#volume_bar").show()

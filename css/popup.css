@@ -45,7 +45,7 @@ span{font-family: 微软雅黑;}
 #comment_close:hover{opacity:0.8}
 .comment_button{float:right;width:16px;height:16px;opacity:0.3;margin-right:5px;margin-top:4px}
 .comment_button:hover{opacity:1.0}
-#notify{width:120px;height:20px;background-color:#3B5343;opacity:0.5;position:absolute;z-index:10000;left:135px;top:5px}
+#notify{width:120px;height:20px;background-color:#3B5343;opacity:0.5;position:absolute;z-index:10000;left:135px;top:7px}
 #notify span{color:#fff;margin-left:7px;margin-top:5px;display:block;font-size:10px;line-height:12px}
 #volume img{vertical-align:middle;float:left}
 ::-webkit-scrollbar {
