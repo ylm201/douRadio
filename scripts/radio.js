@@ -82,9 +82,16 @@ Radio.prototype.reportEnd=function(){
 }
 
 Radio.prototype.changeSong=function(t,callback){
+	//歌曲小于两首时加载
+	if(this.song_list.length<=2){
+		this.getPlayList("p",true,callback)
+		return
+	}
 	var c=localStorage.channel?localStorage.channel:"0"
 	_gaq.push(['_trackEvent', 'channel' + c, 'played']);	
 	this.c_song=this.song_list.shift();
+	console.log("current_song")
+	console.log(this.c_song)
 	if(t!='n'){
 		h_songs=this.heared.split("|");
 		h_songs.push(this.c_song.sid+":"+t);
@@ -93,13 +100,10 @@ Radio.prototype.changeSong=function(t,callback){
 	this.audio.src=this.c_song.url
 	this.audio.play()
 	callback(this.c_song)
-	if(this.song_list.length<=0){
-		this.getPlayList("p",false)
-	}
 }
 
 Radio.prototype.skip=function(c){
-	this.getPlayList("s",true,c)	
+	this.changeSong("s",c)	
 }
 
 Radio.prototype.like=function(){
@@ -141,6 +145,11 @@ radio.audio.addEventListener("timeupdate",function(){
 		d:this.duration
 	})
 })
+
+radio.audio.addEventListener("loadstart",function(){
+	chrome.extension.sendRequest({type:"loading"})
+})
+
 chrome.extension.onRequest.addListener(function(request,sender,callback){
 	console.log("type:"+request.type)
 	if(request.type=="init"){
@@ -171,7 +180,7 @@ chrome.extension.onRequest.addListener(function(request,sender,callback){
 		return
 	}
 	if(request.type=="skip"){
-		radio.skip(callback)
+		radio.changeSong("c",callback)
 		return
 	}
 	if(request.type="switch"){

@@ -14,6 +14,9 @@ chrome.extension.onRequest.addListener(function(req,sender){
 	if(req.type=="end"){
 		showSong(req.song)
 	}
+	if(req.type=="loading"){
+		$("#timer").html("<img src='img/loading.gif'/>")
+	}
 })
 var changeToTime=function(time){
 	var min=0
@@ -123,6 +126,7 @@ $("#channels li").bind("click",function(){
 	$(this).addClass("channel_selected")
 		.siblings().removeClass("channel_selected")
 	$("#channel_popup").fadeOut("slow")
+	showLoading()
 	sendRequest({type:"switch"})
 })
 
@@ -132,15 +136,14 @@ $("#close_c").bind("click",function(){
 
 //分享按钮
 $("#share img").bind("click",function(){
-	var song=radio.c_song;
 	var channel=localStorage.channel?localStorage.channel:"0";
-	var content="分享"+song.artist+"的单曲《"+song.title+"》(来自@豆瓣FM)";
+	var content="分享"+c_song.artist+"的单曲《"+c_song.title+"》(来自@豆瓣FM)";
 	var url="";
 	_gaq.push(['_trackEvent', 'share-'+this.id, 'clicked']);	
-	if(radio.channel!="-1"||this.id=="fanfou"){
-		url="http://douban.fm/?start="+song.sid+"g"+song.ssid+"g"+channel+"&cid="+channel
+	if(channel!="-1"||this.id=="fanfou"){
+		url="http://douban.fm/?start="+c_song.sid+"g"+c_song.ssid+"g"+channel+"&cid="+channel
 	}
-	var pic=song.picture&&song.picture.replace(/mpic|spic/,"lpic")
+	var pic=c_song.picture&&c_song.picture.replace(/mpic|spic/,"lpic")
 	if(this.id=="sina"){
 		window.open("http://service.weibo.com/share/share.php?url=" 
 			+ encodeURIComponent(url) + "&appkey=694135578" 
