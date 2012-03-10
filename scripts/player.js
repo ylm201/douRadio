@@ -2,8 +2,8 @@ var c_song={}
 var power=false
 //初始化
 chrome.extension.sendRequest({type:"init"},function(data){
-	data.power&&showSong(data.song)
 	power=data.power
+	data.power&&showSong(data.song)
 })
 
 //时间轴事件
@@ -14,8 +14,11 @@ chrome.extension.onRequest.addListener(function(req,sender){
 	if(req.type=="end"){
 		showSong(req.song)
 	}
-	if(req.type=="loading"){
-		$("#timer").html("<img src='img/loading.gif'/>")
+	if(req.type=="loadingList"){
+		showLoading()
+	}
+	if(req.type=="loadedList"){
+		hideLoading()
 	}
 })
 var changeToTime=function(time){
@@ -31,8 +34,14 @@ var changeToTime=function(time){
 	return min+":"+second
 },updateTime=function(c,d){
 	var t=(c/d)*240
-	$("#played").css("width",t+"px")
-	$("#timer").text(changeToTime(c)+"/"+changeToTime(d))
+	console.log(c+" "+d)
+	if(!c||!d||c==0||d==0){
+		$("#timer").html("<img src='img/loading.gif'/>")
+		$("#played").css("width","0px")
+	}else{
+		$("#played").css("width",t+"px")
+		$("#timer").text(changeToTime(c)+"/"+changeToTime(d))
+	}
 }
 
 //显示当前歌曲
@@ -54,7 +63,7 @@ showSong=function(data){
 		$("#song_artist").html(data.artist)
 		$("#song_artist").attr("title",data.artist)
 	}
-	hideLoading()
+	power&&$("#timer").html("<img src='img/loading.gif'/>")
 },sendRequest=function(t){//后台交互事件
 	chrome.extension.sendRequest({type:t},function(song){
 		showSong(song)
@@ -67,7 +76,6 @@ showSong=function(data){
 
 //播放事件绑定
 $("#skip").bind("click",function(){
-	showLoading();
 	sendRequest("skip");
 	return false;
 });
@@ -75,7 +83,6 @@ $("#skip").bind("click",function(){
 $("#power").bind("click",function(){
 	sendRequest("on_off")
 	power=!power
-	power&&showLoading()
 	return false;
 });
 

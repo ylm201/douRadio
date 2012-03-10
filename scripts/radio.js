@@ -10,7 +10,7 @@ var Radio=function(){
 	this.power=false;
 	this.uid='';
 	this.heared='';
-	this.red=new Red()
+	//this.red=new Red()
 }
 
 /**
@@ -26,7 +26,7 @@ Radio.init=function(audio){
 		url:"http://douban.com",
 		name:"dbcl2"	
 	},function(b){	
-
+		console.log("cookie:"+b)
 		if(b){
 			chrome.cookies.set({
 				url:"http://douban.fm",
@@ -42,6 +42,9 @@ Radio.init=function(audio){
  *获取播放列表
  * */
 Radio.prototype.getPlayList=function(t,skip,callback){
+	if(t!="r"||t!="u"){
+		chrome.extension.sendRequest({type:"loadingList"})
+	}
 	var self =this
 	if(skip){
 		this.audio.pause()
@@ -55,13 +58,14 @@ Radio.prototype.getPlayList=function(t,skip,callback){
 			r:Math.random(),
 			from:"mainsite"
 		},function(data){
+			chrome.extension.sendRequest({type:"loadedList"})
 			var songs=data.song
 			if(localStorage.channel!="-1"){
 				for(s in songs){
 					self.song_list[s]=songs[s]
 				}
 			}else{
-				self.song_list=self.red.getSongList()
+				//self.song_list=self.red.getSongList()
 			}
 			if(skip){
 				self.changeSong(t,callback)
@@ -82,16 +86,17 @@ Radio.prototype.reportEnd=function(){
 }
 
 Radio.prototype.changeSong=function(t,callback){
-	//歌曲小于两首时加载
-	if(this.song_list.length<=2){
-		this.getPlayList("p",true,callback)
-		return
-	}
+	//重置时间轴
+	chrome.extension.sendRequest({type:"timeUpdate",c:0,d:0})
 	var c=localStorage.channel?localStorage.channel:"0"
 	_gaq.push(['_trackEvent', 'channel' + c, 'played']);	
 	this.c_song=this.song_list.shift();
 	console.log("current_song")
 	console.log(this.c_song)
+	//歌曲小于两首时加载
+	if(this.song_list.length<=2){
+		this.getPlayList("p",false)
+	}
 	if(t!='n'){
 		h_songs=this.heared.split("|");
 		h_songs.push(this.c_song.sid+":"+t);
@@ -120,7 +125,7 @@ Radio.prototype.del=function(){
 
 Radio.prototype.powerOn=function(c){
 	this.power=true
-	this.red.init()
+	//this.red.init()
 	this.getPlayList("n",true,c)
 }
 
@@ -144,10 +149,6 @@ radio.audio.addEventListener("timeupdate",function(){
 		c:this.currentTime,
 		d:this.duration
 	})
-})
-
-radio.audio.addEventListener("loadstart",function(){
-	chrome.extension.sendRequest({type:"loading"})
 })
 
 chrome.extension.onRequest.addListener(function(request,sender,callback){
@@ -188,4 +189,3 @@ chrome.extension.onRequest.addListener(function(request,sender,callback){
 	}
 	return;
 })
-
