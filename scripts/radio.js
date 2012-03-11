@@ -44,7 +44,7 @@ Radio.init=function(audio){
  *获取播放列表
  * */
 Radio.prototype.getPlayList=function(t,skip,port){
-	if(t!="r"||t!="u"){
+	if(t=="n"||t=="p"){
 		port&&port.postMessage({type:"loadingList"})
 	}
 	var self =this
@@ -58,6 +58,7 @@ Radio.prototype.getPlayList=function(t,skip,port){
 		},function(data){
 			port&&port.postMessage({type:"loadedList"})
 			var songs=data.song
+			if(t!="p") self.song_list=[]
 			if(localStorage.channel!="-1"){
 				for(s in songs){
 					self.song_list.push(songs[s])
@@ -65,14 +66,12 @@ Radio.prototype.getPlayList=function(t,skip,port){
 			}else{
 				//self.song_list=self.red.getSongList()
 			}
-			if(skip){
-				//日志打印
-				console.info("---------------------")
-				for(s in self.song_list){
-					console.info(self.song_list[s].title+"--"+self.song_list[s].artist)
-				}
-				self.changeSong(t,port)
+			//日志打印
+			console.info("----------------------------------------------")
+			for(s in self.song_list){
+				console.info(self.song_list[s].title+"--"+self.song_list[s].artist)
 			}
+			skip&&self.changeSong(t,port)
 		})
 }
 
@@ -93,8 +92,7 @@ Radio.prototype.changeSong=function(t,port){
 	_gaq.push(['_trackEvent', 'channel' + c, 'played']);	
 	this.c_song=this.song_list.shift();
 	//console.log("get new song "+this.c_song.artist+"--"+this.c_song.title)
-	//歌曲小于两首时加载
-	if(this.song_list.length<=2){
+	if(this.song_list.length<=1){
 		this.getPlayList("p",false,port)
 	}
 	if(t!='n'){
@@ -107,8 +105,8 @@ Radio.prototype.changeSong=function(t,port){
 	port&&port.postMessage({type:"song",song:radio.c_song})
 }
 
-Radio.prototype.skip=function(c){
-	this.changeSong("s",c)	
+Radio.prototype.skip=function(p){
+	this.changeSong("s",p)	
 }
 
 Radio.prototype.like=function(){
@@ -119,8 +117,9 @@ Radio.prototype.unlike=function(){
 	this.getPlayList("u",false)
 }
 
-Radio.prototype.del=function(){
-	this.getPlayList("b",true,c)
+Radio.prototype.del=function(p){
+	this.audio.pause()
+	this.getPlayList("b",true,p)
 }
 
 Radio.prototype.powerOn=function(port){
@@ -203,6 +202,7 @@ chrome.extension.onConnect.addListener(function(port){
 		}
 		if(request.type=="switch"){
 			radio.powerOn(port)
+			return
 		}
 		if(request.type=="pause"){
 			radio.audio.paused==true?radio.audio.play():radio.audio.pause()

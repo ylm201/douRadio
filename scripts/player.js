@@ -24,6 +24,7 @@ port.onMessage.addListener(function(msg){
 	}
 	if(msg.type=="init"){
 		power=msg.power
+		c_song=msg.song
 		showSong(msg.song)
 		console.log(msg)
 		msg.pause&&$("#mask").show()
@@ -53,10 +54,13 @@ var changeToTime=function(time){
 		$("#played").css("width",t+"px")
 		$("#timer").text(changeToTime(c)+"/"+changeToTime(d))
 	}
+	!power&&$("#timer").html("")
+	!power&&$("#played").css("width","0px")
 }
 
 //显示当前歌曲
 showSong=function(data){
+	c_song=data
 	if(data&&data.like==1){
 		$("#like").attr("src","img/rated.png")
 	}else{
@@ -72,11 +76,12 @@ showSong=function(data){
 		$("#song_title").attr("title",data.title)	
 		$("#song_artist").html(data.artist)
 		$("#song_artist").attr("title",data.artist)
+		power&&$("#timer").html("<img src='img/loading.gif'/>")
 	}else{
 		$("#song_artist").html("豆瓣电台")
 		$("#song_title").html("--")
+		$("timer").html("")
 	}
-	power&&$("#timer").html("<img src='img/loading.gif'/>")
 },sendRequest=function(t){//后台交互事件
 	port.postMessage({type:t})
 },showLoading=function(){
@@ -94,6 +99,11 @@ $("#skip").bind("click",function(){
 $("#power").bind("click",function(){
 	sendRequest("on_off")
 	power=!power
+	if(power==true){
+		$("#power").attr("src","img/off.png")
+	}else{
+		$("#power").attr("src","img/on.png")
+	}
 	return false;
 });
 
@@ -103,9 +113,7 @@ $("#like").bind("click",function(){
 });
 
 $("#delete").bind("click",function(){
-	showLoading()
 	sendRequest("delete")
-
 	return false;
 });
 
@@ -145,12 +153,13 @@ $("#switcher").bind("click",function(){
 
 $("#channels li").bind("click",function(){
 	var sc=$(this).attr("id")
-	localStorage["channel"]=sc
+	if(localStorage.channel&&localStorage.channel!=sc){
+		localStorage["channel"]=sc
+		sendRequest("switch")
+	}
 	$(this).addClass("channel_selected")
 		.siblings().removeClass("channel_selected")
 	$("#channel_popup").fadeOut("slow")
-	showLoading()
-	sendRequest({type:"switch"})
 })
 
 $("#close_c").bind("click",function(){
