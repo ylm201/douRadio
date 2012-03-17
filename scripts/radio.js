@@ -12,6 +12,7 @@ var Radio=function(){
 	this.heared='';
 	//this.red=new Red()
 	this.checked=false;
+	if(!localStorage.channel) localStorage.channel=61
 }
 
 /**
@@ -51,7 +52,7 @@ Radio.prototype.getPlayList=function(t,skip,port){
 	var self =this
 	$.getJSON("http://douban.fm/j/mine/playlist",{
 			type:t,
-			channel:localStorage.channel=="-1"?0:localStorage.channel,
+			channel:localStorage.channel?localStorage.channel:0,
 			h:this.heared,
 			sid:this.c_song? this.c_song.sid:'',
 			r:Math.random(),
