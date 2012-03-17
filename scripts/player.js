@@ -22,11 +22,13 @@ var verifyCookie=function(c){
 				value:b.value
 			})
 			$("#notify_login").hide()
+			checked=true
 		}else{
 			!c&&$("#notify_login").show()
 			c&&$("#notify_login").hide()
 			port.postMessage({type:"check"})
-			console.warn("failed to get cookie")	
+			console.warn("failed to get cookie")
+			checked=false
 		}
 	})
 }
@@ -71,6 +73,9 @@ port.onMessage.addListener(function(msg){
 		$("#volume_bar").css("width",len+"px")
 		//cookie检查
 		verifyCookie(msg.checked)
+		if(localStorage.settingShow&&localStorage.settingShow=="false"){
+			$("#setting_a").hide()
+		}
 	}
 })
 
@@ -148,13 +153,22 @@ $("#power").bind("click",function(){
 });
 
 $("#like").bind("click",function(){
-	sendRequest("like")
+	if(checked){
+		sendRequest("like")
+	}else{
+		$("#notify_login").show()
+		setTimeout(function(){$("#notify_login").fadeOut()},2000)
+	}
 	return false;
 });
 
 $("#delete").bind("click",function(){
-	if(song.like==0) doShare()
-	sendRequest("delete")
+	if(checked){
+		sendRequest("delete")
+	}else{
+		$("#notify_login").show()
+		setTimeout(function(){$("#notify_login").fadeOut()},2000)
+	}
 	return false;
 });
 
@@ -222,10 +236,11 @@ var share_sina=function(content,url,pic){
 	return;
 },share_douban=function(content,url,pic){
 	window.open("http://shuo.douban.com/!service/share?name="+encodeURIComponent(c_song.title)
-		+"&ref="+encodeURIComponent(url)+
-		"&image="+encodeURIComponent(pic)
-		+"&desc=(豆瓣电台chrome插件-小豆)"+
-		"&apikey=0458f5fa0cd49e2a0d0ae1ee267dda7e","_blank","width=615,height=505");
+		+"&href="+encodeURIComponent(url)
+		+"&image="+encodeURIComponent(pic)
+		+"&desc=by小豆(http://goo.gl/iRxds)"
+		+"&apikey=0458f5fa0cd49e2a0d0ae1ee267dda7e&target_type=rec&target_action=0&object_kind=3043&object_id="+c_song.sid
+		+"action_props="+encodeURIComponent('%7B"url"%3A "'+"http://t.cn/zOxAHIV"+'"%2C "title" "'+c_song.artist+'--'+c_song.title+'"%7D'),"_blank","width=615,height=505")
 		window.close()
 		return;
 },share_fanfou=function(content){
@@ -246,7 +261,7 @@ var share_sina=function(content,url,pic){
 		share_sina(content,url,pic)
 	}
 	if(id=="douban"){
-		share_douban(url,content,pic)
+		share_douban(content,url,pic)
 	}
 	if(id=="fanfou"){
 		share_fanfou(content)

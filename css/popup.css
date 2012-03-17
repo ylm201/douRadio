@@ -4,7 +4,7 @@ body{margin:0}
 #power {float:right;width:20px;margin-top:8px;clear:both}
 #power:hover{opacity:0.7}
 #song_title {white-space:nowrap;font-size:10px;color:#3B5343;display:inline-block;overflow:hidden;width:238px;line-height:15px;}
-#song_artist {white-space:nowrap;font-size:15px;color:#3B5343;font-weight:bold;display:inline-block;overflow:hidden;width:238px;line-height:15px;margin-top:1px}
+#song_artist {white-space:nowrap;font-size:14px;color:#3B5343;font-weight:bold;display:inline-block;overflow:hidden;width:238px;line-height:16px;height:16px;}
 #display{margin-top:5px;width:240px;}
 #loaded{height:3px;background-color:#E9F4E9;width:240px;opacity:0.8;margin-top:2px}
 #played{height:3px;background-color:#3B5343;width:0px;opacity:0.8}

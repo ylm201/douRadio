@@ -1,7 +1,7 @@
 {
   "name": "小豆电台",
-  "version": "0.9.9",
-  "description": "豆瓣电台Chrome版，红心电台，微博分享",
+  "version": "1.0.1",
+  "description": "豆瓣电台Chrome版，微博分享",
   "icons":{
     "128": "img/icon_128.png"
   },

@@ -11,7 +11,7 @@
 		<script>
 			var _gaq = _gaq || [];
 			_gaq.push(['_setAccount', 'UA-27166419-2']);
-			_gaq.push(['_trackPageview']);
+			_gaq.push(['_trackPageview','popup_v1.0.1']);
 			(function() {
 				var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
 				ga.src = 'https://ssl.google-analytics.com/ga.js';
@@ -61,7 +61,7 @@
 				<img src="img/fanfou.jpg" id="fanfou"  class="share_button"/>
 				<img src="img/douban.png" id="douban" class="share_button"/>
 				<img src="img/sina.png"   id="sina"   class="share_button"/>
-				<a href="options.html" target="_blank"><img src="img/setting.png"id="setting"/></a>
+				<a href="options.html"  id="setting_a" target="_blank"><img src="img/setting.png"id="setting"/></a>
 			</div>
 			<div class="clear"></div>
 		</div>
@@ -70,8 +70,8 @@
 	<div id="channel_popup">
 		<img src="img/close_c.png" id="close_c"/>
 		<ul id="channels">
-			<li id="-1">红心兆赫</li>
-			<li id="0">私人MHz</li><li id="1">华语MHz</li>
+			<li id="-1" style="display:none" >红心兆赫</li><li id="61" >新歌MHz</li>
+			<li id="0" >私人MHz</li><li id="1">华语MHz</li>
 			<li id="6">粤语MHz</li><li id="2">欧美</li>
 			<li id="22">法语</li><li id="17">日语</li>
 			<li id="18">韩语</li><li id="8">民谣</li>

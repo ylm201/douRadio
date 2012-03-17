@@ -14,8 +14,9 @@
 			h1,h2,h3,h4,h5,span{color:#219A44}
 			p{color:#369}
 			#setting{
-				height:80px
+				height:120px
 			}
+			#setting span{font-size:12px;opacity:0.5}
 		</style>
 		<script type="text/javascript" >
 			$(function(){
@@ -24,6 +25,10 @@
 					$("#"+localStorage.autoShare)[0].checked=true
 					$("#if_share").show()
 				}
+				if(localStorage.settingShow&&localStorage.settingShow=="false"){
+					$("#if_setting").attr("checked",false)
+					$("#info").show()
+				}
 				
 				$("#red_heart_share").bind("click",function(){
 					if(this.checked){
@@ -31,11 +36,22 @@
 					}else{
 						$("#if_share").fadeOut()
 						localStorage.removeItem("autoShare")
+						$(".share").attr("checked",false)
 					}
 				})
 				
 				$(".share").bind("click",function(){
 					localStorage.autoShare=this.id
+				})
+
+				$("#if_setting").bind("click",function(){
+					if(this.checked==false){
+						localStorage.settingShow=false
+						$("#info").fadeIn()
+					}else{
+						localStorage.settingShow=true
+						$("#info").fadeOut()
+					}		
 				})
 			})
 		</script>
@@ -46,7 +62,7 @@
 		<script>
 			var _gaq = _gaq || [];
 			_gaq.push(['_setAccount', 'UA-27166419-2']);
-			_gaq.push(['_trackPageview']);
+			_gaq.push(['_trackPageview','options_v1.0.1']);
 			(function() {
 				var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
 				ga.src = 'https://ssl.google-analytics.com/ga.js';
@@ -55,7 +71,9 @@
 		</script>
 		<div id="setting">
 			<h3>设置</h3>
-			<label for="red_heart_share">加红心同时分享歌曲</label> <input type="checkbox"  value="1" id="red_heart_share" /><br/>
+			<label for="if_setting" >是否显示设置图标:</label><input  id="if_setting" type="checkbox" checked="true"/>
+			<span id="info" style="display:none">也可通过右键小豆图标设置选项哦~</span><br/>
+			<label for="red_heart_share">加红心同时分享歌曲:</label> <input type="checkbox"  value="1" id="red_heart_share" /><br/>
 			<div id="if_share" style="display:none" >
 				自动分享使用：
 				<input  class="share" type="radio"  name="share" value="sina" id="sina"   /><label for="sina">新浪微博</label> 
@@ -68,30 +86,33 @@
 			<h4>使用反馈：</h4>
 			<p>
 				<span>Email:</span><a target="_blank" href="mailto:lmyang.alex@gmail.com">lmyang.alex@gmail.com</a><br/>
-				<span>项目主页:</span><a target="_blank" href="http://blog.drifting-world.info/2012/03/%E5%B0%8F%E8%B1%86%E7%94%B5%E5%8F%B0%E6%9D%A5%E5%95%A6/">http://blog.drifting-world.info/</a><br/>
-				<span>新浪微博:</span><a target="_blank" href="http://weibo.com/ylm201">http://weibo.com/ylm201</a>
-			</p>
+				<span>Github:</span><a target="_blank" href="https://github.com/ylm201/douRadio">https://github.com/ylm201/douRadio</a><br/>
+				<span>豆瓣:</span><a target="_blank" href="http://www.douban.com/people/piaoliu123/">http://www.douban.com/people/piaoliu123/</a><br/>
+				<span>个人博客:</span><a target="_blank" href="http://blog.drifting-world.info/2012/03/%E5%B0%8F%E8%B1%86%E7%94%B5%E5%8F%B0%E6%9D%A5%E5%95%A6/">http://blog.drifting-world.info/</a>
 		</div>
 		<div id="history">
 			<h4>更新历史</h4>
 				
 				<h5>v0.9.6</h5>
 				<p>	
-					微博分享，红心兆赫等功能
+					微博分享，红心兆赫等功能；
 				</p>
 				<h5>v0.9.7</h5>
 				<p>	
-					修改微博分享方式，使用分享按钮代替原来api请求方式
+					修改微博分享方式，使用分享按钮代替原来api请求方式；
 				</p>
 				<h5>v0.9.8</h5>
 				<p>	
-					修复红心兆赫下歌曲分享，修复歌曲时间显示NaN问题，优化目录结构
+					修复红心兆赫下歌曲分享，修复歌曲时间显示NaN问题；
 				</p>
 				
 				<h5>v1.0.1</h5>
 				<p>	
-					暂时删除红心兆赫链接；修改页面交互方式，切歌等操作时不再卡死；<br/>
-					增加登录提示；支持加红心时自动分享
+					暂时删除红心兆赫，新增新歌兆赫；<br/>
+					修改页面交互方式，切歌等操作时不再卡死；<br/>
+					增加登录提示；支持加红心时自动分享;<br/>
+					修复豆瓣电台推荐歌曲bug;<br/>
+					新增设置页面;
 				</p>
 		</div>
 	</div>	

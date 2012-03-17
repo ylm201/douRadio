@@ -15,6 +15,10 @@
 			 ga.src = 'https://ssl.google-analytics.com/ga.js';
 			 var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
 		 })();
+		 if(!localStorage.version||localStorage.version!="1.01"){
+			_gaq.push(['_trackEvent', 'version-1.01', localStorage.version]);
+			localStorage.version="1.01"
+		 }
 	 </script>
 
 	<audio id="radio"></audio>

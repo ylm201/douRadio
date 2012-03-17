@@ -70,10 +70,10 @@ Radio.prototype.getPlayList=function(t,skip,port){
 			if(self.song_list.length>20) self.song_list=self.song_list.slice(-20)						
 			//日志打印
 			//if(t=="p"){
-				console.info("----------------------------------------------")
-				for(s in self.song_list){
-					console.info(self.song_list[s].title+"--"+self.song_list[s].artist)
-				}	
+				//console.info("----------------------------------------------")
+				//for(s in self.song_list){
+				//	console.info(self.song_list[s].title+"--"+self.song_list[s].artist)
+				//}	
 			//}
 			skip&&self.changeSong(t,port)
 		})
@@ -116,6 +116,7 @@ Radio.prototype.changeSong=function(t,port){
 		var notification = webkitNotifications.createHTMLNotification('notification.html');
 		notification.show();
 	}
+	chrome.browserAction.setTitle({title:radio.c_song.artist+":"+radio.c_song.title})
 }
 
 Radio.prototype.skip=function(p){
@@ -137,6 +138,7 @@ Radio.prototype.del=function(p){
 
 Radio.prototype.powerOn=function(port){
 	this.power=true
+	this.audio.pause()
 	//this.red.init()
 	this.getPlayList("n",true,port)
 }
@@ -148,6 +150,7 @@ Radio.prototype.powerOff=function(port){
 	this.audio.src=null
 	this.c_song={}
 	port.postMessage({type:"song",song:{}})
+	chrome.browserAction.setTitle({title:"小豆电台"})
 }
 
 var radio=Radio.init(document.getElementById("radio"));
