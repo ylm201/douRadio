@@ -208,13 +208,16 @@ $("#switcher").bind("click",function(){
 
 $("#channels li").bind("click",function(){
 	var sc=$(this).attr("id")
-	if(localStorage.channel&&localStorage.channel!=sc){
+	if(!localStorage.channel||localStorage.channel!=sc){
 		localStorage.channel=sc
 		sendRequest("switch")
 	}
 	$(this).addClass("channel_selected")
 		.siblings().removeClass("channel_selected")
 	$("#channel_popup").fadeOut("slow")
+	var ch=$("#"+localStorage.channel).html()
+	$("#switcher").attr("title",ch)
+
 })
 
 $("#close_c").bind("click",function(){
