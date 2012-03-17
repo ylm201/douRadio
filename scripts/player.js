@@ -1,7 +1,36 @@
 var c_song={}
 var power=false
+var lock=false
+var checked=false
+
+var ch=$("#"+localStorage.channel).html()
+$("#switcher").attr("title",ch)
 
 var port=chrome.extension.connect({name:"douRadio"})
+
+//登录处理
+var verifyCookie=function(c){
+	chrome.cookies.get({
+		url:"http://douban.com",
+		name:"dbcl2"	
+	},function(b){	
+		if(b){
+			console.info("get cookie:"+b.value)
+			chrome.cookies.set({
+				url:"http://douban.fm",
+				name:"dbcl2",
+				value:b.value
+			})
+			$("#notify_login").hide()
+		}else{
+			!c&&$("#notify_login").show()
+			c&&$("#notify_login").hide()
+			port.postMessage({type:"check"})
+			console.warn("failed to get cookie")	
+		}
+	})
+}
+
 port.onMessage.addListener(function(msg){
 	if(msg.type=="timeUpdate"){
 		updateTime(msg.c,msg.d)
@@ -18,19 +47,30 @@ port.onMessage.addListener(function(msg){
 	if(msg.type=="rate"){
 		if(msg.like==1){
 			$("#like").attr("src","img/rated.png")
+			localStorage.autoShare&&setTimeout(function(){doShare(localStorage.autoShare)},300)
 		}else{
 			$("#like").attr("src","img/unrated.png")
 		}
 	}
 	if(msg.type=="init"){
+		//音量按钮
 		power=msg.power
-		c_song=msg.song
+		if(power==true){
+			$("#power").attr("src","img/off.png")
+		}else{
+			$("#power").attr("src","img/on.png")
+		}
+		//歌曲信息显示
 		showSong(msg.song)
-		console.log(msg)
-		msg.pause&&$("#mask").show()
+		//暂停状态显示
+		msg.power&&msg.pause&&$("#mask").show()
+		//时间条状态获取
 		updateTime(msg.c,msg.d)
+		//音量状态获取
 		var len=msg.volume*50
 		$("#volume_bar").css("width",len+"px")
+		//cookie检查
+		verifyCookie(msg.checked)
 	}
 })
 
@@ -66,28 +106,26 @@ showSong=function(data){
 	}else{
 		$("#like").attr("src","img/unrated.png")
 	}
-	if(power==true){
-		$("#power").attr("src","img/off.png")
-	}else{
-		$("#power").attr("src","img/on.png")
-	}
 	if(data.title){
 		$("#song_title").html(data.title)
 		$("#song_title").attr("title",data.title)	
 		$("#song_artist").html(data.artist)
 		$("#song_artist").attr("title",data.artist)
 		power&&$("#timer").html("<img src='img/loading.gif'/>")
+		$("#played").css("width","0px")
 	}else{
 		$("#song_artist").html("豆瓣电台")
 		$("#song_title").html("--")
 		$("timer").html("")
 	}
 },sendRequest=function(t){//后台交互事件
-	port.postMessage({type:t})
+	!lock&&port.postMessage({type:t})
 },showLoading=function(){
+	lock=true
 	$("#notify").fadeIn()
 },hideLoading=function(){
 	$("#notify").fadeOut()
+	lock=false
 }
 
 //播放事件绑定
@@ -103,6 +141,8 @@ $("#power").bind("click",function(){
 		$("#power").attr("src","img/off.png")
 	}else{
 		$("#power").attr("src","img/on.png")
+		$("#timer").html("")
+		$("#played").css("width","0px")
 	}
 	return false;
 });
@@ -113,6 +153,7 @@ $("#like").bind("click",function(){
 });
 
 $("#delete").bind("click",function(){
+	if(song.like==0) doShare()
 	sendRequest("delete")
 	return false;
 });
@@ -154,7 +195,7 @@ $("#switcher").bind("click",function(){
 $("#channels li").bind("click",function(){
 	var sc=$(this).attr("id")
 	if(localStorage.channel&&localStorage.channel!=sc){
-		localStorage["channel"]=sc
+		localStorage.channel=sc
 		sendRequest("switch")
 	}
 	$(this).addClass("channel_selected")
@@ -166,8 +207,33 @@ $("#close_c").bind("click",function(){
 	$("#channel_popup").fadeOut("slow")
 })
 
-//分享按钮
-$("#share img").bind("click",function(){
+$("#login_close").bind("click",function(){
+	$("#notify_login").fadeOut()
+	port.postMessage({type:"checked"})
+})
+
+
+var share_sina=function(content,url,pic){
+	window.open("http://service.weibo.com/share/share.php?url=" 
+			+ encodeURIComponent(url) + "&appkey=694135578" 
+			+ "&title=" + encodeURIComponent(content) + "&pic=" + encodeURIComponent(pic) 
+			+ "&language=zh-cn", "_blank", "width=615,height=505");
+	window.close()
+	return;
+},share_douban=function(content,url,pic){
+	window.open("http://shuo.douban.com/!service/share?name="+encodeURIComponent(c_song.title)
+		+"&ref="+encodeURIComponent(url)+
+		"&image="+encodeURIComponent(pic)
+		+"&desc=(豆瓣电台chrome插件-小豆)"+
+		"&apikey=0458f5fa0cd49e2a0d0ae1ee267dda7e","_blank","width=615,height=505");
+		window.close()
+		return;
+},share_fanfou=function(content){
+	window.open("http://fanfou.com/sharer?t="+encodeURIComponent(content)
+		+"&u="+encodeURIComponent("http://douban.fm")+"&s=bm","_blank","width=600,height=400");
+		window.close()
+		return;
+},doShare=function(id){
 	var channel=localStorage.channel?localStorage.channel:"0";
 	var content="分享"+c_song.artist+"的单曲《"+c_song.title+"》(来自@豆瓣FM)";
 	var url="";
@@ -176,27 +242,18 @@ $("#share img").bind("click",function(){
 		url="http://douban.fm/?start="+c_song.sid+"g"+c_song.ssid+"g"+channel+"&cid="+channel
 	}
 	var pic=c_song.picture&&c_song.picture.replace(/mpic|spic/,"lpic")
-	if(this.id=="sina"){
-		window.open("http://service.weibo.com/share/share.php?url=" 
-			+ encodeURIComponent(url) + "&appkey=694135578" 
-			+ "&title=" + encodeURIComponent(content) + "&pic=" + encodeURIComponent(pic) 
-			+ "&language=zh-cn", "_blank", "width=615,height=505");
-		window.close()
-		return;
+	if(id=="sina"){
+		share_sina(content,url,pic)
 	}
-	if(this.id=="douban"){
-	window.open("http://shuo.douban.com/!service/share?name="+encodeURIComponent(song.title)
-		+"&ref="+encodeURIComponent(url)+
-		"&image="+encodeURIComponent(pic)
-		+"&desc=(豆瓣电台chrome插件-小豆)"+
-		"&apikey=0458f5fa0cd49e2a0d0ae1ee267dda7e","_blank","width=615,height=505");
-		window.close()
-		return;
+	if(id=="douban"){
+		share_douban(url,content,pic)
 	}
-	if(this.id="fanfou"){
-	window.open("http://fanfou.com/sharer?t="+encodeURIComponent(content)
-		+"&u="+encodeURIComponent("http://douban.fm")+"&s=bm","_blank","width=600,height=400");
-		window.close()
-		return;
+	if(id=="fanfou"){
+		share_fanfou(content)
 	}
+}
+
+//分享按钮
+$(".share_button").bind("click",function(){
+	doShare(this.id)
 })

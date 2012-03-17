@@ -1,25 +1,25 @@
 body{margin:0}
-span{font-family: 微软雅黑;}
-#main{width:280px;padding:7px 4px 7px 4px;height:95px;overflow:hidden;}
+*{font-family: 微软雅黑;}
+#main{width:280px;padding:7px 4px 7px 4px;height:100px;overflow:hidden;}
 #power {float:right;width:20px;margin-top:8px;clear:both}
 #power:hover{opacity:0.7}
-#song_title {white-space:nowrap;font-size:10px;color:#3B5343;display:inline-block;overflow:hidden;width:238px;line-height:15px;margin-bottom:1px}
-#song_artist {white-space:nowrap;font-size:15px;color:#3B5343;font-weight:bold;display:inline-block;overflow:hidden;width:238px;line-height:15px}
+#song_title {white-space:nowrap;font-size:10px;color:#3B5343;display:inline-block;overflow:hidden;width:238px;line-height:15px;}
+#song_artist {white-space:nowrap;font-size:15px;color:#3B5343;font-weight:bold;display:inline-block;overflow:hidden;width:238px;line-height:15px;margin-top:1px}
 #display{margin-top:5px;width:240px;}
 #loaded{height:3px;background-color:#E9F4E9;width:240px;opacity:0.8;margin-top:2px}
 #played{height:3px;background-color:#3B5343;width:0px;opacity:0.8}
-#timer{margin-top:3px;font-size:10px;color:#777;float:right;display:block;vertical-align:middle;line-height:15px}
+#timer{margin-top:3px;font-size:10px;color:#777;float:right;display:block;vertical-align:middle;line-height:14px;height:15px}
 #timer img{height:15px}
 #switcher{width:20px;float:right;margin-top:4px;clear:both}
 #switcher:hover{opacity:0.7}
-#wrapper{height:40px;margin-top:20px;width:280px}
+#wrapper{height:40px;margin-top:23px;width:280px}
 #pause {float:right;width:20px;height:18px;clear:both}
 #pause:hover{opacity:0.7}
 #operation{width:120px;float:left}
 .button {margin-right:7px;cursor:pointer;width:20px;height:20px}
 .button:hover{opacity:0.7}
 #share{float:right;padding-top:5px}
-#share img{width:16px;height:16px;opacity:0.4;margin-left:3px;float:right}
+#share img{width:16px;height:16px;opacity:0.5;margin-left:3px;float:right}
 #share img:hover{opacity:1.0}
 .clear{clear:both}
 #channel_popup{background-color:#fff;height:100%;width:100%;overflow-y:scroll;position:absolute;z-index:999;left:0;top:0;padding:0px;opacity:0.95;display:none}
@@ -45,8 +45,11 @@ span{font-family: 微软雅黑;}
 #comment_close:hover{opacity:0.8}
 .comment_button{float:right;width:16px;height:16px;opacity:0.3;margin-right:5px;margin-top:4px}
 .comment_button:hover{opacity:1.0}
-#notify{width:120px;height:20px;background-color:#3B5343;opacity:0.5;position:absolute;z-index:10000;left:135px;top:7px}
-#notify span{color:#fff;margin-left:7px;margin-top:5px;display:block;font-size:10px;line-height:12px}
+.warn{width:120px;height:20px;background-color:#3B5343;opacity:0.5;position:absolute;z-index:10000;left:135px;top:7px}
+.warn span{color:#fff;margin-left:7px;margin-top:4px;display:block;font-size:10px;line-height:13px}
+
+#notify_login{left:108px;width:150px;}
+#notify_login a{color:#fff;}
 #volume img{vertical-align:middle;float:left}
 ::-webkit-scrollbar {
 	width: 10px;

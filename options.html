@@ -1,0 +1,99 @@
+﻿<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<script type="text/javascript" src="lib/jquery.min.js"></script>
+		<style type="text/css">
+			*{color:#369;font-family: 微软雅黑;}
+			body{
+				background-color:#F4F8F8;
+			}
+			#main{
+				border-radius: 15px;
+				padding:10px;
+			}
+			h1,h2,h3,h4,h5,span{color:#219A44}
+			p{color:#369}
+			#setting{
+				height:80px
+			}
+		</style>
+		<script type="text/javascript" >
+			$(function(){
+				if(localStorage.autoShare){
+					$("#red_heart_share")[0].checked=true
+					$("#"+localStorage.autoShare)[0].checked=true
+					$("#if_share").show()
+				}
+				
+				$("#red_heart_share").bind("click",function(){
+					if(this.checked){
+						$("#if_share").fadeIn()
+					}else{
+						$("#if_share").fadeOut()
+						localStorage.removeItem("autoShare")
+					}
+				})
+				
+				$(".share").bind("click",function(){
+					localStorage.autoShare=this.id
+				})
+			})
+		</script>
+	</head>
+	<body>
+
+	<div id="main">
+		<script>
+			var _gaq = _gaq || [];
+			_gaq.push(['_setAccount', 'UA-27166419-2']);
+			_gaq.push(['_trackPageview']);
+			(function() {
+				var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+				ga.src = 'https://ssl.google-analytics.com/ga.js';
+				var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+			})();
+		</script>
+		<div id="setting">
+			<h3>设置</h3>
+			<label for="red_heart_share">加红心同时分享歌曲</label> <input type="checkbox"  value="1" id="red_heart_share" /><br/>
+			<div id="if_share" style="display:none" >
+				自动分享使用：
+				<input  class="share" type="radio"  name="share" value="sina" id="sina"   /><label for="sina">新浪微博</label> 
+				<input  class="share" type="radio"  name="share" value="douban" id="douban"  /><label for="douban">豆瓣说</label>
+				<input  class="share" type="radio"  name="share" value="fanfou" id="fanfou"  /><label for="fanfou">饭否</label>
+			</div>
+		</div>
+		<div id="info">
+			<h3>感谢使用小豆电台！<h3>
+			<h4>使用反馈：</h4>
+			<p>
+				<span>Email:</span><a target="_blank" href="mailto:lmyang.alex@gmail.com">lmyang.alex@gmail.com</a><br/>
+				<span>项目主页:</span><a target="_blank" href="http://blog.drifting-world.info/2012/03/%E5%B0%8F%E8%B1%86%E7%94%B5%E5%8F%B0%E6%9D%A5%E5%95%A6/">http://blog.drifting-world.info/</a><br/>
+				<span>新浪微博:</span><a target="_blank" href="http://weibo.com/ylm201">http://weibo.com/ylm201</a>
+			</p>
+		</div>
+		<div id="history">
+			<h4>更新历史</h4>
+				
+				<h5>v0.9.6</h5>
+				<p>	
+					微博分享，红心兆赫等功能
+				</p>
+				<h5>v0.9.7</h5>
+				<p>	
+					修改微博分享方式，使用分享按钮代替原来api请求方式
+				</p>
+				<h5>v0.9.8</h5>
+				<p>	
+					修复红心兆赫下歌曲分享，修复歌曲时间显示NaN问题，优化目录结构
+				</p>
+				
+				<h5>v1.0.1</h5>
+				<p>	
+					暂时删除红心兆赫链接；修改页面交互方式，切歌等操作时不再卡死；<br/>
+					增加登录提示；支持加红心时自动分享
+				</p>
+		</div>
+	</div>	
+</body>
+</html>

@@ -11,6 +11,7 @@ var Radio=function(){
 	this.uid='';
 	this.heared='';
 	//this.red=new Red()
+	this.checked=false;
 }
 
 /**
@@ -44,7 +45,7 @@ Radio.init=function(audio){
  *获取播放列表
  * */
 Radio.prototype.getPlayList=function(t,skip,port){
-	if(t=="n"||t=="p"){
+	if(skip){
 		port&&port.postMessage({type:"loadingList"})
 	}
 	var self =this
@@ -58,19 +59,22 @@ Radio.prototype.getPlayList=function(t,skip,port){
 		},function(data){
 			port&&port.postMessage({type:"loadedList"})
 			var songs=data.song
-			if(t!="p") self.song_list=[]
+			if(t=="n") self.song_list=[]
 			if(localStorage.channel!="-1"){
 				for(s in songs){
-					self.song_list.push(songs[s])
+					songs[s].sid&&self.song_list.push(songs[s])
 				}
 			}else{
 				//self.song_list=self.red.getSongList()
 			}
+			if(self.song_list.length>20) self.song_list=self.song_list.slice(-20)						
 			//日志打印
-			console.info("----------------------------------------------")
-			for(s in self.song_list){
-				console.info(self.song_list[s].title+"--"+self.song_list[s].artist)
-			}
+			//if(t=="p"){
+				console.info("----------------------------------------------")
+				for(s in self.song_list){
+					console.info(self.song_list[s].title+"--"+self.song_list[s].artist)
+				}	
+			//}
 			skip&&self.changeSong(t,port)
 		})
 }
@@ -88,13 +92,17 @@ Radio.prototype.reportEnd=function(){
 }
 
 Radio.prototype.changeSong=function(t,port){
+	this.audio.pause()
+	if(this.song_list.length<=0){
+		this.getPlayList("p",true,port)
+		return
+	}
 	var c=localStorage.channel?localStorage.channel:"0"
 	_gaq.push(['_trackEvent', 'channel' + c, 'played']);	
 	this.c_song=this.song_list.shift();
-	//console.log("get new song "+this.c_song.artist+"--"+this.c_song.title)
-	if(this.song_list.length<=1){
-		this.getPlayList("p",false,port)
-	}
+	//if(this.song_list.length==2){
+	//	this.getPlayList("p",false,port)
+	//}
 	if(t!='n'){
 		h_songs=this.heared.split("|");
 		h_songs.push(this.c_song.sid+":"+t);
@@ -102,7 +110,12 @@ Radio.prototype.changeSong=function(t,port){
 	}
 	this.audio.src=this.c_song.url
 	this.audio.play()
-	port&&port.postMessage({type:"song",song:radio.c_song})
+	if(port){
+		port.postMessage({type:"song",song:radio.c_song})
+	}else{
+		var notification = webkitNotifications.createHTMLNotification('notification.html');
+		notification.show();
+	}
 }
 
 Radio.prototype.skip=function(p){
@@ -130,7 +143,10 @@ Radio.prototype.powerOn=function(port){
 
 Radio.prototype.powerOff=function(port){
 	this.power=false
+	radio.audio.removeEventListener("timeupdate",onTimeUpdate)
 	this.audio.pause()
+	this.audio.src=null
+	this.c_song={}
 	port.postMessage({type:"song",song:{}})
 }
 
@@ -139,46 +155,48 @@ var p;
 radio.audio.addEventListener("ended",function(){
 	radio.reportEnd()
 	radio.changeSong("p",p)
-	var notification = webkitNotifications.createHTMLNotification('notification.html');
-	notification.show();
 })
 
 radio.audio.addEventListener("error",function(e){
-	console.error("error on load audio!")
-	window.e&&console.log(e)
+	console.error("error on load audio!",e)
 })
 
 var onTimeUpdate=function(){
 	var r=radio.audio;
 	p&&p.postMessage({type:"timeUpdate",
-		c:r.currentTime,
-		d:r.duration
+		c:radio.power?r.currentTime:0,
+		d:radio.power?r.duration:0
 	})
 }
 
 //交互事件
 chrome.extension.onConnect.addListener(function(port){
 	if(port.name!="douRadio") return
+	radio.audio.addEventListener("timeupdate",onTimeUpdate)	
 	p=port
-	radio.power&&port.postMessage(
+	port.postMessage(
 	{
 		type:"init",
 		song:radio.c_song,
 		power:radio.power,
 		pause:radio.audio.paused,
-		c:radio.audio.currentTime,
-		d:radio.audio.duration,
-		volume:radio.audio.volume
+		c:radio.power?radio.audio.currentTime:0,
+		d:radio.power?radio.audio.duration:0,
+		volume:radio.audio.volume,
+		checked:radio.checked
 	})
 	port.onDisconnect.addListener(function(){
 		p=undefined;
 		radio.audio.removeEventListener("timeupdate",onTimeUpdate)
-	})
-	radio.audio.addEventListener("timeupdate",onTimeUpdate)		
+	})	
 	port.onMessage.addListener(function(request){
 		if(request.type=="on_off"){
 			radio.power?radio.powerOff(port):radio.powerOn(port);
 			return;
+		}
+		if(request.type=="checked"){
+			radio.checked=true;
+			return
 		}
 		if(!radio.power){return}
 		if(request.type=="skip"){
@@ -210,7 +228,8 @@ chrome.extension.onConnect.addListener(function(port){
 		}
 		if(request.type=="volume"){
 			radio.audio.volume=request.vol
-			localStorage.volume=vol
+			localStorage.volume=request.vol
+			return
 		}
 		return;
 	})
