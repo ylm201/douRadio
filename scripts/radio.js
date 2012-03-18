@@ -206,19 +206,23 @@ chrome.extension.onConnect.addListener(function(port){
 		if(!radio.power){return}
 		if(request.type=="skip"){
 			radio.skip(port);
+			_gaq.push(['_trackEvent', 'skip', 'click']);	
 			return
 		}
 		if(request.type=="delete"){
 			radio.del(port);
+			_gaq.push(['_trackEvent', 'delete', 'click']);	
 			return
 		}
 		if(request.type=="like"){
 			if(radio.c_song.like==0){
 				radio.like()
 				radio.c_song.like=1;
+				_gaq.push(['_trackEvent', 'like', 'click']);	
 			}else{
 				radio.unlike()
 				radio.c_song.like=0;
+				_gaq.push(['_trackEvent', 'unlike', 'click']);	
 			}
 			port.postMessage({type:"rate",like:radio.c_song.like})
 			return
