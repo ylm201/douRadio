@@ -76,6 +76,10 @@ port.onMessage.addListener(function(msg){
 		if(localStorage.settingShow&&localStorage.settingShow=="false"){
 			$("#setting_a").hide()
 		}
+		return
+	}
+	if(msg.type=="error"){
+		$("#error").fadeIn().fadeOut(4000)
 	}
 })
 
@@ -255,7 +259,7 @@ var share_sina=function(content,url,pic){
 	var channel=localStorage.channel?localStorage.channel:"0";
 	var content="分享"+c_song.artist+"的单曲《"+c_song.title+"》(来自@豆瓣FM)";
 	var url="";
-	_gaq.push(['_trackEvent', 'share-'+this.id, 'clicked']);	
+	_gaq.push(['_trackEvent', 'share-'+id, 'clicked']);	
 	if(channel!="-1"||this.id=="fanfou"){
 		url="http://douban.fm/?start="+c_song.sid+"g"+c_song.ssid+"g"+channel+"&cid="+channel
 	}

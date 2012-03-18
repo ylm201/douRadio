@@ -58,9 +58,18 @@ Radio.prototype.getPlayList=function(t,skip,port){
 			r:Math.random(),
 			from:"mainsite"
 		},function(data){
+			if(data.err){
+				console.error(data.err)
+				_gaq.push(['_trackPageview','error-'+data.err]);
+				port&&port.postMessage({type:"error",msg:data.err})
+				return;
+			}
 			port&&port.postMessage({type:"loadedList"})
 			var songs=data.song
-			if(t=="n") self.song_list=[]
+			if(t=="n") {
+				self.song_list=[]
+				self.power=true
+			}
 			if(localStorage.channel!="-1"){
 				for(s in songs){
 					songs[s].sid&&self.song_list.push(songs[s])
@@ -69,14 +78,7 @@ Radio.prototype.getPlayList=function(t,skip,port){
 				//self.song_list=self.red.getSongList()
 			}
 			if(self.song_list.length>20) self.song_list=self.song_list.slice(-20)						
-			//日志打印
-			//if(t=="p"){
-				//console.info("----------------------------------------------")
-				//for(s in self.song_list){
-				//	console.info(self.song_list[s].title+"--"+self.song_list[s].artist)
-				//}	
-			//}
-			skip&&self.changeSong(t,port)
+			if(self.song_list.length>0) skip&&self.changeSong(t,port)
 		})
 }
 
@@ -138,7 +140,6 @@ Radio.prototype.del=function(p){
 }
 
 Radio.prototype.powerOn=function(port){
-	this.power=true
 	this.audio.pause()
 	//this.red.init()
 	this.getPlayList("n",true,port)
@@ -237,4 +238,10 @@ chrome.extension.onConnect.addListener(function(port){
 		}
 		return;
 	})
+})
+
+$("body").ajaxError(function(event,jqXHR,setting,error){
+	console.log("error when get song list!",error)
+	_gaq.push(['_trackPageview','error-loading-list']);
+	port&&port.postMessage({type:"error"})
 })
