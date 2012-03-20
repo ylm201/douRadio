@@ -177,7 +177,7 @@ var onTimeUpdate=function(){
 
 $("body").ajaxError(function(event,jqXHR,setting){
 	console.log("error when get song list!")
-	_gaq.push(['_trackPageview','error-loading-list'+jqXHR.status]);
+	_gaq.push(['_trackPageview','error-loading-list-'+jqXHR.status]);
 	p&&p.postMessage({type:"error",errorText:jqXHR.status})
 })//交互事件
 
