@@ -27,6 +27,7 @@ var verifyCookie=function(c){
 			!c&&$("#notify_login").show()
 			c&&$("#notify_login").hide()
 			port.postMessage({type:"check"})
+			_gaq.push(['_trackEvent', 'not_login', 'happen']);	
 			console.warn("failed to get cookie")
 			checked=false
 		}
@@ -82,7 +83,8 @@ port.onMessage.addListener(function(msg){
 		return
 	}
 	if(msg.type=="error"){
-		$("#error").fadeIn().fadeOut(4000)
+		$(".warn").hide()
+		$("#error").html("<span>哎呀，出错了("+msg.errorText+")<//span>").show().fadeOut(8000)
 	}
 })
 

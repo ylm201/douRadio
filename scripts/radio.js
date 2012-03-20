@@ -61,7 +61,8 @@ Radio.prototype.getPlayList=function(t,skip,port){
 			if(data.err){
 				console.error(data.err)
 				_gaq.push(['_trackPageview','error-'+data.err]);
-				port&&port.postMessage({type:"error",msg:data.err})
+				port&&port.postMessage({type:"loadedList"})
+				port&&port.postMessage({type:"error",errorText:data.err})
 				return;
 			}
 			port&&port.postMessage({type:"loadedList"})
@@ -174,7 +175,12 @@ var onTimeUpdate=function(){
 	})
 }
 
-//交互事件
+$("body").ajaxError(function(event,jqXHR,setting){
+	console.log("error when get song list!")
+	_gaq.push(['_trackPageview','error-loading-list'+jqXHR.status]);
+	p&&p.postMessage({type:"error",errorText:jqXHR.status})
+})//交互事件
+
 chrome.extension.onConnect.addListener(function(port){
 	if(port.name!="douRadio") return
 	radio.audio.addEventListener("timeupdate",onTimeUpdate)	
@@ -244,8 +250,4 @@ chrome.extension.onConnect.addListener(function(port){
 	})
 })
 
-$("body").ajaxError(function(event,jqXHR,setting,error){
-	console.log("error when get song list!",error)
-	_gaq.push(['_trackPageview','error-loading-list']);
-	port&&port.postMessage({type:"error"})
-})
+
