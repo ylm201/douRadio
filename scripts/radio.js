@@ -100,9 +100,7 @@ Radio.prototype.changeSong=function(t,port){
 	if(this.song_list.length<=0){
 		this.getPlayList("p",true,port)
 		return
-	}
-	var c=localStorage.channel?localStorage.channel:"0"
-	_gaq.push(['_trackEvent', 'channel' + c, 'played']);	
+	}	
 	this.c_song=this.song_list.shift();
 	//if(this.song_list.length==2){
 	//	this.getPlayList("p",false,port)
@@ -161,6 +159,8 @@ var p;
 radio.audio.addEventListener("ended",function(){
 	radio.reportEnd()
 	radio.changeSong("p",p)
+	var c=localStorage.channel?localStorage.channel:"0"
+	_gaq.push(['_trackEvent', 'channel' + c, 'played']);
 })
 
 radio.audio.addEventListener("error",function(e){
@@ -177,7 +177,6 @@ var onTimeUpdate=function(){
 
 $("body").ajaxError(function(event,jqXHR,setting){
 	console.log("error when get song list!")
-	_gaq.push(['_trackPageview','error-loading-list-'+jqXHR.status]);
 	p&&p.postMessage({type:"error",errorText:jqXHR.status})
 })//交互事件
 
@@ -212,23 +211,19 @@ chrome.extension.onConnect.addListener(function(port){
 		if(!radio.power){return}
 		if(request.type=="skip"){
 			radio.skip(port);
-			_gaq.push(['_trackEvent', 'skip', 'click']);	
 			return
 		}
 		if(request.type=="delete"){
 			radio.del(port);
-			_gaq.push(['_trackEvent', 'delete', 'click']);	
 			return
 		}
 		if(request.type=="like"){
 			if(radio.c_song.like==0){
 				radio.like()
 				radio.c_song.like=1;
-				_gaq.push(['_trackEvent', 'like', 'click']);	
 			}else{
 				radio.unlike()
 				radio.c_song.like=0;
-				_gaq.push(['_trackEvent', 'unlike', 'click']);	
 			}
 			port.postMessage({type:"rate",like:radio.c_song.like})
 			return
@@ -249,5 +244,3 @@ chrome.extension.onConnect.addListener(function(port){
 		return;
 	})
 })
-
-

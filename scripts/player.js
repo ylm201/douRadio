@@ -51,7 +51,6 @@ port.onMessage.addListener(function(msg){
 		if(msg.like==1){
 			$("#like").attr("src","img/rated.png")
 			localStorage.autoShare&&setTimeout(function(){
-				_gaq.push(['_trackEvent', 'like-share-'+localStorage.autoShare, 'click']);	
 				doShare(localStorage.autoShare)
 			},300)
 		}else{
