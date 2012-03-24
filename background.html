@@ -14,10 +14,9 @@
 			 ga.src = 'https://ssl.google-analytics.com/ga.js';
 			 var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
 		 })();
-		 if(!localStorage.version||localStorage.version!="1.02"){
-		 	_gaq.push(['_trackPageview','update-v1.02']);
-			_gaq.push(['_trackEvent', 'version-1.02',"update"]);
-			localStorage.version="1.02"
+		 if(!localStorage.version){
+		 	_gaq.push(['_trackPageview','install-v1.03']);
+			localStorage.version="1.03"
 		 }
 	 </script>
 

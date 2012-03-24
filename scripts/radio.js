@@ -160,7 +160,7 @@ radio.audio.addEventListener("ended",function(){
 	radio.reportEnd()
 	radio.changeSong("p",p)
 	var c=localStorage.channel?localStorage.channel:"0"
-	_gaq.push(['_trackEvent', 'channel' + c, 'played']);
+	_gaq.push(['_trackEvent', 'song-' + c, 'played']);
 })
 
 radio.audio.addEventListener("error",function(e){
