@@ -1,23 +1,23 @@
-﻿<html>
+﻿<!DOCTYPE HTML>
+<html>
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 		<link rel="stylesheet" type="text/css" href="css/popup.css">
 		<script type="text/javascript" src="lib/jquery.min.js"></script>
-		<script type="text/javascript" src="scripts/red.js"></script>
 	</head>
 	<body>
 
 	<div id="main">
-		<script>
+		<!--<script>
 			var _gaq = _gaq || [];
-			_gaq.push(['_setAccount', 'UA-27166419-3']);
-			_gaq.push(['_trackPageview','popup_v1.0.2']);
+			_gaq.push(['_setAccount', 'UA-27166419-2']);
+			_gaq.push(['_trackPageview','popup_v1.0.3']);
 			(function() {
 				var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
 				ga.src = 'https://ssl.google-analytics.com/ga.js';
 				var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
 			})();
-		</script>
+		</script>-->
 		<div id="mask" style="width:100%;height:100%;position:absolute;top:0;left:0;z-index:1001;opacity:0.5;display:none;background-color:#fff"></div>
 
 		<div id="notify" style="display:none" class="warn">
@@ -35,27 +35,30 @@
 		</div>
 
 		<!--主页面-->
-		<div>
+		<div id="top">
 			<span id="song_artist" title="豆瓣电台">豆瓣电台</span>
 			<img id="pause" src="img/pause.png"/>
-			<img id="power" src="img/on.png"/>
-			<img id="switcher" img src="img/channel.png"/>
 		</div>
 		<div id="display">
-			<span id="song_title">--</span>
-			<div id="loaded">
-				<div id="played"></div>
+			<div id="control">
+				<img id="power" src="img/on.png"/>
+				<img id="switcher" img src="img/channel.png"/>
+			</div>
+			<div id="song_info">
+				<span id="song_title">--</span>
+				<div id="loaded">
+					<div id="played"></div>
+				</div>
+				<span id="timer"></span>
 			</div>
 			<div id="volume">
 				<img src="img/volume.png"/>
 				<input type="range" id="range" style="display:none"/>
-				<div id="volume_bar" style="display:none"></div>
 				<div class="clear"></div>
 			</div>
-			<span id="timer"></span>
 			<div class="clear"></div>
 		</div>
-		<div id="wrapper">
+		<div id="bottom">
 			<div id="operation">
 				<img src="img/rated.png"  class="button" id="like" />
 				<img src="img/delete.png"  class="button"  id="delete" />

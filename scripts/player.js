@@ -72,8 +72,7 @@ port.onMessage.addListener(function(msg){
 		//时间条状态获取
 		updateTime(msg.c,msg.d)
 		//音量状态获取
-		var len=msg.volume*50
-		$("#volume_bar").css("width",len+"px")
+		$("#range").val(msg.volume*100)
 		//cookie检查
 		verifyCookie(msg.checked)
 		if(localStorage.settingShow&&localStorage.settingShow=="false"){
@@ -82,8 +81,12 @@ port.onMessage.addListener(function(msg){
 		return
 	}
 	if(msg.type=="error"){
-		$(".warn").hide()
-		$("#error").html("<span>哎呀，出错了("+msg.errorText+")<//span>").show().fadeOut(8000)
+		$(".warn").hide();
+		$("#error").html("<span>哎呀，出错了("+msg.errorText+")</span>").fadeIn();
+		return
+	}
+	if(msg.type=="cleanError"){
+		$(".warn").hide();
 	}
 })
 
@@ -192,18 +195,13 @@ $("#mask").bind("click",function(){
 
 //音量按钮
 $("#range")[0].addEventListener("input",function(){
-	var d=$(this).val()
-	var len=$(this).val()/100*50
-	$("#volume_bar").css("width",len+"px")
 	var v=$(this).val()/100
 	port.postMessage({type:"volume",vol:v})
 })
 $("#volume img").toggle(function(){
 	$("#range").show()
-	$("#volume_bar").show()
 },function(){
 	$("#range").hide()
-	$("#volume_bar").hide()
 })
 
 //频道切换

@@ -10,8 +10,9 @@ var Radio=function(){
 	this.power=false;
 	this.uid='';
 	this.heared='';
-	//this.red=new Red()
 	this.checked=false;
+	this.hasError=false;
+	this.errorText=""
 	if(!localStorage.channel) localStorage.channel=61
 }
 
@@ -42,6 +43,19 @@ Radio.init=function(audio){
 	return radio	
 }
 
+Radio.prototype.error=function(error){
+	_gaq.push(['_trackPageview','error-'+error]);
+	p&&p.postMessage({type:"error",errorText:error});
+	this.hasError=true;
+	this.errorText=error;
+}
+
+Radio.prototype.cleanError=function(){
+	p&&p.postMessage({type:"cleanError"});
+	this.hasError=false;
+	this.errorText="";
+}
+
 /**
  *获取播放列表
  * */
@@ -59,10 +73,7 @@ Radio.prototype.getPlayList=function(t,skip,port){
 			from:"mainsite"
 		},function(data){
 			if(data.err){
-				console.error(data.err)
-				_gaq.push(['_trackPageview','error-'+data.err]);
-				port&&port.postMessage({type:"loadedList"})
-				port&&port.postMessage({type:"error",errorText:data.err})
+				self.error(data.error)
 				return;
 			}
 			port&&port.postMessage({type:"loadedList"})
@@ -75,8 +86,6 @@ Radio.prototype.getPlayList=function(t,skip,port){
 				for(s in songs){
 					songs[s].sid&&self.song_list.push(songs[s])
 				}
-			}else{
-				//self.song_list=self.red.getSongList()
 			}
 			if(self.song_list.length>20) self.song_list=self.song_list.slice(-20)						
 			if(self.song_list.length>0) skip&&self.changeSong(t,port)
@@ -96,15 +105,13 @@ Radio.prototype.reportEnd=function(){
 }
 
 Radio.prototype.changeSong=function(t,port){
+	this.cleanError()
 	this.audio.pause()
 	if(this.song_list.length<=0){
 		this.getPlayList("p",true,port)
 		return
 	}	
 	this.c_song=this.song_list.shift();
-	//if(this.song_list.length==2){
-	//	this.getPlayList("p",false,port)
-	//}
 	if(t!='n'){
 		h_songs=this.heared.split("|");
 		h_songs.push(this.c_song.sid+":"+t);
@@ -140,7 +147,6 @@ Radio.prototype.del=function(p){
 
 Radio.prototype.powerOn=function(port){
 	this.audio.pause()
-	//this.red.init()
 	this.getPlayList("n",true,port)
 }
 
@@ -159,12 +165,11 @@ var p;
 radio.audio.addEventListener("ended",function(){
 	radio.reportEnd()
 	radio.changeSong("p",p)
-	var c=localStorage.channel?localStorage.channel:"0"
-	_gaq.push(['_trackEvent', 'song-' + c, 'played']);
+	_gaq.push(['_trackEvent', 'song_played', 'played']);
 })
 
 radio.audio.addEventListener("error",function(e){
-	console.error("error on load audio!",e)
+	radio.error("载入歌曲失败")
 })
 
 var onTimeUpdate=function(){
@@ -176,8 +181,7 @@ var onTimeUpdate=function(){
 }
 
 $("body").ajaxError(function(event,jqXHR,setting){
-	console.log("error when get song list!")
-	p&&p.postMessage({type:"error",errorText:jqXHR.status})
+	radio.error(jqXHR.status)
 })//交互事件
 
 chrome.extension.onConnect.addListener(function(port){
@@ -195,6 +199,9 @@ chrome.extension.onConnect.addListener(function(port){
 		volume:radio.audio.volume,
 		checked:radio.checked
 	})
+	if(radio.hasError){
+		radio.error(radio.errorText)
+	}
 	port.onDisconnect.addListener(function(){
 		p=undefined;
 		radio.audio.removeEventListener("timeupdate",onTimeUpdate)
