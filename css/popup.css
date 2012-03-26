@@ -1,9 +1,9 @@
-body{margin:0;padding:0;height:105px}
+body{margin:0px;padding:0px;}
 *{font-family: 微软雅黑;}
-#main{width:280px;padding:2px;height:105px;overflow:hidden;}
+#main{width:280px;padding:2px 2px 2px 0px;height:105px;overflow:hidden;}
 /*头部*/
 #top{height:18px}
-#song_artist {float:left;margin:0px;white-space:nowrap;font-size:13px;color:#3B5343;font-weight:bold;display:inline-block;overflow:hidden;line-height:18px;width:240px}
+#song_artist {vertical-align:top;float:left;margin:0px;white-space:nowrap;font-size:14px;color:#3B5343;font-weight:bold;display:inline-block;text-overflow:ellipsis;overflow:hidden;line-height:18px;width:240px}
 #pause {float:right;width:20px;height:18px;}
 #pause:hover{opacity:0.7}
 /*中部显示*/
@@ -16,13 +16,13 @@ body{margin:0;padding:0;height:105px}
 #switcher:hover{opacity:0.7}
 /*歌曲信息*/
 #song_info{width:240px}
-#song_title {white-space:nowrap;font-size:10px;color:#3B5343;display:inline-block;overflow:hidden;width:238px;line-height:15px;}
+#song_title {white-space:nowrap;font-size:10px;color:#3B5343;display:inline-block;text-overflow:ellipsis;overflow:hidden;width:238px;line-height:15px;}
 #loaded{height:3px;background-color:#E9F4E9;width:240px;opacity:0.8;margin-top:2px}
 #played{height:3px;background-color:#3B5343;width:0px;opacity:0.8}
 #timer{margin-top:3px;font-size:10px;color:#777;float:right;display:block;vertical-align:middle;line-height:14px;height:15px}
 #timer img{height:15px}
 /*底部信息*/
-#bottom{width:280px;height:25px;position: absolute;bottom:2px}
+#bottom{width:280px;height:25px;position:absolute;bottom:2px}
 /*播放控制*/
 #operation{width:120px;height:21px;position: absolute;bottom:0}
 .button {margin-right:7px;cursor:pointer;width:20px;height:20px}
@@ -36,7 +36,7 @@ body{margin:0;padding:0;height:105px}
 /*频道选择*/
 #channel_popup{background-color:#fff;height:100%;width:100%;overflow-y:scroll;position:absolute;z-index:999;left:0;top:0;padding:0px;opacity:0.95;display:none}
 #channels{list-style-type:none;list-style-position:outside;padding:0;text-align:center;margin-top:10px}
-#channels li{background-color:#fafafa;opacity:0.95;margin-bottom:5px;width:100px;margin-left:15px;float:left;color:#3B5343}
+#channels li{vertical-align:middle;background-color:#fafafa;opacity:0.95;margin-bottom:5px;width:100px;margin-left:15px;float:left;color:#3B5343}
 #channels li:hover{cursor:pointer;background-color:#3B5343;color:#fff}
 #channels .channel_selected{background-color:#3B5345;color:#fff}
 #close_c{position:fixed;right:15px;top:5px;width:15px;opacity:0.5}

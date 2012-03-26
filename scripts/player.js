@@ -27,7 +27,6 @@ var verifyCookie=function(c){
 			!c&&$("#notify_login").show()
 			c&&$("#notify_login").hide()
 			port.postMessage({type:"check"})
-			_gaq.push(['_trackEvent', 'not_login', 'happen']);	
 			console.warn("failed to get cookie")
 			checked=false
 		}
