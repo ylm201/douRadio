@@ -3,9 +3,21 @@ var power=false
 var lock=false
 var checked=false
 
-var ch=$("#"+localStorage.channel).html()
-$("#switcher").attr("title",ch)
-
+var ch=$("#"+localStorage.channel);
+if(ch.length>0){
+	$("#switcher").attr("title",$("#"+localStorage.channel).html());
+}else{
+	if (localStorage.myChannels){
+		var obj=JSON.parse(localStorage.myChannels);
+		if(obj[localStorage.channel]){
+			$("#switcher").attr("title",obj[localStorage.channel]);
+		}
+	}
+}
+if(localStorage.version!="1.0.7"){
+	$("#update").show().fadeOut(10000);
+	localStorage.version="1.0.7";
+}
 var port=chrome.extension.connect({name:"douRadio"})
 
 //登录处理
@@ -124,6 +136,7 @@ showSong=function(data){
 	if(data.title){
 		$("#song_title").html(data.title)
 		$("#song_title").attr("title",data.title)	
+		$("#song_title").attr("href","http://music.douban.com"+data.album)
 		$("#song_artist").html(data.artist)
 		$("#song_artist").attr("title",data.artist)
 		power&&$("#timer").html("<img src='img/loading.gif'/>")
@@ -207,26 +220,50 @@ $("#volume img").toggle(function(){
 $("#switcher").bind("click",function(){
 	$("#channel_popup").fadeIn("slow")
 	var sc=localStorage["channel"]?localStorage["channel"]:"0"
-	$("#"+sc).addClass("channel_selected")
-		.siblings().removeClass("channel_selected")
-})
-
-$("#channels li").bind("click",function(){
-	var sc=$(this).attr("id")
-	if(!localStorage.channel||localStorage.channel!=sc){
-		localStorage.channel=sc
-		sendRequest("switch")
+	if(sc!="-3"){
+		$("#"+sc).addClass("channel_selected")
+			.siblings().removeClass("channel_selected")
+			$(".red_channel").removeClass("red_channel_selected")
+	}else{
+		$("#"+sc).addClass("red_channel_selected")
+			.siblings().removeClass("channel_selected")
 	}
-	$(this).addClass("channel_selected")
-		.siblings().removeClass("channel_selected")
-	$("#channel_popup").fadeOut("slow")
-	var ch=$("#"+localStorage.channel).html()
-	$("#switcher").attr("title",ch)
-
 })
 
-$("#close_c").bind("click",function(){
-	$("#channel_popup").fadeOut("slow")
+var changeChannel=function(){
+	var sc=$(this).attr("id")
+	if(sc=="my") return;
+	if(/^-?\d+$/.test(sc)){
+		if(!localStorage.channel||localStorage.channel!=sc){
+			localStorage.channel=sc
+			localStorage.context="";
+			sendRequest("switch")
+		}
+	}else{
+		if(!localStorage.context||localStorage.context!=sc){
+			localStorage.channel=0;
+			localStorage.context=sc;
+			sendRequest("switch");
+		}
+	}
+	
+	if(sc!="-3"){
+		$(this).addClass("channel_selected")
+			.siblings().removeClass("channel_selected")
+			//.removeClass("red_channel_selected")
+	}else{
+		$(this).addClass("red_channel_selected")
+			.siblings().removeClass("channel_selected")
+	}
+	$(".popup").fadeOut("slow");
+	var title=$(this).attr("title");
+	var ch=$("#"+localStorage.channel).html();
+	$("#switcher").attr("title",title?title:ch);
+}
+
+
+$(".close_c").bind("click",function(){
+	$(".popup").fadeOut("slow")
 })
 
 $("#login_close").bind("click",function(){
@@ -234,7 +271,39 @@ $("#login_close").bind("click",function(){
 	port.postMessage({type:"checked"})
 })
 
+$("#my").bind("click",function(e){
+	$("#channel_popup").hide();
+	$("#my_popup").fadeIn();
+	var channels=JSON.parse(localStorage.myChannels);
+	var ul=$("#my_popup .channels")
+	ul.html("");
+	$.each(channels,function(index,value){
+		var li=$("<li class='channel_my' id='"+index+"' title='"+value+"'><a class='channel_my_del'>x</a><span>"+value+"</span></li>");
+		if(localStorage.channel==index){
+			li.addClass("channel_selected")
+		}
+		li.bind("click",changeChannel);
+		li.hover(function(){
+			$(this).find(".channel_my_del").fadeIn(100);
+		},function(){
+			$(this).find(".channel_my_del").fadeOut(100);
+		})
+		li.find(".channel_my_del").click(function(e){
+			$(this).parent().fadeOut();
+			var id=$(this).parent().attr("id")
+			var obj=JSON.parse(localStorage.myChannels)
+			delete obj[id];
+			localStorage.setItem("myChannels",JSON.stringify(obj));
+			return false;
+		})
+		ul.append(li)
+	});	
+	e.stopPropagation();
+	e.preventDefault();
+	return false;
+})
 
+$("#channel_popup li").bind("click",changeChannel)
 var share_sina=function(content,url,pic){
 	window.open("http://service.weibo.com/share/share.php?url=" 
 			+ encodeURIComponent(url) + "&appkey=694135578" 

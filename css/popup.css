@@ -1,6 +1,7 @@
-body{margin:0px;padding:0px;}
+body{margin:0px;padding:4px 2px 0px 2px  ;}
 *{font-family: 微软雅黑;}
-#main{width:280px;padding:2px 2px 2px 0px;height:105px;overflow:hidden;}
+a,li{text-decoration:none;}
+#main{width:280px;height:105px;overflow:hidden;}
 /*头部*/
 #top{height:18px}
 #song_artist {vertical-align:top;float:left;margin:0px;white-space:nowrap;font-size:14px;color:#3B5343;font-weight:bold;display:inline-block;text-overflow:ellipsis;overflow:hidden;line-height:18px;width:240px}
@@ -22,7 +23,7 @@ body{margin:0px;padding:0px;}
 #timer{margin-top:3px;font-size:10px;color:#777;float:right;display:block;vertical-align:middle;line-height:14px;height:15px}
 #timer img{height:15px}
 /*底部信息*/
-#bottom{width:280px;height:25px;position:absolute;bottom:2px}
+#bottom{width:280px;height:25px;position:absolute;bottom:4px}
 /*播放控制*/
 #operation{width:120px;height:21px;position: absolute;bottom:0}
 .button {margin-right:7px;cursor:pointer;width:20px;height:20px}
@@ -34,16 +35,19 @@ body{margin:0px;padding:0px;}
 .clear{clear:both}
 
 /*频道选择*/
-#channel_popup{background-color:#fff;height:100%;width:100%;overflow-y:scroll;position:absolute;z-index:999;left:0;top:0;padding:0px;opacity:0.95;display:none}
-#channels{list-style-type:none;list-style-position:outside;padding:0;text-align:center;margin-top:10px}
-#channels li{vertical-align:middle;background-color:#fafafa;opacity:0.95;margin-bottom:5px;width:100px;margin-left:15px;float:left;color:#3B5343}
-#channels li:hover{cursor:pointer;background-color:#3B5343;color:#fff}
-#channels .channel_selected{background-color:#3B5345;color:#fff}
-#close_c{position:fixed;right:15px;top:5px;width:15px;opacity:0.5}
-#close_c:hover{opacity:1.0}
+.popup{background-color:#fff;height:100%;width:100%;overflow-y:scroll;position:absolute;z-index:999;left:0;top:0;padding:0px;display:none}
+.channels{list-style-type:none;list-style-position:outside;padding:0;text-align:center;margin-top:5px}
+.channels li{vertical-align:middle;background-color:#fafafa;opacity:0.95;margin-bottom:5px;width:100px;margin-left:15px;float:left;color:#3B5343;line-height:20px;font-size:15px}
+.channels li:hover{cursor:pointer;background-color:#3B5343;color:#fff}
+.channels .channel_selected{background-color:#3B5345;color:#fff}
+.close_c{position:fixed;right:15px;top:5px;width:15px;opacity:0.5}
+.close_c:hover{opacity:1.0}
+.red_channel{color:rgb(254,66,94)!important}
+.red_channel:hover{background-color:rgb(254,66,94) !important;color:#fff !important}
+.red_channel_selected{background-color:rgb(254,66,94) !important;color:#fff!important}
 
 /*信息栏*/
-.warn{height:18px;background-color:#3B5343;opacity:0.9;position:absolute;z-index:10000;right:30px;top:2px;}
+.warn{height:18px;background-color:#3B5343;opacity:0.9;position:absolute;z-index:10000;right:30px;top:4px;display:none}
 .warn span{color:#fff;display:block;font-size:11px;line-height:17px;vertical-align:middle;margin-left:2px}
 .warn a{color:#fff;}
 
@@ -82,3 +86,10 @@ body{margin:0px;padding:0px;}
 	border-radius: 10px;
 	-webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.5);
 }
+
+#dj_channels{float:left;list-style-type:none;padding:4px;}
+.channel_my{white-space:nowrap;width:120px !important; overflow:hidden !important;text-align:left} 
+.channel_my_del{float:right;margin-right:5px;font-weight:bold;display:none;width:8px}
+.channel_my_del:hover{color:rgb(254,66,94)}
+.channel_my span{width:103px;white-space:nowrap;overflow:hidden;margin-left:5px;display:inline-block;text-overflow:ellipsis;}
+.exploer{margin:5px 0px 2px 12px;color:#52A691;font-size:14px}

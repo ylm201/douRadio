@@ -1,4 +1,3 @@
-ï»¿<!DOCTYPE HTML>
 <html>
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
@@ -20,26 +19,26 @@
 		<div id="mask" style="width:100%;height:100%;position:absolute;top:0;left:0;z-index:1001;opacity:0.5;display:none;background-color:#fff"></div>
 
 		<div id="notify"  class="warn">
-			<span>è½½å…¥æ’­æ”¾åˆ—è¡¨ä¸­ã€‚ã€‚ã€‚</span>
+			<span>ÔØÈë²¥·ÅÁÐ±íÖÐ¡£¡£¡£</span>
 		</div>
 
 		<div id="update" class="warn">
-			<span>å°è±†ç”µå°æ¢å¤çº¢å¿ƒå…†èµ«å•¦ï¼</span>
+			<span>Ð¡¶¹µçÌ¨»Ö¸´ºìÐÄÕ×ºÕÀ²£¡</span>
 		</div>
 
 		<div id="error" class="warn">
-			<span>å“Žå‘€ï¼Œå‡ºé”™å•¦!</span>
+			<span>°¥Ñ½£¬³ö´íÀ²!</span>
 		</div>
 		
 		<div id="notify_login" class="warn" >
 			<span>
-				è¯·å…ˆ<a href="http://www.douban.com/accounts/login" title="ä¸ç™»å½•å°†æ— æ³•æ­£å¸¸æ”¶å¬ç§äººé¢‘é“ï¼Œå’ŒåŠ å¿ƒç­‰æ“ä½œï¼" style="font-weight:bold;text-decoration:none;color:#aaa" target="_blank">ç™»å½•</a>è±†ç“£ç”µå°<a  id="login_close" href="#" title="ä¸ç™»å½•å°†æ— æ³•æ­£å¸¸æ”¶å¬ç§äººé¢‘é“ï¼Œå’ŒåŠ å¿ƒç­‰æ“ä½œï¼" style="text-decoration:none;float:right;margin-right:4px;font-weight:bold">x</a>
+				ÇëÏÈ<a href="http://www.douban.com/accounts/login" title="²»µÇÂ¼½«ÎÞ·¨Õý³£ÊÕÌýË½ÈËÆµµÀ£¬ºÍ¼ÓÐÄµÈ²Ù×÷£¡" style="font-weight:bold;text-decoration:none;color:#aaa" target="_blank">µÇÂ¼</a>¶¹°êµçÌ¨<a  id="login_close" href="#" title="²»µÇÂ¼½«ÎÞ·¨Õý³£ÊÕÌýË½ÈËÆµµÀ£¬ºÍ¼ÓÐÄµÈ²Ù×÷£¡" style="text-decoration:none;float:right;margin-right:4px;font-weight:bold">x</a>
 			</span>
 		</div>
 
-		<!--ä¸»é¡µé¢-->
+		<!--Ö÷Ò³Ãæ-->
 		<div id="top">
-			<span id="song_artist" title="è±†ç“£ç”µå°">è±†ç“£ç”µå°</span>
+			<a id="song_artist" title="¶¹°êµçÌ¨">¶¹°êµçÌ¨</a>
 			<img id="pause" src="img/pause.png"/>
 		</div>
 		<div id="display">
@@ -48,7 +47,7 @@
 				<img id="switcher" img src="img/channel.png"/>
 			</div>
 			<div id="song_info">
-				<a id="song_title" href="#" target="_blank">--</a>
+				<a id="song_title">--</a>
 				<div id="loaded">
 					<div id="played"></div>
 				</div>
@@ -79,30 +78,32 @@
 
 	<div id="channel_popup" class="popup">
 		<img src="img/close_c.png" class="close_c"/>
-		
 		<ul class="channels">
-			<li id="-3" class="red_channel">çº¢å¿ƒå…†èµ«</li>
-			<li id="my">DJå…†èµ«</li>
-			<li id="music">æ­Œæ‰‹/ä¸“è¾‘</li>
-			<li id="61" >æ–°æ­ŒMHz</li>
-			<li id="0" >ç§äººMHz</li><li id="1">åŽè¯­MHz</li>
-			<li id="6">ç²¤è¯­MHz</li><li id="2">æ¬§ç¾Ž</li>
-			<li id="22">æ³•è¯­</li><li id="17">æ—¥è¯­</li>
-			<li id="18">éŸ©è¯­</li><li id="8">æ°‘è°£</li>
-			<li id="7">æ‘‡æ»š</li><li id="13">çˆµå£«</li>
-			<li id="27">å¤å…¸</li><li id="9">è½»éŸ³ä¹</li>
-			<li id="14">ç”µå­ä¹</li><li id="16">r&b</li>
-			<li id="15">è¯´å”±</li><li id="10">ç”µå½±åŽŸå£°</li>
-			<li id="3">70å¹´ä»£</li><li id="4">80å¹´ä»£</li>
-			<li id="5">90å¹´ä»£</li><li id="26">è±†ç“£éŸ³ä¹äºº</li>
-			<li id="20">å¥³å£°</li><li id="28">åŠ¨æ¼«</li>
-			<li id="32">é›€å·¢</li><li id="52">ä¹æ··ç¿»å”±</li>
+			<li id="-3" class="red_channel">ºìÐÄÕ×ºÕ</li>
+			<li id="my">ÎÒµÄµçÌ¨</li>
+			<li id="61" >ÐÂ¸èMHz</li>
+			<li id="0" >Ë½ÈËMHz</li><li id="1">»ªÓïMHz</li>
+			<li id="6">ÔÁÓïMHz</li><li id="2">Å·ÃÀ</li>
+			<li id="22">·¨Óï</li><li id="17">ÈÕÓï</li>
+			<li id="18">º«Óï</li><li id="8">ÃñÒ¥</li>
+			<li id="7">Ò¡¹ö</li><li id="13">¾ôÊ¿</li>
+			<li id="27">¹Åµä</li><li id="9">ÇáÒôÀÖ</li>
+			<li id="14">µç×ÓÀÖ</li><li id="16">r&b</li>
+			<li id="15">Ëµ³ª</li><li id="10">µçÓ°Ô­Éù</li>
+			<li id="3">70Äê´ú</li><li id="4">80Äê´ú</li>
+			<li id="5">90Äê´ú</li><li id="26">¶¹°êÒôÀÖÈË</li>
+			<li id="20">Å®Éù</li><li id="28">¶¯Âþ</li>
+			<li id="32">È¸³²</li><li id="52">ÀÖ»ì·­³ª</li>
 		</ul>
 	</div>
 	<div id="my_popup" class="popup">
-		<a href="http://douban.fm/explore/" class="exploer" target="_blank">å‘çŽ°æ›´å¤šå…†èµ«..</a>
+		<a href="http://douban.fm/explore/" class="exploer" >·¢ÏÖ¸ü¶àDJÕ×ºÕ..</a>
 		<img src="img/close_c.png" class="close_c"/><br/>
 		<ul class="channels">
+			<li class="channel_my">
+				<a class="channel_my_del">x</a>
+				<span>ÎÒµÄÕ×ºÕ</span>
+			</li>
 		</ul>
 	</div>
 	<script type="text/javascript" src="scripts/player.js"></script>

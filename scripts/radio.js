@@ -23,7 +23,7 @@ Radio.init=function(audio){
 	var radio=new Radio()
 	radio.audio=audio
 	radio.audio.volume=localStorage.volume?localStorage.volume:0.8
-	radio.channel=localStorage['channel']?localStorage['channel']:1		
+	radio.channel=localStorage['channel']?localStorage['channel']:61		
 	//douban.fm的cookie是session级别，从douban.com获取dbcl2的cookie到douban.fm
 	chrome.cookies.get({
 		url:"http://douban.com",
@@ -70,10 +70,11 @@ Radio.prototype.getPlayList=function(t,skip,port){
 			h:this.heared,
 			sid:this.c_song? this.c_song.sid:'',
 			r:Math.random(),
-			from:"mainsite"
+			from:"mainsite",
+			context:localStorage.context?localStorage.context:""
 		},function(data){
 			if(data.err){
-				self.error(data.error)
+				self.error(data.err)
 				return;
 			}
 			port&&port.postMessage({type:"loadedList"})
@@ -99,7 +100,7 @@ Radio.prototype.reportEnd=function(){
 	$.get("http://douban.fm/j/mine/playlist",{
 			type:'e',
 			sid:this.c_song.sid,
-			channel:this.channel,
+			channel:localStorage['channel']?localStorage['channel']:61,
 			from:"mainsite"	
 		})		
 }
@@ -122,8 +123,11 @@ Radio.prototype.changeSong=function(t,port){
 	if(port){
 		port.postMessage({type:"song",song:radio.c_song})
 	}else{
-		var notification = webkitNotifications.createHTMLNotification('notification.html');
+		var notification = webkitNotifications.createNotification("",this.c_song.artist,this.c_song.title);
 		notification.show();
+		setTimeout(function(){
+			notification.cancel();
+		},5000)
 	}
 	chrome.browserAction.setTitle({title:radio.c_song.artist+":"+radio.c_song.title})
 }
@@ -165,7 +169,11 @@ var p;
 radio.audio.addEventListener("ended",function(){
 	radio.reportEnd()
 	radio.changeSong("p",p)
-	_gaq.push(['_trackEvent', 'song_played', 'played']);
+	if(localStorage.channel=="-3"){
+		_gaq.push(['_trackEvent', 'song_red_played', 'played']);
+	}else{
+		_gaq.push(['_trackEvent', 'song_played', 'played']);
+	}
 })
 
 radio.audio.addEventListener("error",function(e){
