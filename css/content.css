@@ -1,4 +1,4 @@
-.button{margin-left:10px;cursor:pointer;border-radius:3px;font-size:12px;display:none;background-color:#52A691;color:#fff;line-height:18px;padding:0px 6px 0 6px}
+.button{margin-left:10px;cursor:pointer;border-radius:3px;font-size:12px;display:none;background-color:#52A691;color:#fff;line-height:15px;padding:0px 6px 0 6px}
 .add-fav-dou{display:none}
 .play-in-dou{opacity:0.5; }
 .play-in-dou:hover{opacity:1.0}

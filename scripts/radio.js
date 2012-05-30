@@ -63,32 +63,38 @@ Radio.prototype.getPlayList=function(t,skip,port){
 	if(skip){
 		port&&port.postMessage({type:"loadingList"})
 	}
-	var self =this
+	var self =this;
+	var ch=localStorage.channel?localStorage.channel:0;
+	var context;
+	if(ch=="dj"&&localStorage.djc){
+		ch=localStorage.djc;
+	}else if(ch=="subject"){
+		localStorage.context&&(context=localStorage.context);
+		ch=0;
+	}
 	$.getJSON("http://douban.fm/j/mine/playlist",{
 			type:t,
-			channel:localStorage.channel?localStorage.channel:0,
+			channel:ch,
 			h:this.heared,
 			sid:this.c_song? this.c_song.sid:'',
 			r:Math.random(),
 			from:"mainsite",
-			context:localStorage.context?localStorage.context:""
+			context:context?context:""
 		},function(data){
 			if(data.err){
 				self.error(data.err)
 				return;
 			}
-			port&&port.postMessage({type:"loadedList"})
-			var songs=data.song
-			if(t=="n") {
-				self.song_list=[]
-				self.power=true
+			port&&port.postMessage({type:"loadedList"});
+			if(t=="n") self.power=true;
+			var songs=data.song;
+			self.song_list=[];
+			console.log("loading song...");
+			for(s in songs){
+				songs[s].sid&&self.song_list.push(songs[s]);
+				console.log(songs[s]);
 			}
-			if(localStorage.channel!="-1"){
-				for(s in songs){
-					songs[s].sid&&self.song_list.push(songs[s])
-				}
-			}
-			if(self.song_list.length>20) self.song_list=self.song_list.slice(-20)						
+			console.log("loading song end..");
 			if(self.song_list.length>0) skip&&self.changeSong(t,port)
 		})
 }

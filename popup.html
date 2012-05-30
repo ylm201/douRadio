@@ -1,22 +1,13 @@
-﻿<!DOCTYPE HTML>
+<!DOCTYPE HTML>
 <html>
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 		<link rel="stylesheet" type="text/css" href="css/popup.css">
 		<script type="text/javascript" src="lib/jquery.min.js"></script>
+		
 	</head>
 	<body>
 	<div id="main">
-		<script>
-			var _gaq = _gaq || [];
-			_gaq.push(['_setAccount', 'UA-27166419-3']);
-			//_gaq.push(['_trackPageview','popup_v1.0.5']);
-			(function() {
-				var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-				ga.src = 'https://ssl.google-analytics.com/ga.js';
-				var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-			})();
-		</script>
 		<div id="mask" style="width:100%;height:100%;position:absolute;top:0;left:0;z-index:1001;opacity:0.5;display:none;background-color:#fff"></div>
 
 		<div id="notify"  class="warn">
@@ -24,7 +15,7 @@
 		</div>
 
 		<div id="update" class="warn">
-			<span>小豆电台恢复红心兆赫啦！</span>
+			<span>小豆更新啦！<a href="options.html#update" target="_blank" style="font-weight:bold">查看更新日志</a> </span>
 		</div>
 
 		<div id="error" class="warn">
@@ -82,8 +73,8 @@
 		
 		<ul class="channels">
 			<li id="-3" class="red_channel">红心兆赫</li>
-			<li id="my">DJ兆赫</li>
-			<li id="music">歌手/专辑</li>
+			<li id="dj" class="my">DJ兆赫</li>
+			<li id="subject" class="my">歌手/专辑</li>
 			<li id="61" >新歌MHz</li>
 			<li id="0" >私人MHz</li><li id="1">华语MHz</li>
 			<li id="6">粤语MHz</li><li id="2">欧美</li>
@@ -101,6 +92,7 @@
 	</div>
 	<div id="my_popup" class="popup">
 		<a href="http://douban.fm/explore/" class="exploer" target="_blank">发现更多兆赫..</a>
+		<a href="http://music.douban.com" class="exploer" target="_blank">豆瓣音乐...</a>
 		<img src="img/close_c.png" class="close_c"/><br/>
 		<ul class="channels">
 		</ul>

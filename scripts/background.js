@@ -1,42 +1,34 @@
 var addChannel=function(req){
-	var channels=JSON.parse(localStorage.getItem("myChannels"));
+	var channels=JSON.parse(localStorage.getItem("dj"));
 		if (!channels) channels={};
 		if(channels[req.id]){
 			return false;
 		}else{
 			channels[req.id]=req.title;
-			localStorage.setItem("myChannels",JSON.stringify(channels));
+			localStorage.setItem("dj",JSON.stringify(channels));
 			return true;
 		}
 }
 chrome.extension.onRequest.addListener(function(req,sender,resp){
-	if(req.type=="addChannel"){
-		var b=addChannel(req);
-		if(b){
-			resp({status:"N"})
-		}else{
-			resp({status:"Y"})
-		}
-	}
 	if(req.type=="playChannel"){
 		addChannel(req)
-		localStorage.channel=req.id;
+		localStorage.channel="dj";
+		localStorage.djc=req.id;
+		//localStorage.removeItem("context");
 		radio.powerOn();	
 		resp();
 	}
 	if(req.type=="playMusic"){
-		localStorage.channel=0;
+		localStorage.channel="subject";
 		localStorage.context=req.context;
+		//localStorage.removeItem("djc");
 		radio.powerOn();
-		resp();
-		var channels=JSON.parse(localStorage.getItem("myChannels"));
+		resp(req.title);
+		var channels=JSON.parse(localStorage.getItem("subject"));
 		if (!channels) channels={};
-		if(channels[req.context]){
-			return false;
-		}else{
+		if(!channels[req.context]){
 			channels[req.context]=req.title;
-			localStorage.setItem("myChannels",JSON.stringify(channels));
-			return true;
+			localStorage.setItem("subject",JSON.stringify(channels));
 		}
 	}
 });

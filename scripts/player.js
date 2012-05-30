@@ -2,21 +2,28 @@ var c_song={}
 var power=false
 var lock=false
 var checked=false
-
-var ch=$("#"+localStorage.channel);
-if(ch.length>0){
-	$("#switcher").attr("title",$("#"+localStorage.channel).html());
-}else{
-	if (localStorage.myChannels){
-		var obj=JSON.parse(localStorage.myChannels);
-		if(obj[localStorage.channel]){
-			$("#switcher").attr("title",obj[localStorage.channel]);
-		}
+var channelType=""
+//初始化播放器
+var ch=localStorage.channel;
+if(ch=="dj"&&localStorage.dj){//dj兆赫
+	var obj=JSON.parse(localStorage.dj);
+	var djc=localStorage.djc;
+	if(obj&&djc&&obj[djc]){
+		$("#switcher").attr("title",obj[djc]);
 	}
+}else if(ch=="subject"){//专辑兆赫
+	var obj=JSON.parse(localStorage.subject);
+	var su=localStorage.context;
+	if(obj&&obj[localStorage.context]){
+		$("#switcher").attr("title",obj[su]);
+	}
+}else{//普通兆赫
+	$("#switcher").attr("title",$("#"+ch).html());
 }
-if(localStorage.version!="1.0.7"){
+
+if(localStorage.version!="2.0.1"){
 	$("#update").show().fadeOut(10000);
-	localStorage.version="1.0.7";
+	localStorage.version="2.0.1";
 }
 var port=chrome.extension.connect({name:"douRadio"})
 
@@ -101,6 +108,7 @@ port.onMessage.addListener(function(msg){
 	}
 })
 
+//播放时间显示
 var changeToTime=function(time){
 	var min=0
 	var second=0
@@ -134,11 +142,13 @@ showSong=function(data){
 		$("#like").attr("src","img/unrated.png")
 	}
 	if(data.title){
-		$("#song_title").html(data.title)
-		$("#song_title").attr("title",data.title)	
-		$("#song_title").attr("href","http://music.douban.com"+data.album)
-		$("#song_artist").html(data.artist)
-		$("#song_artist").attr("title",data.artist)
+		var title=$("#song_title");
+		var artist=$("#song_artist");
+		title.html(data.title)
+		title.attr("title",data.title)	
+		title.attr("href","http://music.douban.com"+data.album)
+		artist.html(data.artist)
+		artist.attr("title",data.artist)
 		power&&$("#timer").html("<img src='img/loading.gif'/>")
 		$("#played").css("width","0px")
 	}else{
@@ -231,29 +241,24 @@ $("#switcher").bind("click",function(){
 })
 
 var changeChannel=function(){
-	var sc=$(this).attr("id")
-	if(sc=="my") return;
-	if(/^-?\d+$/.test(sc)){
-		if(!localStorage.channel||localStorage.channel!=sc){
-			localStorage.channel=sc
-			localStorage.context="";
-			sendRequest("switch")
-		}
-	}else{
-		if(!localStorage.context||localStorage.context!=sc){
-			localStorage.channel=0;
-			localStorage.context=sc;
-			sendRequest("switch");
-		}
+	var sc=$(this).attr("id");
+	if(sc=="dj"||sc=="subject"){
+		return getMyChannel(sc);
+	}
+	if(!localStorage.channel||localStorage.channel!=sc){
+		localStorage.channel=sc;
+		//localStorage.removeItem("context");
+		//localStorage.removeItem("djc");
+		sendRequest("switch");
 	}
 	
 	if(sc!="-3"){
 		$(this).addClass("channel_selected")
-			.siblings().removeClass("channel_selected")
-			//.removeClass("red_channel_selected")
+			.siblings().removeClass("channel_selected");
+		$(".red_channel").removeClass("red_channel_selected");
 	}else{
 		$(this).addClass("red_channel_selected")
-			.siblings().removeClass("channel_selected")
+			.siblings().removeClass("channel_selected");
 	}
 	$(".popup").fadeOut("slow");
 	var title=$(this).attr("title");
@@ -261,6 +266,29 @@ var changeChannel=function(){
 	$("#switcher").attr("title",title?title:ch);
 }
 
+var changeMyChannel=function(){
+	var sc=$(this).attr("id")
+	if(/^-?\d+$/.test(sc)){
+		if(localStorage.channel!="dj"||!localStorage.djc||localStorage.djc!=sc){
+			localStorage.channel="dj";
+			localStorage.djc=sc
+			//localStorage.removeItem("context");
+			sendRequest("switch");
+		}
+	}else{
+		if(localStorage.channel!="subject"||!localStorage.context||localStorage.context!=sc){
+			localStorage.channel="subject";
+			localStorage.context=sc;
+			//localStorage.removeItem("djc");
+			sendRequest("switch");
+		}
+	}
+	$(this).addClass("channel_selected")
+			.siblings().removeClass("channel_selected");
+
+	$(".popup").fadeOut("slow");
+	$("#switcher").attr("title",$(this).attr("title"));
+}
 
 $(".close_c").bind("click",function(){
 	$(".popup").fadeOut("slow")
@@ -271,18 +299,27 @@ $("#login_close").bind("click",function(){
 	port.postMessage({type:"checked"})
 })
 
-$("#my").bind("click",function(e){
+var getMyChannel=function(ch){
 	$("#channel_popup").hide();
 	$("#my_popup").fadeIn();
-	var channels=JSON.parse(localStorage.myChannels);
+	var channels;
+	if(ch=="dj"){
+		channels=JSON.parse(localStorage.dj);
+	}else{
+		channels=JSON.parse(localStorage.subject);
+	}
 	var ul=$("#my_popup .channels")
 	ul.html("");
 	$.each(channels,function(index,value){
 		var li=$("<li class='channel_my' id='"+index+"' title='"+value+"'><a class='channel_my_del'>x</a><span>"+value+"</span></li>");
-		if(localStorage.channel==index){
+		if(localStorage.channel=="dj"&&localStorage.djc&&localStorage.djc==index){
 			li.addClass("channel_selected")
 		}
-		li.bind("click",changeChannel);
+		if(localStorage.channel=="subject"&&localStorage.context&&localStorage.context==index){
+			li.addClass("channel_selected")
+		}
+
+		li.bind("click",changeMyChannel);
 		li.hover(function(){
 			$(this).find(".channel_my_del").fadeIn(100);
 		},function(){
@@ -291,17 +328,33 @@ $("#my").bind("click",function(e){
 		li.find(".channel_my_del").click(function(e){
 			$(this).parent().fadeOut();
 			var id=$(this).parent().attr("id")
-			var obj=JSON.parse(localStorage.myChannels)
-			delete obj[id];
-			localStorage.setItem("myChannels",JSON.stringify(obj));
+			if(/^-?\d+$/.test(id)&&localStorage.dj){
+				var obj=JSON.parse(localStorage.dj)
+				delete obj[id];
+				localStorage.setItem("dj",JSON.stringify(obj));
+			}else if(localStorage.subject){
+				obj=JSON.parse(localStorage.subject);
+				delete obj[id];
+				localStorage.setItem("subject",JSON.stringify(obj));
+			}
+			
+			if(id==localStorage.djc){
+				localStorage.removeItem("djc");
+				localStorage.channel="0";
+				power&&sendRequest("on_off");
+			}
+			if(id==localStorage.context){
+				localStorage.removeItem("context");
+				localStorage.channel="0";
+				power&&sendRequest("on_off");
+			}
+			e.stopPropagation()
 			return false;
 		})
 		ul.append(li)
 	});	
-	e.stopPropagation();
-	e.preventDefault();
 	return false;
-})
+}
 
 $("#channel_popup li").bind("click",changeChannel)
 var share_sina=function(content,url,pic){
@@ -329,10 +382,10 @@ var share_sina=function(content,url,pic){
 	var channel=localStorage.channel?localStorage.channel:"0";
 	var content="分享"+c_song.artist+"的单曲《"+c_song.title+"》(来自@豆瓣FM)";
 	var url="";
-	_gaq.push(['_trackEvent', 'share-'+id, 'clicked']);	
-	if(channel!="-1"||this.id=="fanfou"){
-		url="http://douban.fm/?start="+c_song.sid+"g"+c_song.ssid+"g"+channel+"&cid="+channel
-	}
+	//_gaq.push(['_trackEvent', 'share-'+id, 'clicked']);	
+	var ch;
+	if(channel=="dj"||channel=="subject") channel="0";
+	url="http://douban.fm/?start="+c_song.sid+"g"+c_song.ssid+"g"+channel+"&cid="+channel;
 	var pic=c_song.picture&&c_song.picture.replace(/mpic|spic/,"lpic")
 	if(id=="sina"){
 		share_sina(content,url,pic)
