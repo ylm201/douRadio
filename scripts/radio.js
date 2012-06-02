@@ -174,9 +174,12 @@ var radio=Radio.init(document.getElementById("radio"));
 var p;
 radio.audio.addEventListener("ended",function(){
 	radio.reportEnd()
-	radio.changeSong("p",p)
-	if(localStorage.channel=="-3"){
+	radio.changeSong("p",p);
+	var ch=localStorage.channel;
+	if(ch=="-3"){
 		_gaq.push(['_trackEvent', 'song_red_played', 'played']);
+	}else if(ch=="dj"||ch=="subject"){
+		_gaq.push(['_trackEvent', 'song_'+ch+'_played', 'played']);
 	}else{
 		_gaq.push(['_trackEvent', 'song_played', 'played']);
 	}

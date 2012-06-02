@@ -34,7 +34,8 @@ if(/subject_search/.test(window.location.href)){
 			$(".play-in-dou").click(function(){
 				var url=$(".start_radio_musician").attr("href");
 				var context=url.split("?")[1];
-					chrome.extension.sendRequest({type:"playMusic",context:context,title:music},resp);
+				context=context.split("=")[1];
+				chrome.extension.sendRequest({type:"playMusic",context:context,title:music},resp);
 			})
 	}
 }

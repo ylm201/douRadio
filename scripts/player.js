@@ -5,13 +5,14 @@ var checked=false
 var channelType=""
 //初始化播放器
 var ch=localStorage.channel;
+
 if(ch=="dj"&&localStorage.dj){//dj兆赫
 	var obj=JSON.parse(localStorage.dj);
 	var djc=localStorage.djc;
 	if(obj&&djc&&obj[djc]){
 		$("#switcher").attr("title",obj[djc]);
 	}
-}else if(ch=="subject"){//专辑兆赫
+}else if(ch=="subject"&&localStorage.subject){//专辑兆赫
 	var obj=JSON.parse(localStorage.subject);
 	var su=localStorage.context;
 	if(obj&&obj[localStorage.context]){
@@ -100,7 +101,7 @@ port.onMessage.addListener(function(msg){
 	}
 	if(msg.type=="error"){
 		$(".warn").hide();
-		$("#error").html("<span>哎呀，出错了("+msg.errorText+")</span>").fadeIn();
+		$("#error").html("<span>哎呀，出错了("+msg.errorText+")</span>").fadeIn().fadeOut(10000);
 		return
 	}
 	if(msg.type=="cleanError"){
