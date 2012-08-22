@@ -8,21 +8,20 @@
  <body>
 	 <script>
 		 var _gaq = _gaq || [];
-		 _gaq.push(['_setAccount', 'UA-27166419-2']);
-		 //_gaq.push(['_trackPageview']);
-		 (function() {
+		 _gaq.push(['_setAccount', 'UA-27166419-3']);
+		 if(localStorage.version!="2.0.1"){
+		 	_gaq.push(['_trackPageview',"install-2.0.1"]);	
+		}	
+		(function() {
 			 var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
 			 ga.src = 'https://ssl.google-analytics.com/ga.js';
 			 var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
 		 })();
-		 if(!localStorage.version||localStorage.version!="1.01"){
-			_gaq.push(['_trackEvent', 'version-1.01', localStorage.version]);
-			localStorage.version="1.01"
-		 }
-	 </script>
 
+	 </script>
 	<audio id="radio"></audio>
 	<script type="text/javascript" src="scripts/radio.js"></script>	
+	<script type="text/javascript" src="scripts/background.js"></script>
  </body>
 </html>
 

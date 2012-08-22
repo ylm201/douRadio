@@ -10,8 +10,9 @@ var Radio=function(){
 	this.power=false;
 	this.uid='';
 	this.heared='';
-	//this.red=new Red()
 	this.checked=false;
+	this.hasError=false;
+	this.errorText=""
 	if(!localStorage.channel) localStorage.channel=61
 }
 
@@ -22,7 +23,7 @@ Radio.init=function(audio){
 	var radio=new Radio()
 	radio.audio=audio
 	radio.audio.volume=localStorage.volume?localStorage.volume:0.8
-	radio.channel=localStorage['channel']?localStorage['channel']:1		
+	radio.channel=localStorage['channel']?localStorage['channel']:61		
 	//douban.fm的cookie是session级别，从douban.com获取dbcl2的cookie到douban.fm
 	chrome.cookies.get({
 		url:"http://douban.com",
@@ -42,6 +43,19 @@ Radio.init=function(audio){
 	return radio	
 }
 
+Radio.prototype.error=function(error){
+	_gaq.push(['_trackPageview','error-'+error]);
+	p&&p.postMessage({type:"error",errorText:error});
+	this.hasError=true;
+	this.errorText=error;
+}
+
+Radio.prototype.cleanError=function(){
+	p&&p.postMessage({type:"cleanError"});
+	this.hasError=false;
+	this.errorText="";
+}
+
 /**
  *获取播放列表
  * */
@@ -49,34 +63,39 @@ Radio.prototype.getPlayList=function(t,skip,port){
 	if(skip){
 		port&&port.postMessage({type:"loadingList"})
 	}
-	var self =this
+	var self =this;
+	var ch=localStorage.channel?localStorage.channel:0;
+	var context;
+	if(ch=="dj"&&localStorage.djc){
+		ch=localStorage.djc;
+	}else if(ch=="subject"){
+		localStorage.context&&(context=localStorage.context);
+		ch=0;
+	}
 	$.getJSON("http://douban.fm/j/mine/playlist",{
 			type:t,
-			channel:localStorage.channel?localStorage.channel:0,
+			channel:ch,
 			h:this.heared,
 			sid:this.c_song? this.c_song.sid:'',
 			r:Math.random(),
-			from:"mainsite"
+			from:"mainsite",
+			context:context?context:""
 		},function(data){
-			port&&port.postMessage({type:"loadedList"})
-			var songs=data.song
-			if(t=="n") self.song_list=[]
-			if(localStorage.channel!="-1"){
-				for(s in songs){
-					songs[s].sid&&self.song_list.push(songs[s])
-				}
-			}else{
-				//self.song_list=self.red.getSongList()
+			if(data.err){
+				self.error(data.err)
+				return;
 			}
-			if(self.song_list.length>20) self.song_list=self.song_list.slice(-20)						
-			//日志打印
-			//if(t=="p"){
-				//console.info("----------------------------------------------")
-				//for(s in self.song_list){
-				//	console.info(self.song_list[s].title+"--"+self.song_list[s].artist)
-				//}	
-			//}
-			skip&&self.changeSong(t,port)
+			port&&port.postMessage({type:"loadedList"});
+			if(t=="n") self.power=true;
+			var songs=data.song;
+			self.song_list=[];
+			console.log("loading song...");
+			for(s in songs){
+				songs[s].sid&&self.song_list.push(songs[s]);
+				console.log(songs[s]);
+			}
+			console.log("loading song end..");
+			if(self.song_list.length>0) skip&&self.changeSong(t,port)
 		})
 }
 
@@ -87,23 +106,19 @@ Radio.prototype.reportEnd=function(){
 	$.get("http://douban.fm/j/mine/playlist",{
 			type:'e',
 			sid:this.c_song.sid,
-			channel:this.channel,
+			channel:localStorage['channel']?localStorage['channel']:61,
 			from:"mainsite"	
 		})		
 }
 
 Radio.prototype.changeSong=function(t,port){
+	this.cleanError()
 	this.audio.pause()
 	if(this.song_list.length<=0){
 		this.getPlayList("p",true,port)
 		return
-	}
-	var c=localStorage.channel?localStorage.channel:"0"
-	_gaq.push(['_trackEvent', 'channel' + c, 'played']);	
+	}	
 	this.c_song=this.song_list.shift();
-	//if(this.song_list.length==2){
-	//	this.getPlayList("p",false,port)
-	//}
 	if(t!='n'){
 		h_songs=this.heared.split("|");
 		h_songs.push(this.c_song.sid+":"+t);
@@ -114,8 +129,11 @@ Radio.prototype.changeSong=function(t,port){
 	if(port){
 		port.postMessage({type:"song",song:radio.c_song})
 	}else{
-		var notification = webkitNotifications.createHTMLNotification('notification.html');
+		var notification = webkitNotifications.createNotification("",this.c_song.artist,this.c_song.title);
 		notification.show();
+		setTimeout(function(){
+			notification.cancel();
+		},5000)
 	}
 	chrome.browserAction.setTitle({title:radio.c_song.artist+":"+radio.c_song.title})
 }
@@ -138,9 +156,7 @@ Radio.prototype.del=function(p){
 }
 
 Radio.prototype.powerOn=function(port){
-	this.power=true
 	this.audio.pause()
-	//this.red.init()
 	this.getPlayList("n",true,port)
 }
 
@@ -158,11 +174,19 @@ var radio=Radio.init(document.getElementById("radio"));
 var p;
 radio.audio.addEventListener("ended",function(){
 	radio.reportEnd()
-	radio.changeSong("p",p)
+	radio.changeSong("p",p);
+	var ch=localStorage.channel;
+	if(ch=="-3"){
+		_gaq.push(['_trackEvent', 'song_red_played', 'played']);
+	}else if(ch=="dj"||ch=="subject"){
+		_gaq.push(['_trackEvent', 'song_'+ch+'_played', 'played']);
+	}else{
+		_gaq.push(['_trackEvent', 'song_played', 'played']);
+	}
 })
 
 radio.audio.addEventListener("error",function(e){
-	console.error("error on load audio!",e)
+	radio.error("载入歌曲失败")
 })
 
 var onTimeUpdate=function(){
@@ -173,7 +197,10 @@ var onTimeUpdate=function(){
 	})
 }
 
-//交互事件
+$("body").ajaxError(function(event,jqXHR,setting){
+	radio.error(jqXHR.status)
+})//交互事件
+
 chrome.extension.onConnect.addListener(function(port){
 	if(port.name!="douRadio") return
 	radio.audio.addEventListener("timeupdate",onTimeUpdate)	
@@ -189,6 +216,9 @@ chrome.extension.onConnect.addListener(function(port){
 		volume:radio.audio.volume,
 		checked:radio.checked
 	})
+	if(radio.hasError){
+		radio.error(radio.errorText)
+	}
 	port.onDisconnect.addListener(function(){
 		p=undefined;
 		radio.audio.removeEventListener("timeupdate",onTimeUpdate)

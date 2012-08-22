@@ -2,10 +2,30 @@ var c_song={}
 var power=false
 var lock=false
 var checked=false
+var channelType=""
+//初始化播放器
+var ch=localStorage.channel;
 
-var ch=$("#"+localStorage.channel).html()
-$("#switcher").attr("title",ch)
+if(ch=="dj"&&localStorage.dj){//dj兆赫
+	var obj=JSON.parse(localStorage.dj);
+	var djc=localStorage.djc;
+	if(obj&&djc&&obj[djc]){
+		$("#switcher").attr("title",obj[djc]);
+	}
+}else if(ch=="subject"&&localStorage.subject){//专辑兆赫
+	var obj=JSON.parse(localStorage.subject);
+	var su=localStorage.context;
+	if(obj&&obj[localStorage.context]){
+		$("#switcher").attr("title",obj[su]);
+	}
+}else{//普通兆赫
+	$("#switcher").attr("title",$("#"+ch).html());
+}
 
+if(localStorage.version!="2.0.1"){
+	$("#update").show().fadeOut(10000);
+	localStorage.version="2.0.1";
+}
 var port=chrome.extension.connect({name:"douRadio"})
 
 //登录处理
@@ -49,7 +69,9 @@ port.onMessage.addListener(function(msg){
 	if(msg.type=="rate"){
 		if(msg.like==1){
 			$("#like").attr("src","img/rated.png")
-			localStorage.autoShare&&setTimeout(function(){doShare(localStorage.autoShare)},300)
+			localStorage.autoShare&&setTimeout(function(){
+				doShare(localStorage.autoShare)
+			},300)
 		}else{
 			$("#like").attr("src","img/unrated.png")
 		}
@@ -69,16 +91,25 @@ port.onMessage.addListener(function(msg){
 		//时间条状态获取
 		updateTime(msg.c,msg.d)
 		//音量状态获取
-		var len=msg.volume*50
-		$("#volume_bar").css("width",len+"px")
+		$("#range").val(msg.volume*100)
 		//cookie检查
 		verifyCookie(msg.checked)
 		if(localStorage.settingShow&&localStorage.settingShow=="false"){
 			$("#setting_a").hide()
 		}
+		return
+	}
+	if(msg.type=="error"){
+		$(".warn").hide();
+		$("#error").html("<span>哎呀，出错了("+msg.errorText+")</span>").fadeIn().fadeOut(10000);
+		return
+	}
+	if(msg.type=="cleanError"){
+		$(".warn").hide();
 	}
 })
 
+//播放时间显示
 var changeToTime=function(time){
 	var min=0
 	var second=0
@@ -112,10 +143,13 @@ showSong=function(data){
 		$("#like").attr("src","img/unrated.png")
 	}
 	if(data.title){
-		$("#song_title").html(data.title)
-		$("#song_title").attr("title",data.title)	
-		$("#song_artist").html(data.artist)
-		$("#song_artist").attr("title",data.artist)
+		var title=$("#song_title");
+		var artist=$("#song_artist");
+		title.html(data.title)
+		title.attr("title",data.title)	
+		title.attr("href","http://music.douban.com"+data.album)
+		artist.html(data.artist)
+		artist.attr("title",data.artist)
 		power&&$("#timer").html("<img src='img/loading.gif'/>")
 		$("#played").css("width","0px")
 	}else{
@@ -184,44 +218,81 @@ $("#mask").bind("click",function(){
 
 //音量按钮
 $("#range")[0].addEventListener("input",function(){
-	var d=$(this).val()
-	var len=$(this).val()/100*50
-	$("#volume_bar").css("width",len+"px")
 	var v=$(this).val()/100
 	port.postMessage({type:"volume",vol:v})
 })
 $("#volume img").toggle(function(){
 	$("#range").show()
-	$("#volume_bar").show()
 },function(){
 	$("#range").hide()
-	$("#volume_bar").hide()
 })
 
 //频道切换
 $("#switcher").bind("click",function(){
 	$("#channel_popup").fadeIn("slow")
 	var sc=localStorage["channel"]?localStorage["channel"]:"0"
-	$("#"+sc).addClass("channel_selected")
-		.siblings().removeClass("channel_selected")
+	if(sc!="-3"){
+		$("#"+sc).addClass("channel_selected")
+			.siblings().removeClass("channel_selected")
+			$(".red_channel").removeClass("red_channel_selected")
+	}else{
+		$("#"+sc).addClass("red_channel_selected")
+			.siblings().removeClass("channel_selected")
+	}
 })
 
-$("#channels li").bind("click",function(){
-	var sc=$(this).attr("id")
+var changeChannel=function(){
+	var sc=$(this).attr("id");
+	if(sc=="dj"||sc=="subject"){
+		return getMyChannel(sc);
+	}
 	if(!localStorage.channel||localStorage.channel!=sc){
-		localStorage.channel=sc
-		sendRequest("switch")
+		localStorage.channel=sc;
+		//localStorage.removeItem("context");
+		//localStorage.removeItem("djc");
+		sendRequest("switch");
+	}
+	
+	if(sc!="-3"){
+		$(this).addClass("channel_selected")
+			.siblings().removeClass("channel_selected");
+		$(".red_channel").removeClass("red_channel_selected");
+	}else{
+		$(this).addClass("red_channel_selected")
+			.siblings().removeClass("channel_selected");
+	}
+	$(".popup").fadeOut("slow");
+	var title=$(this).attr("title");
+	var ch=$("#"+localStorage.channel).html();
+	$("#switcher").attr("title",title?title:ch);
+}
+
+var changeMyChannel=function(){
+	var sc=$(this).attr("id")
+	if(/^-?\d+$/.test(sc)){
+		if(localStorage.channel!="dj"||!localStorage.djc||localStorage.djc!=sc){
+			localStorage.channel="dj";
+			localStorage.djc=sc
+			//localStorage.removeItem("context");
+			sendRequest("switch");
+		}
+	}else{
+		if(localStorage.channel!="subject"||!localStorage.context||localStorage.context!=sc){
+			localStorage.channel="subject";
+			localStorage.context=sc;
+			//localStorage.removeItem("djc");
+			sendRequest("switch");
+		}
 	}
 	$(this).addClass("channel_selected")
-		.siblings().removeClass("channel_selected")
-	$("#channel_popup").fadeOut("slow")
-	var ch=$("#"+localStorage.channel).html()
-	$("#switcher").attr("title",ch)
+			.siblings().removeClass("channel_selected");
 
-})
+	$(".popup").fadeOut("slow");
+	$("#switcher").attr("title",$(this).attr("title"));
+}
 
-$("#close_c").bind("click",function(){
-	$("#channel_popup").fadeOut("slow")
+$(".close_c").bind("click",function(){
+	$(".popup").fadeOut("slow")
 })
 
 $("#login_close").bind("click",function(){
@@ -229,7 +300,64 @@ $("#login_close").bind("click",function(){
 	port.postMessage({type:"checked"})
 })
 
+var getMyChannel=function(ch){
+	$("#channel_popup").hide();
+	$("#my_popup").fadeIn();
+	var channels;
+	if(ch=="dj"){
+		channels=JSON.parse(localStorage.dj);
+	}else{
+		channels=JSON.parse(localStorage.subject);
+	}
+	var ul=$("#my_popup .channels")
+	ul.html("");
+	$.each(channels,function(index,value){
+		var li=$("<li class='channel_my' id='"+index+"' title='"+value+"'><a class='channel_my_del'>x</a><span>"+value+"</span></li>");
+		if(localStorage.channel=="dj"&&localStorage.djc&&localStorage.djc==index){
+			li.addClass("channel_selected")
+		}
+		if(localStorage.channel=="subject"&&localStorage.context&&localStorage.context==index){
+			li.addClass("channel_selected")
+		}
 
+		li.bind("click",changeMyChannel);
+		li.hover(function(){
+			$(this).find(".channel_my_del").fadeIn(100);
+		},function(){
+			$(this).find(".channel_my_del").fadeOut(100);
+		})
+		li.find(".channel_my_del").click(function(e){
+			$(this).parent().fadeOut();
+			var id=$(this).parent().attr("id")
+			if(/^-?\d+$/.test(id)&&localStorage.dj){
+				var obj=JSON.parse(localStorage.dj)
+				delete obj[id];
+				localStorage.setItem("dj",JSON.stringify(obj));
+			}else if(localStorage.subject){
+				obj=JSON.parse(localStorage.subject);
+				delete obj[id];
+				localStorage.setItem("subject",JSON.stringify(obj));
+			}
+			
+			if(id==localStorage.djc){
+				localStorage.removeItem("djc");
+				localStorage.channel="0";
+				power&&sendRequest("on_off");
+			}
+			if(id==localStorage.context){
+				localStorage.removeItem("context");
+				localStorage.channel="0";
+				power&&sendRequest("on_off");
+			}
+			e.stopPropagation()
+			return false;
+		})
+		ul.append(li)
+	});	
+	return false;
+}
+
+$("#channel_popup li").bind("click",changeChannel)
 var share_sina=function(content,url,pic){
 	window.open("http://service.weibo.com/share/share.php?url=" 
 			+ encodeURIComponent(url) + "&appkey=694135578" 
@@ -255,10 +383,10 @@ var share_sina=function(content,url,pic){
 	var channel=localStorage.channel?localStorage.channel:"0";
 	var content="分享"+c_song.artist+"的单曲《"+c_song.title+"》(来自@豆瓣FM)";
 	var url="";
-	_gaq.push(['_trackEvent', 'share-'+this.id, 'clicked']);	
-	if(channel!="-1"||this.id=="fanfou"){
-		url="http://douban.fm/?start="+c_song.sid+"g"+c_song.ssid+"g"+channel+"&cid="+channel
-	}
+	//_gaq.push(['_trackEvent', 'share-'+id, 'clicked']);	
+	var ch;
+	if(channel=="dj"||channel=="subject") channel="0";
+	url="http://douban.fm/?start="+c_song.sid+"g"+c_song.ssid+"g"+channel+"&cid="+channel;
 	var pic=c_song.picture&&c_song.picture.replace(/mpic|spic/,"lpic")
 	if(id=="sina"){
 		share_sina(content,url,pic)
