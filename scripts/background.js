@@ -33,6 +33,10 @@ chrome.extension.onRequest.addListener(function(req,sender,resp){
 	}
 });
 
+var _gaq = _gaq || [];
+_gaq.push(['_setAccount', 'UA-27166419-3']);
+_gaq.push(['_trackPageview']);
+
 (function(){
 	var _gaq = _gaq || [];
 	 _gaq.push(['_setAccount', 'UA-27166419-3']);
@@ -42,3 +46,14 @@ chrome.extension.onRequest.addListener(function(req,sender,resp){
 		 var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
 	})();
 })();
+
+chrome.runtime.onInstalled.addListener(function(detail){
+	if(detail.reason=="update"){
+		console.log("update");
+		 _gaq.push(['_trackPageview',"update"]); 
+	}else{
+		console.log("install")
+		_gaq.push(['_trackPageview',"install"]); 
+	}
+	window.open("options.html");
+})

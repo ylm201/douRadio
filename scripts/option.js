@@ -1,0 +1,10 @@
+console.log("haha")
+$(function(){
+	$("#enable_notify").bind("click",function(){
+		if($(this).val()=="Y"){
+			localStorage.enableNotify="Y";
+		}else{
+			localStorage.removeItem("enableNotify");
+		}
+	})	
+})

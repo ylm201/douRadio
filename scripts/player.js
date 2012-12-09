@@ -22,10 +22,6 @@ if(ch=="dj"&&localStorage.dj){//dj兆赫
 	$("#switcher").attr("title",$("#"+ch).html());
 }
 
-if(localStorage.version!="2.0.1"){
-	$("#update").show().fadeOut(10000);
-	localStorage.version="2.0.1";
-}
 var port=chrome.extension.connect({name:"douRadio"})
 
 //登录处理
@@ -403,3 +399,5 @@ var share_sina=function(content,url,pic){
 $(".share_button").bind("click",function(){
 	doShare(this.id)
 })
+
+

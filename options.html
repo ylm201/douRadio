@@ -1,7 +1,8 @@
 <html>
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-		<script type="text/javascript" src="lib/jquery.min.js"></script>
+		<script type="text/javascript" src="scripts/jquery.min.js"></script>
+		<script type="text/javascript" src="scripts/option.js"></script>
 		<style type="text/css">
 			*{color:#369;font-family: 微软雅黑;}
 			body{
@@ -18,69 +19,13 @@
 			}
 			#setting span{font-size:12px;opacity:0.5}
 		</style>
-		<script type="text/javascript" >
-			$(function(){
-				if(localStorage.autoShare){
-					$("#red_heart_share")[0].checked=true
-					$("#"+localStorage.autoShare)[0].checked=true
-					$("#if_share").show()
-				}
-				if(localStorage.settingShow&&localStorage.settingShow=="false"){
-					$("#if_setting").attr("checked",false)
-					$("#info").show()
-				}
-				
-				$("#red_heart_share").bind("click",function(){
-					if(this.checked){
-						$("#if_share").fadeIn()
-					}else{
-						$("#if_share").fadeOut()
-						localStorage.removeItem("autoShare")
-						$(".share").attr("checked",false)
-					}
-				})
-				
-				$(".share").bind("click",function(){
-					localStorage.autoShare=this.id
-				})
-
-				$("#if_setting").bind("click",function(){
-					if(this.checked==false){
-						localStorage.settingShow=false
-						$("#info").fadeIn()
-					}else{
-						localStorage.settingShow=true
-						$("#info").fadeOut()
-					}		
-				})
-			})
-		</script>
 	</head>
 	<body>
-
 	<div id="main">
-		<script>
-			var _gaq = _gaq || [];
-			_gaq.push(['_setAccount', 'UA-27166419-3']);
-			_gaq.push(['_trackPageview','options_v1.0.5']);
-			(function() {
-				var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-				ga.src = 'https://ssl.google-analytics.com/ga.js';
-				var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-			})();
-		</script>
 		<div id="setting">
 			<h3>设置</h3>
-			<label for="if_setting" >是否显示设置图标:</label><input  id="if_setting" type="checkbox" checked="true"/>
-			<span id="info" style="display:none">也可通过右键小豆图标设置选项哦~</span><br/>
-			<label for="red_heart_share">加红心同时分享歌曲:</label> <input type="checkbox"  value="1" id="red_heart_share" /><br/>
-			<div id="if_share" style="display:none" >
-				自动分享使用：
-				<input  class="share" type="radio"  name="share" value="sina" id="sina"   /><label for="sina">新浪微博</label> 
-				<input  class="share" type="radio"  name="share" value="douban" id="douban"  /><label for="douban">豆瓣说</label>
-				<input  class="share" type="radio"  name="share" value="fanfou" id="fanfou"  /><label for="fanfou">饭否</label>
-			</div>
-		</div>
+			<label for="enable_notify" >显示桌面通知</label>
+			<input id="enable_notify" type="checkbox" name="enableNofify" checked="true" value="Y"/>
 		<div id="info">
 			<h3>感谢使用小豆电台！<h3>
 			<h4>使用过程中遇到问题或者有什么改进建议，欢迎指正：</h4>
@@ -92,19 +37,6 @@
 		</div>
 		<div id="history">
 			<h4>更新历史</h4>
-				<h5>v0.9.6</h5>
-				<p>	
-					微博分享，红心兆赫等功能；
-				</p>
-				<h5>v0.9.7</h5>
-				<p>	
-					修改微博分享方式，使用分享按钮代替原来api请求方式；
-				</p>
-				<h5>v0.9.8</h5>
-				<p>	
-					修复红心兆赫下歌曲分享，修复歌曲时间显示NaN问题；
-				</p>
-				
 				<h5>v1.0.2</h5>
 				<p>	
 					暂时删除红心兆赫，新增新歌兆赫；<br/>
@@ -133,7 +65,7 @@
 					通过页面“小豆”图标可以在小豆电台中播放DJ、专辑歌曲<br/>
 					Dj兆赫、专辑等可保存，下次播放能够再次选择
 				</p>
-
+				<br/>
 		</div>
 	</div>	
 </body>
