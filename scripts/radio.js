@@ -128,7 +128,7 @@ Radio.prototype.changeSong=function(t,port){
 	this.audio.play()
 	if(port){
 		port.postMessage({type:"song",song:radio.c_song})
-	}else if(localStorage.enableNotify=='Y'){
+	}else if(localStorage.enableNotify!='N'){
 		var notification = webkitNotifications.createNotification("",this.c_song.artist,this.c_song.title);
 		notification.show();
 		setTimeout(function(){
