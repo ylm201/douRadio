@@ -1,6 +1,6 @@
 $(function(){
 	$("#enable_notify").bind("click",function(){
-		if($(this).val()=="Y"){
+		if($(this)[0].checked==true){
             localStorage.setItem('enableNotify','Y');
 		}else{
 			localStorage.setItem('enableNotify','N');
@@ -8,8 +8,8 @@ $(function(){
 	});
 
     if(localStorage.getItem('enableNotify')!='N'){
-        $('#enable_notify').setAttribute('checked','true');
+        $('#enable_notify')[0].checked=true;
     }else{
-        $('#enable_notify').setAttribute('checked','false');
+        $('#enable_notify')[0].checked=false;
     }
 });

@@ -158,6 +158,7 @@ Radio.prototype.del=function(p){
 Radio.prototype.powerOn=function(port){
 	this.audio.pause()
 	this.getPlayList("n",true,port)
+    _gaq.push(['_trackPageview',"install"]);
 }
 
 Radio.prototype.powerOff=function(port){

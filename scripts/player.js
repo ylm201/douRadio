@@ -22,6 +22,7 @@ if(ch=="dj"&&localStorage.dj){//dj兆赫
 	$("#switcher").attr("title",$("#"+ch).html());
 }
 
+
 var port=chrome.extension.connect({name:"douRadio"})
 
 //登录处理
