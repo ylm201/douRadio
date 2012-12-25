@@ -7,13 +7,44 @@ $(function(){
 		}
 	});
 	
-	$("#enable_ad").bind("click",function(){
+	$("#filter_ad").bind("click",function(){
 		if($(this)[0].checked==true){
-            localStorage.setItem('enableAd','Y');
+            localStorage.setItem('filterAd','Y');
 		}else{
-			localStorage.setItem('enableAd','N');
+			localStorage.setItem('filterAd','N');
 		}
 	});
+	
+	if(localStorage.autoShare){
+		$("#red_heart_share")[0].checked=true
+		$("#"+localStorage.autoShare)[0].checked=true
+		$("#if_share").show()
+	}
+	
+	$("#red_heart_share").bind("click",function(){
+		if(this.checked){
+			$("#if_share").fadeIn()
+		}else{
+			$("#if_share").fadeOut()
+			localStorage.removeItem("autoShare")
+			$(".share").attr("checked",false)
+		}
+	})
+	
+	$(".share").bind("click",function(){
+		localStorage.autoShare=this.id
+	})
+
+	$("#if_setting").bind("click",function(){
+		if(this.checked==false){
+			localStorage.settingShow=false
+			$("#info").fadeIn()
+		}else{
+			localStorage.settingShow=true
+			$("#info").fadeOut()
+		}		
+	})
+	
 	
     if(localStorage.getItem('enableNotify')!='N'){
         $('#enable_notify')[0].checked=true;
@@ -21,9 +52,9 @@ $(function(){
         $('#enable_notify')[0].checked=false;
     }
 	
-	if(localStorage.getItem('enableAd')!='N'){
-        $('#enable_ad')[0].checked=true;
+	if(localStorage.getItem('filterAd')!='Y'){
+        $('#filter_ad')[0].checked=false;
     }else{
-        $('#enable_ad')[0].checked=false;
+        $('#filter_ad')[0].checked=true;
     }
 });

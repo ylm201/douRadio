@@ -48,6 +48,7 @@ Radio.prototype.error=function(error){
 	p&&p.postMessage({type:"error",errorText:error});
 	this.hasError=true;
 	this.errorText=error;
+	console.error(error);
 }
 
 Radio.prototype.cleanError=function(){
@@ -91,7 +92,7 @@ Radio.prototype.getPlayList=function(t,skip,port){
 			self.song_list=[];
 			console.log("loading song...");
 			for(s in songs){
-				if(!songs[s].adtype||localStorage.enableAd!='N'){
+				if(!songs[s].adtype||localStorage.filterAd!='Y'){
 					self.song_list.push(songs[s]);
 					console.log("push song:");
 					console.log(songs[s])

@@ -15,6 +15,7 @@
 			h1,h2,h3,h4,h5,span{color:#219A44}
 			p{color:#369}
 			#setting span{font-size:12px;opacity:0.5}
+			#if_share{font-size:10px}
 		</style>
 	</head>
 	<body>
@@ -24,8 +25,16 @@
 			<label for="enable_notify" >显示桌面通知</label>
 			<input id="enable_notify" type="checkbox" name="enableNofify" checked="true"/>
 			<br/>
-			<label for="enable_ad" >播放广告</label>
-			<input id="enable_ad" type="checkbox" name="enableAd" checked="true" />
+			<label for="filter_ad" >过滤广告</label>
+			<input id="filter_ad" type="checkbox" name="filterAd" checked="true" />
+			<br/>
+			<label for="red_heart_share">加红心同时分享歌曲:</label> <input type="checkbox"  value="1" id="red_heart_share" /><br/>
+			<div id="if_share" style="display:none" >
+				自动分享使用：
+				<input  class="share" type="radio"  name="share" value="sina" id="sina"   /><label for="sina">新浪微博</label> 
+				<input  class="share" type="radio"  name="share" value="douban" id="douban"  /><label for="douban">豆瓣说</label>
+				<input  class="share" type="radio"  name="share" value="fanfou" id="fanfou"  /><label for="fanfou">饭否</label>
+			</div>
         </div>
 		<div id="info">
 			<h3>感谢使用小豆电台！</h3>
@@ -41,8 +50,9 @@
 			<h4>更新历史</h4>
             <h5 style="color:red" >v2.1.1</h5>
             <p>
-                切换歌曲是桌面通知开关<br/>
-				是否播放广告开关
+                更新至chrome manifest2<br/>
+				切换歌曲时桌面通知开关<br/>
+				是否过滤广告开关
             </p>
 			<h5><a>v2.0.1</a></h5>
 			<p>
