@@ -1,3 +1,11 @@
+var _gaq = _gaq || [];
+(function() {
+	var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+	ga.src = 'https://ssl.google-analytics.com/ga.js';
+	var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+})();
+_gaq.push(['_setAccount', 'UA-27166419-4']);
+
 var c_song={}
 var power=false
 var lock=false
@@ -387,12 +395,15 @@ var share_sina=function(content,url,pic){
 	var pic=c_song.picture&&c_song.picture.replace(/mpic|spic/,"lpic")
 	if(id=="sina"){
 		share_sina(content,url,pic)
+		_gaq.push(['_trackPageview',"share-sina"]); 
 	}
 	if(id=="douban"){
 		share_douban(content,url,pic)
+		_gaq.push(['_trackPageview',"share-douban"]); 
 	}
 	if(id=="fanfou"){
 		share_fanfou(content)
+		_gaq.push(['_trackPageview',"share-fanfou"]); 
 	}
 }
 

@@ -14,9 +14,6 @@
 			}
 			h1,h2,h3,h4,h5,span{color:#219A44}
 			p{color:#369}
-			#setting{
-				height:120px
-			}
 			#setting span{font-size:12px;opacity:0.5}
 		</style>
 	</head>
@@ -25,7 +22,10 @@
 		<div id="setting">
 			<h3>设置</h3>
 			<label for="enable_notify" >显示桌面通知</label>
-			<input id="enable_notify" type="checkbox" name="enableNofify" checked="true" value="Y"/>
+			<input id="enable_notify" type="checkbox" name="enableNofify" checked="true"/>
+			<br/>
+			<label for="enable_ad" >播放广告</label>
+			<input id="enable_ad" type="checkbox" name="enableAd" checked="true" />
         </div>
 		<div id="info">
 			<h3>感谢使用小豆电台！</h3>
@@ -35,12 +35,14 @@
 				<span>Github:</span><a target="_blank" href="https://github.com/ylm201/douRadio">https://github.com/ylm201/douRadio</a><br/>
 				<span>豆瓣:</span><a target="_blank" href="http://www.douban.com/people/piaoliu123/">http://www.douban.com/people/piaoliu123/</a><br/>
 				<span>个人博客:</span><a target="_blank" href="http://blog.drifting-world.info/2012/03/%E5%B0%8F%E8%B1%86%E7%94%B5%E5%8F%B0%E6%9D%A5%E5%95%A6/">http://blog.drifting-world.info/</a>
+			</p>	
 		</div>
 		<div id="history">
 			<h4>更新历史</h4>
             <h5 style="color:red" >v2.1.1</h5>
             <p>
                 切换歌曲是桌面通知开关<br/>
+				是否播放广告开关
             </p>
 			<h5><a>v2.0.1</a></h5>
 			<p>

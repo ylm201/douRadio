@@ -91,10 +91,15 @@ Radio.prototype.getPlayList=function(t,skip,port){
 			self.song_list=[];
 			console.log("loading song...");
 			for(s in songs){
-				songs[s].sid&&self.song_list.push(songs[s]);
-				console.log(songs[s]);
+				if(!songs[s].adtype||localStorage.enableAd!='N'){
+					self.song_list.push(songs[s]);
+					console.log("push song:");
+					console.log(songs[s])
+				}else{
+					console.log("reject song:");
+					console.log(songs[s])
+				}
 			}
-			console.log("loading song end..");
 			if(self.song_list.length>0) skip&&self.changeSong(t,port)
 		})
 }
@@ -187,7 +192,8 @@ radio.audio.addEventListener("ended",function(){
 })
 
 radio.audio.addEventListener("error",function(e){
-	radio.error("载入歌曲失败")
+	console.log(e);
+	radio.error("load error:"+e.srcElement.error.code)
 })
 
 var onTimeUpdate=function(){
@@ -269,3 +275,4 @@ chrome.extension.onConnect.addListener(function(port){
 		return;
 	})
 })
+
