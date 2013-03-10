@@ -50,6 +50,6 @@ chrome.runtime.onInstalled.addListener(function(detail){
 		console.log("install")
 		_gaq.push(['_trackPageview',"install"]); 
 	}
-	window.open("options.html");
+	//window.open("options.html");
 })
 chrome.browserAction.setTitle({title:"小豆电台"})

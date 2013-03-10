@@ -94,8 +94,6 @@ Radio.prototype.getPlayList=function(t,skip,port){
 			for(s in songs){
 				if(!songs[s].adtype||localStorage.filterAd!='Y'){
 					self.song_list.push(songs[s]);
-					console.log("push song:");
-					console.log(songs[s])
 				}else{
 					console.log("reject song:");
 					console.log(songs[s])
@@ -164,7 +162,7 @@ Radio.prototype.del=function(p){
 Radio.prototype.powerOn=function(port){
 	this.audio.pause()
 	this.getPlayList("n",true,port)
-    _gaq.push(['_trackPageview',"install"]);
+    _gaq.push(['_trackPageview',"power"]);
 }
 
 Radio.prototype.powerOff=function(port){
@@ -276,4 +274,8 @@ chrome.extension.onConnect.addListener(function(port){
 		return;
 	})
 })
+
+if(localStorage.autoPlay=="Y"){
+	radio.powerOn()
+}
 

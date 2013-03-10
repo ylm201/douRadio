@@ -15,6 +15,14 @@ $(function(){
 		}
 	});
 	
+	$("#auto_play").bind("click",function(){
+		if($(this)[0].checked==true){
+            localStorage.setItem('autoPlay','Y');
+		}else{
+			localStorage.setItem('autoPlay','N');
+		}
+	});
+	
 	if(localStorage.autoShare){
 		$("#red_heart_share")[0].checked=true
 		$("#"+localStorage.autoShare)[0].checked=true
@@ -57,4 +65,10 @@ $(function(){
     }else{
         $('#filter_ad')[0].checked=true;
     }
+	
+	if(localStorage.getItem('autoPlay')!='Y'){
+		$('#auto_play')[0].checked=false;
+	}else{
+		$('#auto_play')[0].checked=true;
+	}
 });
