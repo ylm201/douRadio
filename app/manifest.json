@@ -11,18 +11,6 @@
         "default_icon": "img/icon_48.png",
         "default_title":"小豆电台"
     },
-    "content_scripts":[
-        {
-            "matches":["http://douban.fm/*"],
-            "css":["css/content.css"],
-            "js":["lib/jquery.min.js","scripts/content.js"]
-        },
-        {
-            "matches":["http://music.douban.com/*"],
-            "css":["css/content.css"],
-            "js":["lib/jquery.min.js","scripts/content_musican.js"]
-        }
-    ],
     "permissions": [
         "notifications",
         "tabs",
