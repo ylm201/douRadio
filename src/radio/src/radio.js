@@ -1,50 +1,62 @@
 define(function(require, exports, module) {
-	var $=require("jquery");
-	var Events=require("events");
+	var $=require("$");
+	var _ = require('underscore');
+	var Backbone=require('backbone');
 	var Radio=function(){
-		this.currentSong={};
+		this.currentSong=null;
 		this.songList=[];
 		this.channel=0;
-		this.power=false;
-		this._audio=null;
+		this.audio=null;
+		this.isReplay=false;
 	};
-	Events.mixTo(Radio);
 	Radio.init=function(id){
 		var radio=new Radio();
-		radio.audio=$(id);
+		_.extend(radio,Backbone.Events);
+		radio.audio=$(id)[0];
 		radio.audio.volume=localStorage.volume?localStorage.volume:0.8;
-		radio.channel=localStorage['channel']?localStorage['channel']:61;
-		this.audio.addEventListener("ended",(function(){
+		radio.channel=localStorage['channel']?localStorage['channel']:-3;
+		radio.audio.addEventListener("ended",(function(){
+			if(this.isReplay){
+				this.audio.play();
+				return;
+			}
 			this.reportEnd();
 			if(this.songList.length>1){
 				this.changeSong();
 			}else{
-				this.getPlayList("p",that.changeSong);
+				this.getPlayList("p",this.changeSong);
 			}
-		}).bind(this));
-		this.audio.addEventListener("timeupdate",(function(){
-			this.tiggle("playing",{currentTime:this.audio.currentTime,duration:this.audio.duration});
-		}).bind(this));
+		}).bind(radio));
+		radio.audio.addEventListener("timeupdate",(function(){
+			this.trigger("playing",{currentTime:this.audio.currentTime,duration:this.audio.duration});
+		}).bind(radio));
+		radio.getPlayList('n',function(){
+			radio.changeSong(true);
+		})
 		return radio;
 	};
 	
 	Radio.prototype.getPlayList=function(t,fn){
-		this.tiggle("songListLoading")
+		this.trigger("songListLoading",t);
 		$.getJSON("http://douban.fm/j/mine/playlist",{
 				type:t,
-				channel:this.channel,
-				pb:localStorage.pb?localStorage.pb:128,
+				channel:0,
+				pb:localStorage.pb?localStorage.pb:64,
 				sid:this.currentSong? this.currentSong.sid:'',
+				pt:this.audio.currentTime,
 				r:Math.random(),
 				from:"mainsite"
 			},(function(data){
 				if(data.err){
-					this.tiggle("songListLoadError");
+					this.trigger("songListLoadError",t);
 					return;
 				}
-				this.tiggle("songListLoaded")
+				this.trigger("songListLoaded");
+				data.song.forEach(function(o){
+					o.picture=o.picture.replace("mpic","lpic");
+				})
 				this.songList=data.song;
-				fn&&fn();		
+				fn&&(fn.bind(this))();		
 		}).bind(this))
 	}
 
@@ -57,17 +69,17 @@ define(function(require, exports, module) {
 		})		
 	}
 
-	Radio.prototype.changeSong=function(){
-		this._audio.pause();
+	Radio.prototype.changeSong=function(b){
 		this.currentSong=this.songList.shift();
+		//new Image().src=this.currentSong.picture;
 		this.audio.src=this.currentSong.url;
-		this.audio.play();
-		this.tiggle("songChanged",this.currentSong);
+		!b&&this.audio.play();
+		this.trigger("songChanged",this.currentSong);
 	}
 
 	Radio.prototype.skip=function(){
 		this.audio.pause();
-		this.getPlayList("s",this.changeSong)	
+		this.getPlayList("s",this.changeSong);	
 	}
 
 	Radio.prototype.like=function(){
@@ -80,23 +92,14 @@ define(function(require, exports, module) {
 
 	Radio.prototype.del=function(){
 		this.audio.pause();
-		this.getPlayList("b",true,this.changeSong);
+		this.getPlayList("b",this.changeSong);
 	}
 
 	Radio.prototype.powerOn=function(port){
 		this.audio.pause()
-		this.getPlayList("n",true,port)
-	}
-
-	Radio.prototype.powerOff=function(port){
-		this.power=false
-		radio.audio.removeEventListener("timeupdate",onTimeUpdate)
-		this.audio.pause()
-		this.audio.src=null
-		this.currentSong={}
-		port.postMessage({type:"song",song:{}})
+		this.getPlayList("n",this.changeSong)
 	}
 	
-	exports.Radio=Radio;
+	module.exports=Radio;
 	
 });
