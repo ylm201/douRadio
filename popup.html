@@ -1,0 +1,57 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<link rel="stylesheet" type="text/css" href="css/popup.css">		
+	</head>
+	<body>
+		<div id="main"></div>
+		<script src="./sea-modules/seajs/seajs/2.1.1/sea.js"></script>
+		<script src="scripts/popup.js"></script>
+		<script type="scripts/template" id="t_songInfo">
+			<div id="top">
+				<a id="title" href="#" class="songInfo" title="<%=currentSong.title%>"><%=currentSong.title%></a>
+				<span id="artist" class="songInfo" title="<%=currentSong.artist%>"><%=currentSong.artist %></span>
+			</div>
+			<div id="cd">
+				<% if (playing) { %>
+					<div id="cover" class="rotate rotating" style='background-image:url(<%= currentSong.picture %>)' >
+					</div>
+					<div id="control"><a  href="#"  class="button playing hidden"></a></div>
+				<% }else{  %>
+					<div id="cover" class="rotate fadeout" style='background-image:url(<%= currentSong.picture %>)'>
+					</div>
+					<div id="control"><a  href="#"  class="button paused"></a></div>
+				<%}%>
+				<input id="range" class="hover-fadeIn" type="range" value="<%=volume*100%>"/>
+				<div class="bottom_left">
+					<span id="timer"></span>
+				</div>
+				<div class="bottom_right">
+					<a id="playLast" href="#" class="button hover-fadeIn"></a>
+					<a id="replay" href="#" class="button <% if (!isReplay) { %> hover-fadeIn<%}%>"></a>
+				</div>
+				<div id="played"></div>
+			</div>
+			<div id="bottom">
+				<ul id="operation">	
+					<li id="share" style="margin-right:0px">
+						<a href="#" class="hover_fadeOut button share" style="margin-right:0px"></a>
+						<ul id="shareList">
+							<li><a id='shareDouban' href="#" ></a></li>
+							<li><a id='shareWeibo'  href="#" ></a></li>
+						</ul>
+					</li>			
+					<li op='b'><a href="#" id="delete" class="hover_fadeOut button delete"></a></li>
+					<% if (currentSong.like) { %>
+						<li><a href="#" id="like" class="hover_fadeOut button like" ></a></li>
+					<% }else{  %>
+						<li><a href="#" id="like" class="hover_fadeOut button unlike"></a></li>
+					<%}%>
+					<li op='s'><a href="#" id="skip" class="hover_fadeOut button skip"></a></li>
+					<li><a href="#" id="search" class="hover_fadeOut button search"></a></li>	
+				</ul>
+			</div>				
+		</script>
+	</body>
+</html>

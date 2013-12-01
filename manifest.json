@@ -1,0 +1,25 @@
+{
+    "name": "小豆电台",
+    "version": "2.2.1",
+    "manifest_version":2,
+    "description": "豆瓣电台Chrome版，微博分享",
+    "icons":{
+        "128": "img/icon_128.png"
+    },
+    "browser_action": {
+        "default_popup": "popup.html",
+        "default_icon": "img/icon_48.png",
+        "default_title":"小豆电台"
+    },
+    "permissions": [
+        "notifications",
+        "tabs",
+        "cookies",
+        "http://*.douban.fm/*",
+        "http://*.douban.com/*"
+    ],
+    "background": {
+        "page": "background.html"
+    },
+    "content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self'"
+}

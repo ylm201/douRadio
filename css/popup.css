@@ -1,0 +1,64 @@
+* { margin:0; padding:0;} 
+body { font-family: "微软雅黑", "雅黑", "Arial"; font-size:12px;color:#3B5343}
+a,li,ul{text-decoration:none;color:#3B5343;list-style: none}
+:focus {outline: none}
+@font-face
+{
+	font-family: Glyphicons Halflings;
+	src: url('/fonts/glyphicons-halflings-regular.ttf');
+}
+@-webkit-keyframes rotate
+{
+from {-webkit-transform: rotate(0deg);}
+to {-webkit-transform: rotate(360deg);}
+}
+.hidden{display:none;}
+.fadeout{opacity:0.7;}
+.hover-fadeIn{opacity: 0.6}
+.hover-fadeIn:hover{opacity:1;}
+.button{font-family: 'Glyphicons Halflings';}
+.rotate {-webkit-animation-name: rotate;-webkit-animation-duration: 10s;-webkit-animation-timing-function: linear;-webkit-animation-iteration-count: infinite;-webkit-animation-direction: normal;-webkit-animation-play-state:paused;}
+.rotating{-webkit-animation-play-state:running;}
+.hover_fadeOut{opacity:1;}
+.hover_fadeOut:hover{opacity:0.8;}
+#main{width:220px;}
+#top{width:100%;text-align:center;background-color:#FFF;opacity:0.85;position:absolute;top:0px;z-index:1;padding-top: 3px}
+.songInfo{white-space:nowrap;display: inline-block;width:218px;font-weight: bold;text-overflow:ellipsis;overflow:hidden;margin:auto;}
+#title{font-size: 15px;line-height: 20px}
+#artist{font-size: 12px;line-height:15px}
+#cover {width:210px;height:210px;background-repeat: no-repeat;background-position:center;background-size:cover;margin:auto;border-radius: 50%;}
+#cd {height:210px;width:100%;background-color: #B7DDB7;padding:5px 0px 7px 0px;position: relative;text-align: center}
+#control {margin:auto;position: absolute;top:20px;left:20px;text-align: center;width:180px;height: 180px;border-radius: 50%;}
+#control a{line-height:180px;font-size:30px;color:#FFF;text-shadow: 3px 3px 1px #3B5343;}
+.paused:before{content:"\e072";}
+.playing:before{content:"\e073";}
+#setting:before {content:"\e019";}
+#loaded{height:2px;background-color:#E9F4E9;width:100%;opacity:0.8;}
+#played{height:2px;background-color:#3B5343;width:0%;opacity:0.8}
+#timer{color:#3B5343;font-size:14px;line-height: 14px;}
+#replay:before{content:'\e115';}
+#playLast:before{content:'\e091';}
+#played{height:2px;background-color:#3B5343;width:80%;opacity:0.8;position: absolute;bottom:0px;}
+.bottom_left{position: absolute;left:5px;bottom:2px}
+.bottom_right{position: absolute;right:17px;bottom:2px}
+.bottom_right a{float:left;margin-left: 5px}
+#range{-webkit-appearance:none;height: 3px;width:37px;position: absolute;bottom: 20px;right:-10px;-webkit-transform: rotate(-90deg);}
+#range::-webkit-slider-thumb{-webkit-appearance:none;width:8px; height:8px;border-radius:50%;background-color:#3B5343;}
+/*底部信息*/
+#bottom{padding-top:3px; positoin:relative;overflow: hidden}
+#bottom a{font-size:22px;line-height: 35px;}
+#operation li{display: inline-block;width:44px;text-align: center;float:left;}
+.search:before{content:"\e011";}
+.like:before{content:"\e005";}
+.unlike:before{content:"\e143";}
+.delete:before{content:"\e020";}
+.delete{padding-top:10px;}
+.skip:before{content:"\e076"}
+.share:before{content:"\e066";}
+#shareList{position:absolute;bottom:0px;left:0px;z-index: 1;background-color: #FFF;width:40px;display: none}
+#shareList li{text-align:center;height:26px;width:40px;padding:7px 0px;}
+#shareList li:hover{background-color:#3B5343;}
+#shareList a{width:26px;height:26px;background-size:100% 100%;margin:auto;display: inline-block;border-radius: 3px}
+#shareDouban {background-image:url(/img/douban.png)}
+#shareWeibo{background-image: url(/img/sina.png)}
+#share_fanfou{background-image: url(/img/fanfou.jpg)}
