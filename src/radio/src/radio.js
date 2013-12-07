@@ -48,17 +48,28 @@ define(function(require, exports, module) {
             	e.target.pause();
             	console.log("reload song");
             	setTimeout(function(){
-            		console.log("replay song");
+            		console.log("begin replay song:"+e.target.currentTime+","+currentTime);
+            		e.target.currentTime=currentTime;
             		e.target.play();
-            		e.target.currentTime=currentTime;	
-            	},1000)
+            		console.log("end replay song:"+e.target.currentTime+","+currentTime);
+            	},2000)
             }else{
             	console.error("exceed max retry time!");
             }
 
         });
+
+        radio.audio.addEventListener("loadedmetadata",function(){
+        	console.log("metadata loaded");
+        	if(false&&radio.currentSong.loadError&&radio.currentSong.currentTime!=0){
+        		console.log("begin replay song:"+e.target.currentTime+","+currentTime);
+            	radio.audio.currentTime=radio.currentSong.currentTime;
+            	radio.audio.play();
+            	console.log("end replay song:"+e.target.currentTime+","+currentTime);
+        	}
+        })
 		radio.getPlayList('n',function(){
-			radio.changeSong(true);
+			radio.changeSong(!localStorage.autoPlay=='Y');
 		})
 		return radio;
 	};
@@ -68,11 +79,11 @@ define(function(require, exports, module) {
 		$.getJSON("http://douban.fm/j/mine/playlist",{
 				type:t,
 				channel:localStorage.channelId?localStorage.channelId:0,
-				pb:localStorage.pb?localStorage.pb:192,
+				pb:localStorage.bitrate?localStorage.bitrate:64,
 				sid:this.currentSong? this.currentSong.sid:'',
 				pt:this.audio.currentTime,
 				r:Math.random(),
-				kbps:localStorage.pb?localStorage.pb:192,
+				kbps:localStorage.bitrate?localStorage.bitrate:64,
 				from:"mainsite"
 			},(function(data){
 				if(data.err){
@@ -80,13 +91,20 @@ define(function(require, exports, module) {
 					return;
 				}
 				this.trigger("songListLoaded");
+				var temp=[];
 				data.song.forEach(function(o){
-					o.picture=o.picture.replace("mpic","lpic");
-					o.retryTimes=0;
-					o.replayTimes=0;
+					//filter ad songs
+					if(!o.adtype||localStorage.filterAd!='Y'){
+						o.picture=o.picture.replace("mpic","lpic");
+						o.retryTimes=0;
+						o.replayTimes=0;
+						temp.push(o);
+					}else{
+						console.log("filter song"+JSON.stringify(o));
+					}
 				})
 				this.kind=data.kind;
-				this.songList=data.song;
+				this.songList=temp;
 				fn&&(fn.bind(this))();		
 		}).bind(this))
 	}

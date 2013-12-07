@@ -1,0 +1,67 @@
+<html>
+        <head>
+                <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+                <style type="text/css">
+                        *{color:#369;font-family: 微软雅黑;}
+                        body{
+                                background-color:#F4F8F8;
+                        }
+                        #main{
+                                border-radius: 15px;
+                                padding:10px;
+                        }
+                        h1,h2,h3,h4,h5,span{color:#219A44}
+                        p{color:#369}
+                        #setting span{font-size:12px;opacity:0.5}
+                        #if_share{font-size:10px}
+                </style>
+        </head>
+    <body>
+        <div id="main">
+                <div id="setting">
+                        <h3>设置</h3>
+                        <label for="enable_notify" >显示桌面通知</label>
+                        <input id="enable_notify" type="checkbox" name="enableNofify" checked="true"/>
+                        <br/>
+                        <label for="filter_ad" >过滤广告</label>
+                        <input id="filter_ad" type="checkbox" name="filterAd" checked="true" />
+                        <br/>
+                        <label for="auto_play" >打开浏览器自动播放</label>
+                        <input id="auto_play" type="checkbox" name="autoPlay" checked="true" />
+                        <br/>
+                        <label for="filter_ad" >192kbps</label>
+                        <input class="bitrate" name="bitrate" value="192" type="radio">
+                        <label for="filter_ad" >128kbps</label>
+                        <input class="bitrate" name="bitrate" value="128" type="radio">
+                        <label for="filter_ad" >64kbps</label>
+                        <input class="bitrate" name="bitrate" value="64" type="radio">
+                </div>
+                <div id="info">
+                        <h3>感谢使用小豆电台！</h3>
+                        <h4>使用过程中遇到问题或者有什么改进建议，欢迎指正：</h4>
+                        <p>
+                                <span>Email:</span><a target="_blank" href="mailto:lmyang.alex@gmail.com">lmyang.alex@gmail.com</a><br/>
+                                <span>Github:</span><a target="_blank" href="https://github.com/ylm201/douRadio">https://github.com/ylm201/douRadio</a><br/>
+                                <span>豆瓣:</span><a target="_blank" href="http://www.douban.com/people/piaoliu123/">http://www.douban.com/people/piaoliu123/</a><br/>
+                                <span>个人博客:</span><a target="_blank" href="http://blog.drifting-world.info/2012/03/%E5%B0%8F%E8%B1%86%E7%94%B5%E5%8F%B0%E6%9D%A5%E5%95%A6/">http://blog.drifting-world.info/</a>
+                        </p>        
+                </div>
+            <div id="history">
+                <h4>更新历史</h4>
+                <h5 style="color:red" >v3.0.1</h5>
+                <p>
+                    采用全新界面风格，增加专辑图片<br/>
+                    更丰富频道选择<br/>
+                    单曲循环功能<br/>
+                </p>
+                <h5>敬请期待:<h5>
+                <p>
+                    频道搜索<br/>
+                    最近收听歌曲列表
+                </p>
+            </div> 
+        </div>
+        <script src="./sea-modules/seajs/seajs/2.1.1/sea.js"></script>
+        <script type="text/javascript" src="scripts/options.js"></script>
+    </body>
+</html>

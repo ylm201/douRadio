@@ -40,6 +40,7 @@ to {-webkit-transform: rotate(360deg);}
 #search_channel{line-height: 20px;border:1px solid #ccc;}
 .top{width:100%;text-align:center;background-color:#FFF;opacity:0.85;position:absolute;top:0px;z-index:1;padding-top: 3px;}
 .songInfo{white-space:nowrap;display: inline-block;width:218px;font-weight: bold;text-overflow:ellipsis;overflow:hidden;margin:auto;}
+#main{width:220px;}
 #title{font-size: 15px;line-heighdist: 20px}
 #artist{font-size: 12px;line-height:15px}
 #main{width:220px;}
