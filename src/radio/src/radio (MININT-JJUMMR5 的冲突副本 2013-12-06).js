@@ -15,11 +15,7 @@ define(function(require, exports, module) {
 		_.extend(radio,Backbone.Events);
 		radio.audio=$(id)[0];
 		radio.audio.volume=localStorage.volume?localStorage.volume:0.8;
-		if(!localStorage['channelId']){
-			localStorage.setItem('channelId','0');
-			localStorage.setItem('channelName','私人');
-			localStorage.setItem('channelCollected','disable');
-		}
+		if(!localStorage['channelId'])  localStorage.setItem('channelId','0');
 		radio.audio.addEventListener("ended",(function(){
 			if(this.isReplay){
 				this.audio.play();
@@ -38,22 +34,18 @@ define(function(require, exports, module) {
 		}).bind(radio));
 
 		radio.audio.addEventListener("error", function(e) { 
-            console.log("playing error: "+e.target.error.code+","+e.target.currentTime);
+            console.log("playing error: ");
+            console.log(e.target.error?e.target.error.code:null);
             // exception recover
-            if(radio.currentSong.retryTimes<3){
-            	radio.currentSong.retryTimes++;
-            	console.log("retryTimes: "+radio.currentSong.retryTimes);
+            if(e.target.error){
             	var currentTime=e.target.currentTime;
-            	e.target.load();
-            	e.target.pause();
             	console.log("reload song");
-            	setTimeout(function(){
+            	e.target.load();
+            	e.target.setTimeout(function(){
             		console.log("replay song");
             		e.target.play();
-            		e.target.currentTime=currentTime;	
-            	},1000)
-            }else{
-            	console.error("exceed max retry time!");
+            		e.target.currentTime=currentTime;
+            	},2000)
             }
 
         });
@@ -82,8 +74,6 @@ define(function(require, exports, module) {
 				this.trigger("songListLoaded");
 				data.song.forEach(function(o){
 					o.picture=o.picture.replace("mpic","lpic");
-					o.retryTimes=0;
-					o.replayTimes=0;
 				})
 				this.kind=data.kind;
 				this.songList=data.song;
@@ -104,6 +94,8 @@ define(function(require, exports, module) {
 		this.currentSong=this.songList.shift();
 		new Image().src=this.currentSong.picture;
 		this.audio.src=this.currentSong.url;
+		this.audio.load();
+		this.audio.currentTime=400;
 		!b&&this.audio.play();
 		this.trigger("songChanged",this.currentSong);
 	}

@@ -5,11 +5,22 @@
 		<link rel="stylesheet" type="text/css" href="css/popup.css">		
 	</head>
 	<body>
-		<div id="main"></div>
+		<div class="container">
+			<div id="main" class="component"></div>
+			<div id="channels" class="component">
+				<div class="top" style="width:180px">
+					<a id="op-fav-channel"  href="#" class='star button' style="line-height:20px"></a><span  id="currentChannel" class="songInfo" style="width:126px;line-height:20px"></span>
+				</div>
+				<div id="channelList" class="scroll">
+					<div id="myFav" style="margin-top:30px">loading..</div>
+					<div id="total">loading..</div>
+				</div>
+			</div>
+		</div>
 		<script src="./sea-modules/seajs/seajs/2.1.1/sea.js"></script>
 		<script src="scripts/popup.js"></script>
 		<script type="scripts/template" id="t_songInfo">
-			<div id="top">
+			<div class="top">
 				<a id="title" href="#" class="songInfo" title="<%=currentSong.title%>"><%=currentSong.title%></a>
 				<span id="artist" class="songInfo" title="<%=currentSong.artist%>"><%=currentSong.artist %></span>
 			</div>
@@ -28,7 +39,6 @@
 					<span id="timer"></span>
 				</div>
 				<div class="bottom_right">
-					<a id="playLast" href="#" class="button hover-fadeIn"></a>
 					<a id="replay" href="#" class="button <% if (!isReplay) { %> hover-fadeIn<%}%>"></a>
 				</div>
 				<div id="played"></div>
@@ -49,9 +59,33 @@
 						<li><a href="#" id="like" class="hover_fadeOut button unlike"></a></li>
 					<%}%>
 					<li op='s'><a href="#" id="skip" class="hover_fadeOut button skip"></a></li>
-					<li><a href="#" id="search" class="hover_fadeOut button search"></a></li>	
+					<li><a href="#" id="search" class="hover_fadeOut button search" title="正在收听：<%=localStorage.channelName%>Hz"></a></li>	
 				</ul>
 			</div>				
+		</script>
+		<script type="scripts/template" id="t_channels">
+					<% _.forEach(groups,function(group){%>
+						<% if(group.group_id!=0){%>
+							<div class="channel_group">
+							<span class="channel_group_title"><%=group.group_name%></span>
+								<% _.forEach(group.chls,function(ch){%>
+									<a class="channel_item <% if(ch.id==localStorage.channelId){%> channel_item_selected<%}%>" href="#" cid="<%=ch.id%>"  collected="<%=ch.collected%>" title="<%=ch.name%>"><%=ch.name%></a>
+								<%})%>
+							</div>
+						<%}%>
+					<%})%>
+		</script>
+		<script type="scripts/template" id="t_favchannels">
+			<div class="channel_group">
+				<a class="channel_item channel_item <% if(0==localStorage.channelId){%> channel_item_selected<%}%>" href="#" cid="0" collected="disable" title="私人">私人</a>
+				<a id="redHeart" class="channel_item channel_item <% if(-3==localStorage.channelId){%> channel_item_selected<%}%>" href="#" cid="-3" collected="disable" title="红心">红心</a>
+			</div>
+			<div class="channel_group" id="fav_channels">
+				<span class="channel_group_title">我的收藏</span>
+				<% _.forEach(channels,function(ch){%>
+					<a class="channel_item <% if(ch.id==localStorage.channelId){%> channel_item_selected<%}%>" href="#" cid="<%=ch.id%>" collected="true" title="<%=ch.name%>"><%=ch.name%></a>
+				<%})%>
+			</div>	
 		</script>
 	</body>
 </html>

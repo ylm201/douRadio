@@ -4,6 +4,7 @@ define(function(require, exports, module){
     $ = require('$');
     _ = require('underscore');
     share=require('../share');
+    var ChannelsView=require('./channels');
     PopupView = Backbone.View.extend({
         el:"#main",
         template:_.template($("#t_songInfo").html()),
@@ -12,6 +13,7 @@ define(function(require, exports, module){
             'click #skip':'skip',
             'click #like':'like',
             'click #delete':'deleteSong',
+            'click #search':'showChannels',
             'mouseover #control':'fadeOutCD',
             'mouseout #control':'fadeInCD',
             'mouseover #share':'showShareList',
@@ -29,7 +31,7 @@ define(function(require, exports, module){
         render: function () {
             var html = this.template(this.model.attributes);
             this.$el.html(html);
-            this.playing()
+            this.playing();
         },
         realModel:function(){
             return this.model.attributes;
@@ -60,18 +62,18 @@ define(function(require, exports, module){
             var currentSong=this.model.get('currentSong');
             var url=currentSong.picture;
             var cover=$("#cover");
-            cover.fadeOut('250', function() {
+            cover.fadeOut('150', function() {
                 var img=new Image();
                 img.src=url;
                 $(img).load(function(){
                     console.log('img loaded');
                     cover.removeClass('fadeout').addClass('rotating');
-                    $("#cover").css("background-image","url("+url+")");
-                    $("#cover").fadeIn('250');   
+                    cover.css("background-image","url("+url+")");
+                    cover.fadeIn('350');   
                 })
             });
-            $("#title").html(currentSong.title);
-            $("#artist").html(currentSong.artist);
+            $("#title").html(currentSong.title).attr('title',currentSong.title);
+            $("#artist").html(currentSong.artist).attr('title',currentSong.artist);
             $("#like").attr('class', currentSong.like==1?'button like':'button unlike');
         },
         playing:function(){
@@ -108,7 +110,7 @@ define(function(require, exports, module){
             var op=$("#operation li[op='"+this.model.get('loadType')+"']");
             if(this.model.get('loading')){
                 op.removeClass('rotated').addClass('rotate').addClass('rotating');
-                if(this.model.get('loadType')!='r') $("#cover").addClass('fadeout').removeClass('rotating');
+                if(this.model.get('loadType')!='r'&&this.model.get('loadType')!='u') $("#cover").addClass('fadeout').removeClass('rotating');
             }else{
                 $("#operation li").removeClass('rotate').removeClass('rotating');
             }
@@ -121,6 +123,20 @@ define(function(require, exports, module){
         },
         volume:function(o){
             this.port.postMessage({type:'changeVolume',value:o.target.value/100})
+        },
+        showChannels:function(){
+            var left='-180px';
+            if($("#search").attr('slided')=='true'){
+                $(".container").animate({left: '0px'},500,function(){
+                    $("#search").attr('slided','false')
+                });
+            }else{
+                $('#channels').show();
+                $(".container").animate({left: '-180px'},500,function(){
+                    $("#search").attr('slided','true')
+                });
+            }
+
         }
     });
     module.exports = PopupView;

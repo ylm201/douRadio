@@ -3,6 +3,7 @@ define(function(require, exports, module) {
 	var radio=require("./radio").init("#radio");
 	var hasLogin=false;
 	window.port=null;
+	var notification=null;
     chrome.cookies.get({
         url:"http://douban.com",
         name:"dbcl2"        
@@ -17,9 +18,16 @@ define(function(require, exports, module) {
     })
 	//歌曲切换
 	radio.on("songChanged",function(currentSong){
-		console.log("on radio change song")
 		port&&port.postMessage({type:'songChanged',obj:currentSong});
-		//TODO notify逻辑
+		if(!port&&!radio.audio.paused){
+			if(notification)  notification.cancel();
+			notification = webkitNotifications.createNotification(radio.currentSong.picture,radio.currentSong.artist,radio.currentSong.title);
+            notification.show();
+            setTimeout(function(){
+                notification.cancel();
+            },5000)
+		}
+		!radio.audio.paused&&chrome.browserAction.setTitle({title:radio.currentSong.artist+":"+radio.currentSong.title});
 	})
 	
 	//正在载入播放列表
@@ -91,6 +99,12 @@ define(function(require, exports, module) {
 			if(request.type=="changeVolume"){
 				radio.audio.volume=request.value
 				return
+			}
+			if(request.type=='changeChannel'){
+				localStorage['channelId']=request.channel.channelId;
+				localStorage['channelName']=request.channel.channelName;
+				localStorage['channelCollected']=request.channel.channelCollected;
+				radio.powerOn();
 			}
 			return;
 		})

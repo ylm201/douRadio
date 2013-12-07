@@ -1,5 +1,5 @@
 * { margin:0; padding:0;} 
-body { font-family: "微软雅黑", "雅黑", "Arial"; font-size:12px;color:#3B5343}
+body { font-family: "微软雅黑", "雅黑", "Arial"; font-size:12px;color:#3B5343;width:220px;overflow:hidden}
 a,li,ul{text-decoration:none;color:#3B5343;list-style: none}
 :focus {outline: none}
 @font-face
@@ -21,11 +21,28 @@ to {-webkit-transform: rotate(360deg);}
 .rotating{-webkit-animation-play-state:running;}
 .hover_fadeOut{opacity:1;}
 .hover_fadeOut:hover{opacity:0.8;}
-#main{width:220px;}
-#top{width:100%;text-align:center;background-color:#FFF;opacity:0.85;position:absolute;top:0px;z-index:1;padding-top: 3px}
+.component{float:left;position: relative;overflow: hidden}
+.container{overflow: hidden;position: relative;width:500px;}
+#channels{background-color:#B7DDB7;width:180px;height:259px;}
+.scroll{overflow-y:scroll;height:259px;}
+.channel_group_title{line-height: 20px;background-color:#428bca;display: block;padding-left: 5px;color:#FFF;}
+
+.channel_group a:nth-last-of-type(n+2){border-bottom:1px solid #3B5343;}
+.channel_item{display: block;line-height: 30px;padding-left: 15px;}
+.channel_item:hover{background-color:#3B5343;color:#fff;}
+.channel_item_selected{background-color:#3B5343;color:#fff;}
+.star[collected='true']:before{content:"\e006";}
+.star[collected='false']:before{content:"\e007";}
+.star[collected='disable']{display: none}
+.star{float:right;margin-right:5px;font-size: 14px}
+#redHeart[class*='channel_item_selected']{background-color: rgb(254,66,94)}
+#redHeart:hover{background-color: rgb(254,66,94)}
+#search_channel{line-height: 20px;border:1px solid #ccc;}
+.top{width:100%;text-align:center;background-color:#FFF;opacity:0.85;position:absolute;top:0px;z-index:1;padding-top: 3px;}
 .songInfo{white-space:nowrap;display: inline-block;width:218px;font-weight: bold;text-overflow:ellipsis;overflow:hidden;margin:auto;}
-#title{font-size: 15px;line-height: 20px}
+#title{font-size: 15px;line-heighdist: 20px}
 #artist{font-size: 12px;line-height:15px}
+#main{width:220px;}
 #cover {width:210px;height:210px;background-repeat: no-repeat;background-position:center;background-size:cover;margin:auto;border-radius: 50%;}
 #cd {height:210px;width:100%;background-color: #B7DDB7;padding:5px 0px 7px 0px;position: relative;text-align: center}
 #control {margin:auto;position: absolute;top:20px;left:20px;text-align: center;width:180px;height: 180px;border-radius: 50%;}
@@ -62,3 +79,23 @@ to {-webkit-transform: rotate(360deg);}
 #shareDouban {background-image:url(/img/douban.png)}
 #shareWeibo{background-image: url(/img/sina.png)}
 #share_fanfou{background-image: url(/img/fanfou.jpg)}
+
+::-webkit-scrollbar{
+    width:6px;
+    height:30px;
+    background-color:#fff;
+}
+::-webkit-scrollbar:hover{
+    background-color:#eee;
+}
+::-webkit-resizer{}
+::-webkit-scrollbar-thumb{
+    -webkit-border-radius:4px;
+    background-color: #ccc;
+}
+::-webkit-scrollbar-thumb:hover{
+    background-color: #bbb;
+}
+::-webkit-scrollbar-thumb:active{
+    background-color:#888;
+}

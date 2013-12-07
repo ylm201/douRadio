@@ -13,10 +13,10 @@
     },
     "permissions": [
         "notifications",
-        "tabs",
         "cookies",
         "http://*.douban.fm/*",
-        "http://*.douban.com/*"
+        "http://*.douban.com/*",
+        "https://*.douban.com/*"
     ],
     "background": {
         "page": "background.html"

@@ -1,7 +1,10 @@
 define(function(require, exports, module) {
 	var $=require("$");
+	var Backbone=require("backbone");
 	var Player=require("./models/player");
 	var PopupView=require("./view/popup");
+	var ChannelsView=require("./view/channels");
+	//var FavChannelsView=require("./view/favChannels");
 	var player,popupView;
 	var port=chrome.extension.connect({name:"douRadio"})
 	port.onMessage.addListener(function(msg){
@@ -10,6 +13,9 @@ define(function(require, exports, module) {
 			player=new Player(msg.obj);
 			popupView=new PopupView({'model':player});
 			popupView.port=port;
+			var channelsView = new ChannelsView();
+			channelsView.port=port;
+			channelsView.player=player;
 		}
 
 		if(msg.type=='songChanged'){
@@ -27,7 +33,7 @@ define(function(require, exports, module) {
 		}
 
 		if(msg.type=='playing'){
-			player.set({time:msg.obj})
+			player.set({time:msg.obj});
 		}
 	})
 });
