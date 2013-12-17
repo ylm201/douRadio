@@ -21,34 +21,37 @@
                 <div id="setting">
                         <h3>设置</h3>
                         <label for="enable_notify" >显示桌面通知</label>
-                        <input id="enable_notify" type="checkbox" name="enableNofify" checked="true"/>
+                        <input id="enable_notify" type="checkbox" name="enableNofify" checked="true" seed="click_notify"/>
                         <br/>
                         <label for="filter_ad" >过滤广告</label>
-                        <input id="filter_ad" type="checkbox" name="filterAd" checked="true" />
+                        <input id="filter_ad" type="checkbox" name="filterAd" checked="true" seed="click_filtAd" />
                         <br/>
                         <label for="auto_play" >打开浏览器自动播放</label>
-                        <input id="auto_play" type="checkbox" name="autoPlay" checked="true" />
+                        <input id="auto_play" type="checkbox" name="autoPlay" checked="true" seed="click_autoPlay" />
                         <br/>
                         <label for="filter_ad" >192kbps</label>
-                        <input class="bitrate" name="bitrate" value="192" type="radio">
+                        <input class="bitrate" name="bitrate" value="192" type="radio" seed="click_rate192">
                         <label for="filter_ad" >128kbps</label>
-                        <input class="bitrate" name="bitrate" value="128" type="radio">
+                        <input class="bitrate" name="bitrate" value="128" type="radio" seed="click_rate128">
                         <label for="filter_ad" >64kbps</label>
-                        <input class="bitrate" name="bitrate" value="64" type="radio">
+                        <input class="bitrate" name="bitrate" value="64" type="radio" seed="click_rate64">
+                        <span id="douban_pro" style="display:none;margin-left:10px" >请确认已购买douban.fm专业版</span>
                 </div>
                 <div id="info">
-                        <h3>感谢使用小豆电台！</h3>
+                        <h3>感谢使用小豆电台！ 抽空给个<a seed="click_comment" target="_blank" href="https://chrome.google.com/webstore/detail/%E5%B0%8F%E8%B1%86%E7%94%B5%E5%8F%B0/nljjfnjijdcagicaijhmaialoiahjckf/reviews?hl=zh-CN">评分</a>呗</h3>
                         <h4>使用过程中遇到问题或者有什么改进建议，欢迎指正：</h4>
-                        <p>
+                        <p> 
                                 <span>Email:</span><a target="_blank" href="mailto:lmyang.alex@gmail.com">lmyang.alex@gmail.com</a><br/>
                                 <span>Github:</span><a target="_blank" href="https://github.com/ylm201/douRadio">https://github.com/ylm201/douRadio</a><br/>
                                 <span>豆瓣:</span><a target="_blank" href="http://www.douban.com/people/piaoliu123/">http://www.douban.com/people/piaoliu123/</a><br/>
-                                <span>个人博客:</span><a target="_blank" href="http://blog.drifting-world.info/2012/03/%E5%B0%8F%E8%B1%86%E7%94%B5%E5%8F%B0%E6%9D%A5%E5%95%A6/">http://blog.drifting-world.info/</a>
+                                <span>个人博客:</span><a target="_blank" href="http://blog.drifting-world.info/2012/03/%E5%B0%8F%E8%B1%86%E7%94%B5%E5%8F%B0%E6%9D%A5%E5%95%A6/">http://blog.drifting-world.info/</a><br/>
+                                <span>问题反馈:</span><a seed="click_feedback" target="_blank" href="https://chrome.google.com/webstore/support/nljjfnjijdcagicaijhmaialoiahjckf?hl=zh-CN&gl=CN#feature">https://chrome.google.com/webstore/support/nljjfnjijdcagicaijhmaialoiahjckf?hl=zh-CN&gl=CN#feature</a>
+                                
                         </p>        
                 </div>
             <div id="history">
                 <h4>更新历史</h4>
-                <h5 style="color:red" >v3.0.1</h5>
+                <h5 style="color:red" >v3.0.2</h5>
                 <p>
                     采用全新界面风格，增加专辑图片<br/>
                     更丰富频道选择<br/>

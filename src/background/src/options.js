@@ -26,6 +26,11 @@ define(function(require, exports, module){
     
     $("input[name='bitrate']").bind("click",function(){
         localStorage.setItem('bitrate',$(this).val());
+        if($(this).val()!='64'){
+            $('#douban_pro').show();
+        }else{
+            $('#douban_pro').hide();
+        }
     });
 
     if(localStorage.getItem('enableNotify')!='N'){
@@ -34,16 +39,16 @@ define(function(require, exports, module){
         $('#enable_notify')[0].checked=false;
     }
         
-    if(localStorage.getItem('filterAd')!='Y'){
-        $('#filter_ad')[0].checked=false;
-    }else{
+    if(localStorage.getItem('filterAd')=='Y'){
         $('#filter_ad')[0].checked=true;
+    }else{
+        $('#filter_ad')[0].checked=false;
     }
         
-    if(localStorage.getItem('autoPlay')!='Y'){
-        $('#auto_play')[0].checked=false;
-    }else{
+    if(localStorage.getItem('autoPlay')=='Y'){
         $('#auto_play')[0].checked=true;
+    }else{
+        $('#auto_play')[0].checked=false;
     }
 
     var selector=".bitrate[value='"+(localStorage.bitrate?localStorage.bitrate:'64')+"']";

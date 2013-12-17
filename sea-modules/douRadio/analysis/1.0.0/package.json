@@ -1,0 +1,26 @@
+{
+  "family": "douRadio",
+  "name": "analysis",
+  "version": "1.0.0",
+  "description": "Google Analysis Module.",
+  "homepage": "https://github.com/ylm201/douRadio",
+  "author": "ylm",
+  "maintainers": [
+    "ylm"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/ylm201/douRadio.git"
+  },
+  "bugs": {
+    "url": ""
+  },
+  "keywords": [],
+  "licenses": "MIT",
+  "spm": {
+    "output": ["analysis.js"],
+    "alias": {},
+    "devAlias": {},
+    "engines": {}
+  }
+}

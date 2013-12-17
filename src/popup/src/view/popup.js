@@ -73,7 +73,7 @@ define(function(require, exports, module){
                 })
             });
             $("#title").html(currentSong.title).attr('title',currentSong.title);
-            $("#artist").html(currentSong.artist).attr('title',currentSong.artist);
+            $("#artist").html(currentSong.artist+'--'+currentSong.albumtitle).attr('title',currentSong.artist+'--'+currentSong.albumtitle).attr('href','http://music.douban.com'+currentSong.album);
             $("#like").attr('class', currentSong.like==1?'button like':'button unlike');
         },
         playing:function(){

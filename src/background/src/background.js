@@ -1,25 +1,59 @@
 define(function(require, exports, module) {
 	
-	var radio=require("./radio").init("#radio");
-	var hasLogin=false;
+	var Radio=require("./radio");
+	var radio=Radio.init("#radio");
+	var tracker=require("analysis");
 	window.port=null;
 	var notification=null;
-    chrome.cookies.get({
+    
+	var checkLogin=function(){
+		chrome.cookies.get({
         url:"http://douban.com",
         name:"dbcl2"        
-    },function(cookie){        
-        if(cookie){
-            chrome.cookies.set({
-                url:"http://douban.fm",
-                name:"dbcl2",
-                value:cookie.value
-            })
-        }
-    })
+	    },function(cookie){        
+	        if(cookie){
+	            chrome.cookies.set({
+	                url:"http://douban.fm",
+	                name:"dbcl2",
+	                value:cookie.value
+	            })
+	        }else{
+	        	port&&port.postMessage({type:'login'})
+	        }
+	    })
+	    chrome.cookies.get({
+	        url:"http://douban.com",
+	        name:"ck"        
+	    },function(cookie){        
+	        if(cookie){
+	            chrome.cookies.set({
+	                url:"http://douban.fm",
+	                name:"ck",
+	                value:cookie.value
+	            })
+	        }
+	    })
+	}
+
+	var checkVersion=function(){		
+		if(localStorage.version!=chrome.app.getDetails().version){
+			if(localStorage.version!='3.0.2') window.open('options.html');
+				tracker&&tracker.trackEvent('update',chrome.app.getDetails().version,localStorage.version?localStorage.version:'--');	
+				localStorage.version=chrome.app.getDetails().version;
+		}
+	}
+
+	checkVersion();
+	checkLogin();
+
+	radio.on("songEnded",function(currentSong){
+		tracker&&tracker.trackEvent('play',this.kind=="session"?"session":"normal",currentSong&&currentSong.kbps);	
+	})
+
 	//歌曲切换
 	radio.on("songChanged",function(currentSong){
 		port&&port.postMessage({type:'songChanged',obj:currentSong});
-		if(!port&&!radio.audio.paused){
+		if(!port&&!radio.audio.paused&&localStorage.enableNotify!='N'){
 			if(notification)  notification.cancel();
 			notification = webkitNotifications.createNotification(radio.currentSong.picture,radio.currentSong.artist,radio.currentSong.title);
             notification.show();
@@ -50,7 +84,8 @@ define(function(require, exports, module) {
 		window.port=port;
 		port.onDisconnect.addListener(function(){
 			window.port=undefined;
-		})	
+		})
+		checkLogin();
 		port.postMessage(
 		{
 			type:"init",

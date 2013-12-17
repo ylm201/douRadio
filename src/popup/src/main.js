@@ -35,5 +35,13 @@ define(function(require, exports, module) {
 		if(msg.type=='playing'){
 			player.set({time:msg.obj});
 		}
+
+		if(msg.type=='login'){
+			$('#notify').show();
+		}
+	});
+
+	$("#notify_close").on("click",function(){
+		$("#notify").hide()
 	})
 });

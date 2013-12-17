@@ -21,8 +21,13 @@ define(function(require, exports, module) {
 			localStorage.setItem('channelCollected','disable');
 		}
 		radio.audio.addEventListener("ended",(function(){
+			this.trigger('songEnded',this.currentSong);
 			if(this.isReplay){
 				this.audio.play();
+				if(this.currentSong.replayTimes==0){
+					this.reportEnd();
+					this.currentSong.replayTimes++;
+				}
 				return;
 			}
 			this.reportEnd();
@@ -38,38 +43,33 @@ define(function(require, exports, module) {
 		}).bind(radio));
 
 		radio.audio.addEventListener("error", function(e) { 
-            console.log("playing error: "+e.target.error.code+","+e.target.currentTime);
+            tracker.trackEvent('error','play:'+e.target.error.code);
+            console.log("loadSongError:"+e.target.error.code);
             // exception recover
-            if(radio.currentSong.retryTimes<3){
-            	radio.currentSong.retryTimes++;
-            	console.log("retryTimes: "+radio.currentSong.retryTimes);
-            	var currentTime=e.target.currentTime;
-            	e.target.load();
-            	e.target.pause();
-            	console.log("reload song");
-            	setTimeout(function(){
-            		console.log("begin replay song:"+e.target.currentTime+","+currentTime);
-            		e.target.currentTime=currentTime;
-            		e.target.play();
-            		console.log("end replay song:"+e.target.currentTime+","+currentTime);
-            	},2000)
-            }else{
-            	console.error("exceed max retry time!");
-            }
+            //if(radio.currentSong.retryTimes<2){
+            //	radio.currentSong.retryTimes++;
+            //	console.log("retryTimes: "+radio.currentSong.retryTimes);
+            //	var currentTime=e.target.currentTime;
+            //	e.target.load();
+            //	e.target.pause();
+            //	console.log("reload song");
+            //	setTimeout(function(){
+            //		console.log("begin replay song:"+e.target.currentTime+","+currentTime);
+            //		e.target.currentTime=currentTime;
+            //		e.target.play();
+            //		console.log("end replay song:"+e.target.currentTime+","+currentTime);
+            //	},2000)
+            //}else{
+            //	console.error("exceed max retry time!");
+            //}
 
         });
 
         radio.audio.addEventListener("loadedmetadata",function(){
-        	console.log("metadata loaded");
-        	if(false&&radio.currentSong.loadError&&radio.currentSong.currentTime!=0){
-        		console.log("begin replay song:"+e.target.currentTime+","+currentTime);
-            	radio.audio.currentTime=radio.currentSong.currentTime;
-            	radio.audio.play();
-            	console.log("end replay song:"+e.target.currentTime+","+currentTime);
-        	}
+        	//console.log("metadata loaded");
         })
 		radio.getPlayList('n',function(){
-			radio.changeSong(!localStorage.autoPlay=='Y');
+			radio.changeSong(localStorage.autoPlay!='Y');
 		})
 		return radio;
 	};
@@ -104,8 +104,25 @@ define(function(require, exports, module) {
 					}
 				})
 				this.kind=data.kind;
-				this.songList=temp;
+				if(temp.length>0) this.songList=temp;
 				fn&&(fn.bind(this))();		
+		}).bind(this))
+	}
+
+	Radio.prototype.report=function(t){
+		$.getJSON("http://douban.fm/j/mine/playlist",{
+				type:t,
+				channel:localStorage.channelId?localStorage.channelId:0,
+				pb:localStorage.bitrate?localStorage.bitrate:64,
+				sid:this.currentSong? this.currentSong.sid:'',
+				pt:this.audio.currentTime,
+				r:Math.random(),
+				kbps:localStorage.bitrate?localStorage.bitrate:64,
+				from:"mainsite"
+			},(function(data){
+				if(data.err){
+					return;
+				}	
 		}).bind(this))
 	}
 
@@ -115,7 +132,7 @@ define(function(require, exports, module) {
 				sid:this.currentSong.sid,
 				channel:localStorage['channel']?localStorage['channel'].channelId:61,
 				from:"mainsite"	
-		})		
+		})
 	}
 
 	Radio.prototype.changeSong=function(b){
@@ -129,6 +146,7 @@ define(function(require, exports, module) {
 	Radio.prototype.skip=function(){
 		this.audio.pause();
 		if(this.kind=='session'){
+			this.report('s');
 			if(this.songList.length<=1){
 				this.trigger("songListLoading","s");
 				this.getPlayList("p",this.changeSong);	
@@ -141,16 +159,26 @@ define(function(require, exports, module) {
 	}
 
 	Radio.prototype.like=function(){
-		this.getPlayList("r")
+		this.kind=='session'?this.report('r'):this.getPlayList('r');
 	}
 
 	Radio.prototype.unlike=function(){
-		this.getPlayList("u")
+		this.kind=='session'?this.report('u'):this.getPlayList('u');
 	}
 
 	Radio.prototype.del=function(){
 		this.audio.pause();
-		this.getPlayList("b",this.changeSong);
+		if(this.kind=='session'){
+			this.report('b');
+			if(this.songList.length<=1){
+				this.trigger("songListLoading","b");
+				this.getPlayList("p",this.changeSong);	
+			}else{
+				this.changeSong();
+			}
+		}else{
+			this.getPlayList("b",this.changeSong);
+		}
 	}
 
 	Radio.prototype.powerOn=function(port){

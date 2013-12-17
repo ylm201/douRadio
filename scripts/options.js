@@ -6,4 +6,6 @@ seajs.config({
     "backbone": "gallery/backbone/1.0.0/backbone.js"
   }
 });
-seajs.use("/src/radio/src/options");
+seajs.use("douRadio/background/1.0.0/options");
+seajs.use("douRadio/analysis/1.0.0/analysis");
+//seajs.use("/src/background/src/options");

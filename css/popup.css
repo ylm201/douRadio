@@ -26,7 +26,9 @@ to {-webkit-transform: rotate(360deg);}
 #channels{background-color:#B7DDB7;width:180px;height:259px;}
 .scroll{overflow-y:scroll;height:259px;}
 .channel_group_title{line-height: 20px;background-color:#428bca;display: block;padding-left: 5px;color:#FFF;}
-
+#notify{position: absolute;top:0;left:0;width:220px;height:40px;background-color:#FFF;z-index: 2;text-align: center;display: none}
+#notify p{line-height: 40px;}
+#notify_close{position: absolute;top:0;right:5px;font-size: 13px}
 .channel_group a:nth-last-of-type(n+2){border-bottom:1px solid #3B5343;}
 .channel_item{display: block;line-height: 30px;padding-left: 15px;}
 .channel_item:hover{background-color:#3B5343;color:#fff;}
@@ -44,7 +46,7 @@ to {-webkit-transform: rotate(360deg);}
 #title{font-size: 15px;line-heighdist: 20px}
 #artist{font-size: 12px;line-height:15px}
 #main{width:220px;}
-#cover {width:210px;height:210px;background-repeat: no-repeat;background-position:center;background-size:cover;margin:auto;border-radius: 50%;}
+#cover {width:210px;height:210px;background-repeat: no-repeat;background-position:center;background-size:cover;background-color:white;margin:auto;border-radius: 50%;}
 #cd {height:210px;width:100%;background-color: #B7DDB7;padding:5px 0px 7px 0px;position: relative;text-align: center}
 #control {margin:auto;position: absolute;top:20px;left:20px;text-align: center;width:180px;height: 180px;border-radius: 50%;}
 #control a{line-height:180px;font-size:30px;color:#FFF;text-shadow: 3px 3px 1px #3B5343;}
@@ -56,7 +58,7 @@ to {-webkit-transform: rotate(360deg);}
 #timer{color:#3B5343;font-size:14px;line-height: 14px;}
 #replay:before{content:'\e115';}
 #playLast:before{content:'\e091';}
-#played{height:2px;background-color:#3B5343;width:80%;opacity:0.8;position: absolute;bottom:0px;}
+#played{height:2px;background-color:#3B5343;width:0%;opacity:0.8;position: absolute;bottom:0px;}
 .bottom_left{position: absolute;left:5px;bottom:2px}
 .bottom_right{position: absolute;right:17px;bottom:2px}
 .bottom_right a{float:left;margin-left: 5px}

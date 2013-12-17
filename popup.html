@@ -5,6 +5,10 @@
 		<link rel="stylesheet" type="text/css" href="css/popup.css">		
 	</head>
 	<body>
+		<div id="notify">
+			<a href="#" id="notify_close" title="未登录将无法收藏歌曲，频道等操作">x</a>
+			<p>您尚未登录豆瓣电台! <a href="https://www.douban.com/accounts/login" style="color:red" target="_blank" title="未登录将无法收藏歌曲，频道等操作" seed="click_login">点此登录</a></p>
+		</div>
 		<div class="container">
 			<div id="main" class="component"></div>
 			<div id="channels" class="component">
@@ -12,7 +16,7 @@
 					<a id="op-fav-channel"  href="#" class='star button' style="line-height:20px"></a><span  id="currentChannel" class="songInfo" style="width:126px;line-height:20px"></span>
 				</div>
 				<div id="channelList" class="scroll">
-					<div id="myFav" style="margin-top:30px">loading..</div>
+					<div id="myFav" style="margin-top:25px">loading..</div>
 					<div id="total">loading..</div>
 				</div>
 			</div>
@@ -21,8 +25,8 @@
 		<script src="scripts/popup.js"></script>
 		<script type="scripts/template" id="t_songInfo">
 			<div class="top">
-				<a id="title" href="#" class="songInfo" title="<%=currentSong.title%>"><%=currentSong.title%></a>
-				<span id="artist" class="songInfo" title="<%=currentSong.artist%>"><%=currentSong.artist %></span>
+				<span id="title" class="songInfo" title="<%=currentSong.title%>" seed="click_album"><%=currentSong.title%></span>
+				<a id="artist" class="songInfo" title="<%=currentSong.artist%>--<%=currentSong.albumtitle %>"  href="http://music.douban.com<%=currentSong.album%>" target="_blank" seed="click_album" ><%=currentSong.artist %>--<%=currentSong.albumtitle %></a>
 			</div>
 			<div id="cd">
 				<% if (playing) { %>
@@ -39,7 +43,7 @@
 					<span id="timer"></span>
 				</div>
 				<div class="bottom_right">
-					<a id="replay" href="#" class="button <% if (!isReplay) { %> hover-fadeIn<%}%>"></a>
+					<a id="replay" href="#" class="button <% if (!isReplay) { %> hover-fadeIn<%}%>" seed="click_replay" ></a>
 				</div>
 				<div id="played"></div>
 			</div>
@@ -48,18 +52,18 @@
 					<li id="share" style="margin-right:0px">
 						<a href="#" class="hover_fadeOut button share" style="margin-right:0px"></a>
 						<ul id="shareList">
-							<li><a id='shareDouban' href="#" ></a></li>
-							<li><a id='shareWeibo'  href="#" ></a></li>
+							<li><a id='shareDouban' href="#" seed="click_share_douban"></a></li>
+							<li><a id='shareWeibo'  href="#" seed="click_share_weibo"></a></li>
 						</ul>
 					</li>			
-					<li op='b'><a href="#" id="delete" class="hover_fadeOut button delete"></a></li>
+					<li op='b'><a href="#" id="delete" class="hover_fadeOut button delete" seed="click_delete"></a></li>
 					<% if (currentSong.like) { %>
-						<li><a href="#" id="like" class="hover_fadeOut button like" ></a></li>
+						<li><a href="#" id="like" class="hover_fadeOut button like" seed="click_unlike"></a></li>
 					<% }else{  %>
-						<li><a href="#" id="like" class="hover_fadeOut button unlike"></a></li>
+						<li><a href="#" id="like" class="hover_fadeOut button unlike" seed="click_like"></a></li>
 					<%}%>
-					<li op='s'><a href="#" id="skip" class="hover_fadeOut button skip"></a></li>
-					<li><a href="#" id="search" class="hover_fadeOut button search" title="正在收听：<%=localStorage.channelName%>Hz"></a></li>	
+					<li op='s'><a href="#" id="skip" class="hover_fadeOut button skip" seed="click_skip"></a></li>
+					<li><a href="#" id="search" class="hover_fadeOut button search" title="正在收听：<%=localStorage.channelName%>Hz" seed="click_channels"></a></li>	
 				</ul>
 			</div>				
 		</script>
@@ -69,23 +73,24 @@
 							<div class="channel_group">
 							<span class="channel_group_title"><%=group.group_name%></span>
 								<% _.forEach(group.chls,function(ch){%>
-									<a class="channel_item <% if(ch.id==localStorage.channelId){%> channel_item_selected<%}%>" href="#" cid="<%=ch.id%>"  collected="<%=ch.collected%>" title="<%=ch.name%>"><%=ch.name%></a>
+									<a class="channel_item <% if(ch.id==localStorage.channelId){%> channel_item_selected<%}%>" href="#" cid="<%=ch.id%>"  collected="<%=ch.collected%>" title="<%=ch.name%>" seed="click_changeChannel"><%=ch.name%></a>
 								<%})%>
 							</div>
 						<%}%>
 					<%})%>
 		</script>
 		<script type="scripts/template" id="t_favchannels">
-			<div class="channel_group">
-				<a class="channel_item channel_item <% if(0==localStorage.channelId){%> channel_item_selected<%}%>" href="#" cid="0" collected="disable" title="私人">私人</a>
-				<a id="redHeart" class="channel_item channel_item <% if(-3==localStorage.channelId){%> channel_item_selected<%}%>" href="#" cid="-3" collected="disable" title="红心">红心</a>
-			</div>
+			
 			<div class="channel_group" id="fav_channels">
-				<span class="channel_group_title">我的收藏</span>
+				<span class="channel_group_title">我的兆赫</span>
+				<a class="channel_item channel_item <% if(0==localStorage.channelId){%> channel_item_selected<%}%>" href="#" cid="0" collected="disable" title="私人" >私人</a>
+				<a id="redHeart" class="channel_item channel_item <% if(-3==localStorage.channelId){%> channel_item_selected<%}%>" href="#" cid="-3" collected="disable" title="红心">红心</a>
+				<%if(channels.length>0){%>
 				<% _.forEach(channels,function(ch){%>
-					<a class="channel_item <% if(ch.id==localStorage.channelId){%> channel_item_selected<%}%>" href="#" cid="<%=ch.id%>" collected="true" title="<%=ch.name%>"><%=ch.name%></a>
+					<a class="channel_item <% if(ch.id==localStorage.channelId){%> channel_item_selected<%}%>" href="#" cid="<%=ch.id%>" collected="true" title="<%=ch.name%>" seed="click_changeChannel"><%=ch.name%><span class='unfav' style="float:right;margin-right:10px" cid='<%=ch.id%>'>x</span></a>
 				<%})%>
-			</div>	
+				<%}%>
+			</div>
 		</script>
 	</body>
 </html>

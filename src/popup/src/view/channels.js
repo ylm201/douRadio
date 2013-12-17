@@ -15,15 +15,21 @@ define(function(require, exports, module){
             this.favChannels=new FavChannels;
             this.favChannels.fetch({success:this.renderFav});
             this.channels.fetch({success:this.render});
-            $('#currentChannel').html('正在收听：'+localStorage.channelName+' Hz')
-            $('#op-fav-channel').attr('cid',localStorage.channelId).attr('collected',localStorage.channelCollected);
+            $('#currentChannel').html(localStorage.channelName);
+            if(localStorage.channelCollected!='disable'){
+                $.get("http://douban.fm/j/explore/is_fav_channel?cid="+localStorage.channelId,function(data){    
+                    $('#op-fav-channel').attr('cid',localStorage.channelId).attr('collected',data.data.res.is_fav);
+                })
+            }else{
+                $('#op-fav-channel').attr('cid',localStorage.channelId).attr('collected','disable');  
+            }
         },
         events: {
             'click .channel_item':'changeChannel',
-            'click #op-fav-channel':'favChannel'
+            'click #op-fav-channel':'favChannel',
+            'click .unfav':'unfavChannel'
         },
         render:function(){
-            console.log(this.channels);
             $('#total').html(this.template(this.channels.attributes));
         },
         renderFav:function(){
@@ -33,7 +39,7 @@ define(function(require, exports, module){
             $('.channel_item').removeClass('channel_item_selected');
             var s=$(o.target);
             s.addClass('channel_item_selected');
-            $('#currentChannel').html('正在收听：'+s.html()+' Hz')
+            $('#currentChannel').html(s.attr('title')).attr('title',s.attr('title'));
             $('#op-fav-channel').attr('cid',s.attr('cid')).attr('collected',s.attr('collected'));
             $('#search').attr('title',s.attr('title'));
             this.player.set({playing:true});
@@ -64,6 +70,20 @@ define(function(require, exports, module){
                     $('#op-fav-channel').attr('collected',currentChannel.attr('collected')=='true'?'false':'true')
                 }
             })
+        },
+        unfavChannel:function(o){
+            console.log('unfav');
+            var ch=$(o.target).parent();
+            $.get('http://douban.fm/j/explore/unfav_channel?cid='+ch.attr('cid'),function(data){
+                if(data.status==true) {
+                    ch.remove();
+                    if($('#op-fav-channel').attr('cid')==ch.attr('cid')){
+                        $('#op-fav-channel').attr('collected','false');
+                        localStorage.channelCollected='false';   
+                    }
+                }
+            })
+            return false;
         }
     });
     module.exports=ChannelsView;

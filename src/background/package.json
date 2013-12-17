@@ -1,6 +1,6 @@
 {
   "family": "douRadio",
-  "name": "radio",
+  "name": "background",
   "version": "1.0.0",
   "description": "chrome extension for douban.fm",
   "homepage": "https://github.com/ylm201/douRadio",
@@ -18,7 +18,7 @@
   "keywords": [],
   "licenses": "MIT",
   "spm": {
-    "output": ["radio.js"],
+    "output": ["background.js","options.js"],
     "alias": {},
     "devAlias": {},
     "engines": {}
