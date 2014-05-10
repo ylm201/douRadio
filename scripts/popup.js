@@ -8,4 +8,4 @@ seajs.config({
   }
 });
 seajs.use("douRadio/popup/1.0.0/main");
-seajs.use("douRadio/analysis/1.0.0/analysis");
+//seajs.use("/src/popup/src/main");

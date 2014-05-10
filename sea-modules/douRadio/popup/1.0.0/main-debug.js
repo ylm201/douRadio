@@ -1,9 +1,9 @@
-define("douRadio/popup/1.0.0/main", [ "$", "backbone", "./models/player", "./view/popup", "underscore", "./share", "./view/channels" ], function(require, exports, module) {
-    var $ = require("$");
-    var Backbone = require("backbone");
-    var Player = require("./models/player");
-    var PopupView = require("./view/popup");
-    var ChannelsView = require("./view/channels");
+define("douRadio/popup/1.0.0/main-debug", [ "$-debug", "backbone-debug", "./models/player-debug", "./view/popup-debug", "underscore-debug", "./share-debug", "./view/channels-debug" ], function(require, exports, module) {
+    var $ = require("$-debug");
+    var Backbone = require("backbone-debug");
+    var Player = require("./models/player-debug");
+    var PopupView = require("./view/popup-debug");
+    var ChannelsView = require("./view/channels-debug");
     //var FavChannelsView=require("./view/favChannels");
     var player, popupView;
     var port = chrome.extension.connect({
@@ -55,19 +55,19 @@ define("douRadio/popup/1.0.0/main", [ "$", "backbone", "./models/player", "./vie
     });
 });
 
-define("douRadio/popup/1.0.0/models/player", [ "backbone" ], function(require, exports, module) {
-    var Backbone = require("backbone");
+define("douRadio/popup/1.0.0/models/player-debug", [ "backbone-debug" ], function(require, exports, module) {
+    var Backbone = require("backbone-debug");
     var Player = Backbone.Model.extend({});
     module.exports = Player;
 });
 
-define("douRadio/popup/1.0.0/view/popup", [ "backbone", "$", "underscore", "douRadio/popup/1.0.0/share", "douRadio/popup/1.0.0/view/channels" ], function(require, exports, module) {
+define("douRadio/popup/1.0.0/view/popup-debug", [ "backbone-debug", "$-debug", "underscore-debug", "douRadio/popup/1.0.0/share-debug", "douRadio/popup/1.0.0/view/channels-debug" ], function(require, exports, module) {
     var Backbone, $, _, share;
-    Backbone = require("backbone");
-    $ = require("$");
-    _ = require("underscore");
-    share = require("douRadio/popup/1.0.0/share");
-    var ChannelsView = require("douRadio/popup/1.0.0/view/channels");
+    Backbone = require("backbone-debug");
+    $ = require("$-debug");
+    _ = require("underscore-debug");
+    share = require("douRadio/popup/1.0.0/share-debug");
+    var ChannelsView = require("douRadio/popup/1.0.0/view/channels-debug");
     PopupView = Backbone.View.extend({
         el: "#main",
         template: _.template($("#t_songInfo").html()),
@@ -135,12 +135,12 @@ define("douRadio/popup/1.0.0/view/popup", [ "backbone", "$", "underscore", "douR
             var currentSong = this.model.get("currentSong");
             var url = currentSong.picture;
             var cover = $("#cover");
+            var that = this;
             cover.fadeOut("150", function() {
                 var img = new Image();
                 img.src = url;
                 $(img).load(function() {
-                    console.log("img loaded");
-                    cover.removeClass("fadeout").addClass("rotating");
+                    if (that.model.get("playing")) cover.removeClass("fadeout").addClass("rotating");
                     cover.css("background-image", "url(" + url + ")");
                     cover.fadeIn("350");
                 });
@@ -225,7 +225,7 @@ define("douRadio/popup/1.0.0/view/popup", [ "backbone", "$", "underscore", "douR
     module.exports = PopupView;
 });
 
-define("douRadio/popup/1.0.0/share", [], function(require, exports, module) {
+define("douRadio/popup/1.0.0/share-debug", [], function(require, exports, module) {
     var share = {
         shareWeibo: function(song) {
             url = "http://douban.fm/?start=" + song.sid + "g" + song.ssid + "g0&cid=0";
@@ -243,11 +243,11 @@ define("douRadio/popup/1.0.0/share", [], function(require, exports, module) {
     module.exports = share;
 });
 
-define("douRadio/popup/1.0.0/view/channels", [ "backbone", "$", "underscore" ], function(require, exports, module) {
+define("douRadio/popup/1.0.0/view/channels-debug", [ "backbone-debug", "$-debug", "underscore-debug" ], function(require, exports, module) {
     var Backbone, $, _, share;
-    Backbone = require("backbone");
-    $ = require("$");
-    _ = require("underscore");
+    Backbone = require("backbone-debug");
+    $ = require("$-debug");
+    _ = require("underscore-debug");
     var ChannelsView = Backbone.View.extend({
         el: "#channels",
         template: _.template($("#t_channels").html()),

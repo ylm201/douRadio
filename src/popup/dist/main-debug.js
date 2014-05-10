@@ -135,12 +135,12 @@ define("douRadio/popup/1.0.0/view/popup-debug", [ "backbone-debug", "$-debug", "
             var currentSong = this.model.get("currentSong");
             var url = currentSong.picture;
             var cover = $("#cover");
+            var that = this;
             cover.fadeOut("150", function() {
                 var img = new Image();
                 img.src = url;
                 $(img).load(function() {
-                    console.log("img loaded");
-                    cover.removeClass("fadeout").addClass("rotating");
+                    if (that.model.get("playing")) cover.removeClass("fadeout").addClass("rotating");
                     cover.css("background-image", "url(" + url + ")");
                     cover.fadeIn("350");
                 });

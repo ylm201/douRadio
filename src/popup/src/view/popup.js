@@ -42,7 +42,7 @@ define(function(require, exports, module){
             this.port.postMessage({type:'togglePlay'});
             if(!lastPlayingStatus){
                 $("#control a").attr('class','button playing');
-                $("#cover").removeClass('fadeout').addClass('rotating');
+                $("#cover").removeClass('fadeout').addClass('rotating');;
             }else{
                 $("#control a").attr('class','button paused');
                 $("#cover").addClass('fadeout').removeClass('rotating');
@@ -62,14 +62,14 @@ define(function(require, exports, module){
             var currentSong=this.model.get('currentSong');
             var url=currentSong.picture;
             var cover=$("#cover");
+            var that=this;
             cover.fadeOut('150', function() {
                 var img=new Image();
                 img.src=url;
                 $(img).load(function(){
-                    console.log('img loaded');
-                    cover.removeClass('fadeout').addClass('rotating');
+                    if(that.model.get('playing')) cover.removeClass('fadeout').addClass('rotating');
                     cover.css("background-image","url("+url+")");
-                    cover.fadeIn('350');   
+                    cover.fadeIn('350');
                 })
             });
             $("#title").html(currentSong.title).attr('title',currentSong.title);
@@ -85,16 +85,16 @@ define(function(require, exports, module){
             $('#timer').html(m+":"+s);
             $('#played').width((time.currentTime/time.duration*100)+"%");
         },
-        fadeOutCD:function(){            
+        fadeOutCD:function(){
             if($("#control a").hasClass('playing')){
                 $('#cover').addClass('fadeout');
-                $('#control a').show();         
+                $('#control a').show();
             }
         },
         fadeInCD:function(){
             if($("#control a").hasClass('playing')){
                 $('#cover').removeClass('fadeout');
-                $('#control a').hide();     
+                $('#control a').hide();
             }
         },
         showShareList:function(){
