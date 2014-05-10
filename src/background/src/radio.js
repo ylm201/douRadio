@@ -54,7 +54,6 @@ define(function(require, exports, module) {
         });
 
         radio.audio.addEventListener("loadedmetadata",function(){
-        	console.error("loadedmetadata!");
 			if(radio.currentSong.retryTimes>0&&radio.currentSong.retryTimes<=3&&radio.currentSong.revoverTime){
         		this.currentTime=radio.currentSong.revoverTime;
         		radio.trigger("error","revover:"+radio.currentSong.retryTimes);

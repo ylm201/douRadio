@@ -36,7 +36,7 @@ define("douRadio/background/1.0.0/background-debug", [ "./radio-debug", "$-debug
     };
     var checkVersion = function() {
         if (localStorage.version != chrome.app.getDetails().version) {
-            if (localStorage.version != "3.0.2") window.open("options.html");
+            //if(localStorage.version!='3.0.2') window.open('options.html');
             tracker && tracker.trackEvent("update", chrome.app.getDetails().version, localStorage.version ? localStorage.version : "--");
             localStorage.version = chrome.app.getDetails().version;
         }
@@ -218,7 +218,6 @@ define("douRadio/background/1.0.0/radio-debug", [ "$-debug", "underscore-debug",
             }
         });
         radio.audio.addEventListener("loadedmetadata", function() {
-            console.error("loadedmetadata!");
             if (radio.currentSong.retryTimes > 0 && radio.currentSong.retryTimes <= 3 && radio.currentSong.revoverTime) {
                 this.currentTime = radio.currentSong.revoverTime;
                 radio.trigger("error", "revover:" + radio.currentSong.retryTimes);

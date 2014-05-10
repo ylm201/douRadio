@@ -1,16 +1,16 @@
 define(function(require, exports, module) {
-	
+
 	var Radio=require("./radio");
 	var radio=Radio.init("#radio");
 	var tracker=require("analysis");
 	window.port=null;
 	var notification=null;
-    
+
 	var checkLogin=function(){
 		chrome.cookies.get({
         url:"http://douban.com",
-        name:"dbcl2"        
-	    },function(cookie){        
+        name:"dbcl2"
+	    },function(cookie){
 	        if(cookie){
 	            chrome.cookies.set({
 	                url:"http://douban.fm",
@@ -23,8 +23,8 @@ define(function(require, exports, module) {
 	    })
 	    chrome.cookies.get({
 	        url:"http://douban.com",
-	        name:"ck"        
-	    },function(cookie){        
+	        name:"ck"
+	    },function(cookie){
 	        if(cookie){
 	            chrome.cookies.set({
 	                url:"http://douban.fm",
@@ -35,11 +35,11 @@ define(function(require, exports, module) {
 	    })
 	}
 
-	var checkVersion=function(){		
+	var checkVersion=function(){
 		if(localStorage.version!=chrome.app.getDetails().version){
-			if(localStorage.version!='3.0.2') window.open('options.html');
-				tracker&&tracker.trackEvent('update',chrome.app.getDetails().version,localStorage.version?localStorage.version:'--');	
-				localStorage.version=chrome.app.getDetails().version;
+			//if(localStorage.version!='3.0.2') window.open('options.html');
+			tracker&&tracker.trackEvent('update',chrome.app.getDetails().version,localStorage.version?localStorage.version:'--');
+			localStorage.version=chrome.app.getDetails().version;
 		}
 	}
 
@@ -47,7 +47,7 @@ define(function(require, exports, module) {
 	checkLogin();
 
 	radio.on("songEnded",function(currentSong){
-		tracker&&tracker.trackEvent('play',this.kind=="session"?"session":"normal",currentSong&&currentSong.kbps);	
+		tracker&&tracker.trackEvent('play',this.kind=="session"?"session":"normal",currentSong&&currentSong.kbps);
 	})
 
 	//歌曲切换
@@ -63,22 +63,22 @@ define(function(require, exports, module) {
 		}
 		!radio.audio.paused&&chrome.browserAction.setTitle({title:radio.currentSong.artist+":"+radio.currentSong.title});
 	})
-	
+
 	//正在载入播放列表
 	radio.on("songListLoading",function(t){
 		port&&port.postMessage({type:'songListLoading',obj:t});
 	})
-	
+
 	//播放列表已载入
 	radio.on("songListLoaded",function(t){
 		port&&port.postMessage({type:'songListLoaded',obj:t});
 	})
-	
+
 	//歌曲播放中
 	radio.on("playing",function(time){
 		port&&port.postMessage({type:'playing',obj:{currentTime:time.currentTime,duration:time.duration}});
 	})
-	
+
 	chrome.extension.onConnect.addListener(function(port){
 		if(port.name!="douRadio") return;
 		window.port=port;
