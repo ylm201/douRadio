@@ -4,7 +4,7 @@ define(function(require, exports, module) {
 	var radio=Radio.init("#radio");
 	var tracker=require("analysis");
 	window.port=null;
-	var notification=null;
+	var prevNotification=null;
 
 	var checkLogin=function(){
 		chrome.cookies.get({
@@ -54,12 +54,28 @@ define(function(require, exports, module) {
 	radio.on("songChanged",function(currentSong){
 		port&&port.postMessage({type:'songChanged',obj:currentSong});
 		if(!port&&!radio.audio.paused&&localStorage.enableNotify!='N'){
-			if(notification)  notification.cancel();
-			notification = webkitNotifications.createNotification(radio.currentSong.picture,radio.currentSong.artist,radio.currentSong.title);
-            notification.show();
-            setTimeout(function(){
-                notification.cancel();
-            },5000)
+			prevNotification&&chrome.notifications.clear(prevNotification,function(){})
+			chrome.notifications.create('',
+				{
+					iconUrl:radio.currentSong.picture,
+					title:radio.currentSong.artist,
+					message:radio.currentSong.title,
+					type:'basic',
+					buttons:[{title:'下一首'}],
+					isClickable:true
+				},
+				function(id){
+					notification=id;
+					setTimeout(function(){chrome.notifications.clear(id,function(){})},5000)
+					chrome.notifications.onButtonClicked.addListener(function(clickId,index){
+						if(clickId==id){
+							if(index==0){
+								radio.skip()
+							}
+						}
+					})
+				}
+				)
 		}
 		!radio.audio.paused&&chrome.browserAction.setTitle({title:radio.currentSong.artist+":"+radio.currentSong.title});
 	})

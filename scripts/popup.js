@@ -7,5 +7,5 @@ seajs.config({
     "backbone": "gallery/backbone/1.0.0/backbone.js"
   }
 });
-seajs.use("douRadio/popup/1.0.0/main");
-//seajs.use("/src/popup/src/main");
+//seajs.use("douRadio/popup/1.0.0/main");
+seajs.use("/src/popup/src/main");

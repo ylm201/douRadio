@@ -18,9 +18,6 @@
   "keywords": [],
   "licenses": "MIT",
   "spm": {
-    "output": ["background.js","options.js"],
-    "alias": {},
-    "devAlias": {},
-    "engines": {}
+    "output": ["background.js","options.js"]
   }
 }

@@ -8,4 +8,5 @@ seajs.config({
     "analysis":"douRadio/analysis/1.0.0/analysis"
   }
 });
-seajs.use("douRadio/background/1.0.0/background");
+//seajs.use("douRadio/background/1.0.0/background");
+seajs.use("/src/background/src/background");
