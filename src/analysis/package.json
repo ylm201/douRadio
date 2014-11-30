@@ -1,26 +1,25 @@
 {
-  "family": "douRadio",
-  "name": "analysis",
+  "name": "gaForDou",
   "version": "1.0.0",
-  "description": "Google Analysis Module.",
-  "homepage": "https://github.com/ylm201/douRadio",
-  "author": "ylm",
-  "maintainers": [
-    "ylm"
-  ],
+  "description": "google analysis helper",
+  "keywords": [],
+  "homepage": "",
+  "author": "liming.yang",
   "repository": {
     "type": "git",
-    "url": "git://github.com/ylm201/douRadio.git"
+    "url": "https://github.com/ylm201/douRadio"
   },
   "bugs": {
     "url": ""
   },
-  "keywords": [],
   "licenses": "MIT",
   "spm": {
-    "output": ["analysis.js"],
-    "alias": {},
-    "devAlias": {},
-    "engines": {}
+    "main": "src/analysis.js",
+    "dependencies": {
+      "jquery":"1.10.1"
+    },
+    "devDependencies": {
+      "expect.js": "0.3.1"
+    }
   }
 }

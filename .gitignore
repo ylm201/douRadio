@@ -3,3 +3,5 @@
 .project
 .idea/
 douRadio.iml
+dist/
+spm_modules

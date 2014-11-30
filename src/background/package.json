@@ -1,23 +1,28 @@
 {
-  "family": "douRadio",
   "name": "background",
   "version": "1.0.0",
-  "description": "chrome extension for douban.fm",
-  "homepage": "https://github.com/ylm201/douRadio",
+  "description": "background of douRadio chrome extension",
+  "keywords": [],
+  "homepage": "",
   "author": "liming.yang",
-  "maintainers": [
-    "liming.yang"
-  ],
   "repository": {
     "type": "git",
-    "url": "git://github.com/ylm201/douRadio.git"
+    "url": ""
   },
   "bugs": {
     "url": ""
   },
-  "keywords": [],
   "licenses": "MIT",
   "spm": {
-    "output": ["background.js","options.js"]
+    "output": ["background.js"],
+    "dependencies": {
+      "jquery":"1.10.1",
+      "underscore":"1.6.0",
+      "backbone":"1.1.2",
+      "gaForDou":"1.0.0"
+    },
+    "devDependencies": {
+      "expect.js": "0.3.1"
+    }
   }
 }

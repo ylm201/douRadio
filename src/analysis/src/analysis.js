@@ -1,5 +1,5 @@
 define(function(require, exports, module){
-	$ = require('$');
+	$ = require('jquery');
 	window._gaq = window._gaq || [];
 	(function() {
 	        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
