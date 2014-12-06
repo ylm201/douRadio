@@ -8,25 +8,24 @@
         el:"#main",
         template:_.template($("#t_songInfo").html()),
         events: {
-            'click #control a': 'play',
-            'click #skip':'skip',
-            'click #like':'like',
-            'click #delete':'deleteSong',
-            'click #search':'showChannels',
-            'mouseover #control':'fadeOutCD',
-            'mouseout #control':'fadeInCD',
+            'click #J-toggle-play': 'togglePlay',
+            'click #J-btn-skip':'skip',
+            'click #J-btn-like':'like',
+            'click #J-btn-delete':'delete',
+            'click #J-btn-channel':'showChannels',
+            'click #J-btn-history':'showHistory',
+            'mouseover .play-btn-wrapper':'fadeOutCD',
+            'mouseout .play-btn-wrapper':'fadeInCD',
             'mouseover #share':'showShareList',
             'mouseout  #share':'hideShareList',
             'click #shareList a':'share',
             'click #replay':'replay',
-            'input #range':'volume',
-            'click #history':'showHistory'
+            'input #range':'volume'
         },
         initialize:function () {
             this.render();
             this.listenTo(this.model,'change:currentSong', this.changeSong);
             this.listenTo(this.model,'change:time',this.playing);
-            this.listenTo(this.model,'change:loading',this.loading);
         },
         render: function () {
             var html = this.template(this.model.attributes);
@@ -36,29 +35,34 @@
         realModel:function(){
             return this.model.attributes;
         },
-        play:function() {
-            var lastPlayingStatus=this.model.get('playing');
-            this.model.set({playing:!lastPlayingStatus})
+        togglePlay:function() {
+            this.model.set({playing:!this.model.get('playing')});
             this.port.postMessage({type:'togglePlay'});
-            if(!lastPlayingStatus){
-                $("#control a").attr('class','button playing');
-                $("#cover").removeClass('fadeout').addClass('rotating');;
+            $("#cover").toggleClass('fn-rotating-paused');
+            if(this.realModel().playing){
+                $("#J-toggle-play").addClass('playing').removeClass('paused');
+                $('#cover').removeClass('fadeout');   
             }else{
-                $("#control a").attr('class','button paused');
-                $("#cover").addClass('fadeout').removeClass('rotating');
+                $("#J-toggle-play").removeClass('playing').addClass('paused'); 
+                $('#cover').addClass('fadeout');
             }
         },
-        skip:function(){
-            this.model.get('playing')&&this.port.postMessage({type:'skip'})
+        skip:function(e){
+            this.port.postMessage({type:'skip'})
+            $(e.target.parentNode).addClass('fn-rotating');
+            $("#cover").addClass('fadeout').addClass('fn-rotating-paused');
         },
         like:function(){
-            this.model.get('playing')&&this.port.postMessage({type:'toggleLike'})
-            this.model.get('playing')&&$("#like").toggleClass('like').toggleClass('unlike');
+            this.port.postMessage({type:'toggleLike'})
+            $("#J-btn-like").toggleClass('like').toggleClass('unlike');
         },
-        deleteSong:function(){
-            this.model.get('playing')&&this.port.postMessage({type:"delete"});
+        delete:function(e){
+            this.port.postMessage({type:"delete"});
+            $(e.target.parentNode).addClass('fn-rotating');
+            $("#cover").addClass('fadeout').removeClass('fn-rotating-paused');
         },
         changeSong:function(){
+            this.model.set({playing:!this.model.get('playing')});
             var currentSong=this.model.get('currentSong');
             var url=currentSong.picture;
             var cover=$("#cover");
@@ -67,14 +71,16 @@
                 var img=new Image();
                 img.src=url;
                 $(img).load(function(){
-                    if(that.model.get('playing')) cover.removeClass('fadeout').addClass('rotating');
+                    cover.removeClass('fadeout').removeClass('fn-rotating-paused');
                     cover.css("background-image","url("+url+")");
                     cover.fadeIn('350');
                 })
             });
-            $("#title").html(currentSong.title).attr('title',currentSong.title);
-            $("#artist").html(currentSong.artist+'--'+currentSong.albumtitle).attr('title',currentSong.artist+'--'+currentSong.albumtitle).attr('href','http://music.douban.com'+currentSong.album);
-            $("#like").attr('class', currentSong.like==1?'button like':'button unlike');
+            this.realModel().playing&&$("#J-toggle-play").addClass('playing').removeClass('paused').hide();
+            $("#J-song-title").html(currentSong.title).attr('title',currentSong.title);
+            $("#J-song-artist").html(currentSong.artist+'--'+currentSong.albumtitle).attr('title',currentSong.artist+'--'+currentSong.albumtitle).attr('href','http://music.douban.com'+currentSong.album);
+            $("#J-btn-like").attr('class', currentSong.like==1?'button like':'button unlike');
+            $("#controller li").removeClass('fn-rotating');
         },
         playing:function(){
             var time=this.model.get('time');
@@ -86,15 +92,15 @@
             $('#played').width((time.currentTime/time.duration*100)+"%");
         },
         fadeOutCD:function(){
-            if($("#control a").hasClass('playing')){
+            if(this.model.get('playing')){
                 $('#cover').addClass('fadeout');
-                $('#control a').show();
+                $('#J-toggle-play').show();
             }
         },
         fadeInCD:function(){
-            if($("#control a").hasClass('playing')){
+            if(this.model.get('playing')){
                 $('#cover').removeClass('fadeout');
-                $('#control a').hide();
+                $('#J-toggle-play').hide();
             }
         },
         showShareList:function(){
@@ -106,43 +112,33 @@
         share:function(o){
             share[$(o.target).attr('id')](this.model.get('currentSong'));
         },
-        loading:function(){
-            var op=$("#operation li[op='"+this.model.get('loadType')+"']");
-            if(this.model.get('loading')){
-                op.removeClass('rotated').addClass('rotate').addClass('rotating');
-                if(this.model.get('loadType')!='r'&&this.model.get('loadType')!='u') $("#cover").addClass('fadeout').removeClass('rotating');
-            }else{
-                $("#operation li").removeClass('rotate').removeClass('rotating');
-            }
-        },
         replay:function(){
-            var isReplay=this.model.get('isReplay');
-            this.model.set({isReplay:!isReplay});
-            !isReplay?$("#replay").removeClass('hover-fadeIn'):$("#replay").addClass('hover-fadeIn')
+            this.model.set({isReplay:!this.model.get('isReplay')});
+            $('#replay').toggleClass('fn-hover-fadein');
             this.port.postMessage({type:'toggleReplay'});
         },
         volume:function(o){
             this.port.postMessage({type:'changeVolume',value:o.target.value/100})
         },
         showChannels:function(){
-            if($("#search").attr('slided')=='true'){
+            if($("#J-btn-channel").attr('slided')=='true'){
                 $(".container").animate({left: '-180px'},500,function(){
-                    $("#search").attr('slided','false')
+                    $("#J-btn-channel").attr('slided','false')
                 });
             }else{
                 $(".container").animate({left: '-360px'},500,function(){
-                    $("#search").attr('slided','true')
+                    $("#J-btn-channel").attr('slided','true')
                 });
             }
         },
         showHistory:function(){
-            if($("#history").attr('slided')=='true'){
+            if($("#J-btn-history").attr('slided')=='true'){
                 $(".container").animate({left: '-180px'},500,function(){
-                    $("#history").attr('slided','false')
+                    $("#J-btn-history").attr('slided','false')
                 });
             }else{
                 $(".container").animate({left: '0px'},500,function(){
-                    $("#history").attr('slided','true')
+                    $("#J-btn-history").attr('slided','true')
                 });
             }
         }

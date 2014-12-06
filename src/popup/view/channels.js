@@ -8,43 +8,49 @@
         template:_.template($("#t_channels").html()),
         templateFav:_.template($("#t_favchannels").html()),
         initialize:function(){
-            _.bindAll(this,'render','renderFav');
+            _.bindAll(this,'renderPublic','renderPrivate');
             var Channels=Backbone.Model.extend({url:"https://api.douban.com/v2/fm/app_channels"});
             this.channels=new Channels;
             var FavChannels=Backbone.Model.extend({url:"http://douban.fm/j/fav_channels"});
             this.favChannels=new FavChannels;
-            this.favChannels.fetch({success:this.renderFav});
-            this.channels.fetch({success:this.render});
+            this.favChannels.fetch({success:this.renderPrivate});
+            this.channels.fetch({success:this.renderPublic});
             $('#currentChannel').html(localStorage.channelName);
-            if(localStorage.channelCollected!='disable'){
+            if(localStorage.channelCollected=='true'||localStorage.channelCollected=='false'){
                 $.get("http://douban.fm/j/explore/is_fav_channel?cid="+localStorage.channelId,function(data){    
-                    $('#op-fav-channel').attr('cid',localStorage.channelId).attr('collected',data.data.res.is_fav);
+                    $('#J-fav-channel').attr('cid',localStorage.channelId).attr('collected',data.data.res.is_fav);
+                    data.data.res.is_fav?$('#J-fav-channel').addClass('star').removeClass('unstar'):$('#J-fav-channel').addClass('unstar').removeClass('star')
                 })
             }else{
-                $('#op-fav-channel').attr('cid',localStorage.channelId).attr('collected','disable');  
+                $('#J-fav-channel').attr('cid',localStorage.channelId).hide();  
             }
         },
         events: {
-            'click .channel_item':'changeChannel',
-            'click #op-fav-channel':'favChannel',
-            'click .unfav':'unfavChannel'
+            'click .J-channel-item':'changeChannel',
+            'click #J-fav-channel':'favChannel',
+            'click .J-btn-unfav-channel':'unfavChannel'
         },
-        render:function(){
-            $('#total').html(this.template(this.channels.attributes));
+        renderPublic:function(){
+            $('#public-channel').html(this.template(this.channels.attributes));
         },
-        renderFav:function(){
-            $('#myFav').html(this.templateFav(this.favChannels.attributes));
+        renderPrivate:function(){
+            $('#private-channel').html(this.templateFav(this.favChannels.attributes));
         },
-        changeChannel:function(o){
-            $('.channel_item').removeClass('channel_item_selected');
-            var s=$(o.target);
-            s.addClass('channel_item_selected');
+        changeChannel:function(e){
+            var s=$(e.target);
+            $("#channels li").removeClass('item-selected');
+            $(e.target.parentNode).addClass('item-selected');
             $('#currentChannel').html(s.attr('title')).attr('title',s.attr('title'));
-            $('#op-fav-channel').attr('cid',s.attr('cid')).attr('collected',s.attr('collected'));
-            $('#search').attr('title',s.attr('title'));
-            this.player.set({playing:true});
-            $("#control a").attr('class','button playing').hide();;
-            $("#cover").removeClass('fadeout').addClass('rotating');
+            if(s.attr('collected')=='true'){
+                $('#J-fav-channel').addClass('star').removeClass('unstar').show();   
+            }else if(s.attr('collected')=='false'){
+                $('#J-fav-channel').addClass('unstar').removeClass('star').show();   
+            }else{
+                $('#J-fav-channel').hide();    
+            }
+            $('#J-fav-channel').attr('cid',s.attr('cid')).attr('collected',s.attr('collected'));
+            $('#J-btn-channel').attr('title',s.attr('title'));
+            $("#cover").addClass('fadeout').addClass('fn-rotating-paused');
             this.port.postMessage({type:'changeChannel',
                 channel:{
                     channelId:s.attr('cid'),
@@ -55,7 +61,7 @@
         },
         favChannel:function(){
             var url;
-            var currentChannel=$('#op-fav-channel');
+            var currentChannel=$('#J-fav-channel');
             if(currentChannel.attr("collected")=='true'){
                 url='http://douban.fm/j/explore/unfav_channel?cid='
             }else if(currentChannel.attr("collected")=='false'){
@@ -65,21 +71,21 @@
             }
             $.get(url+currentChannel.attr('cid'),function(data){
                 if(data.status==true) {
-                    var collected=currentChannel.attr('collected')=='true'?'false':'true';
-                    localStorage.channelCollected=collected;
-                    $('#op-fav-channel').attr('collected',currentChannel.attr('collected')=='true'?'false':'true')
+                    currentChannel.attr('collected')=='true'?localStorage.channelCollected='false':localStorage.channelCollected='true'; 
+                    localStorage.channelCollected=='true'?currentChannel.addClass('star').removeClass('unstar'):$('#J-fav-channel').addClass('unstar').removeClass('star')
+                    currentChannel.attr('collected',localStorage.channelCollected)
                 }
             })
         },
         unfavChannel:function(o){
-            console.log('unfav');
-            var ch=$(o.target).parent();
+            var ch=$(o.target);
             $.get('http://douban.fm/j/explore/unfav_channel?cid='+ch.attr('cid'),function(data){
                 if(data.status==true) {
-                    ch.remove();
-                    if($('#op-fav-channel').attr('cid')==ch.attr('cid')){
-                        $('#op-fav-channel').attr('collected','false');
-                        localStorage.channelCollected='false';   
+                    ch.parent().fadeOut(500);
+                    if($('#J-fav-channel').attr('cid')==ch.attr('cid')){
+                        $('#J-fav-channel').attr('collected','false');
+                        localStorage.channelCollected='false';
+                        $('#J-fav-channel').addClass('unstar').removeClass('star');  
                     }
                 }
             })

@@ -23,6 +23,7 @@
     },
     "devDependencies": {
       "expect.js": "0.3.1"
-    }
+    },
+    "buildArgs": "-O ../../output/spm_modules --with-deps"
   }
 }

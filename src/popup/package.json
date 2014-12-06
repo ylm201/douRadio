@@ -14,7 +14,7 @@
   },
   "licenses": "MIT",
   "spm": {
-    "output": ["main.js"],
+    "output": ["main.js","popup.css"],
     "dependencies": {
       "jquery":"1.10.1",
       "underscore":"1.6.0",
@@ -23,6 +23,7 @@
     },
     "devDependencies": {
       "expect.js": "0.3.1"
-    }
+    },
+    "buildArgs": "-O ../../output/static --with-deps"
   }
 }
