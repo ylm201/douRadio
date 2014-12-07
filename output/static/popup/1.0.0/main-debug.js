@@ -7,7 +7,23 @@ define("popup/1.0.0/main-debug", ["jquery/1.10.1/jquery-debug", "backbone/1.1.2/
   var HistoryView = require("popup/1.0.0/view/history-debug");
   var player, popupView;
   var port = chrome.extension.connect({
-    name: "douRadio"
+      name: "douRadio"
+    })
+    //引用ga会影响popup弹出速度，使用port转发消息给background
+  $('body').on('click', '[seed]', function() {
+    var seed = $(this).attr("seed");
+    var params = seed.split("_");
+    if (params.length == 2) {
+      port.postMessage({
+        type: 'analysis',
+        trackParams: ['_trackEvent', params[0], params[1]]
+      });
+    } else if (params.length == 3) {
+      port.postMessage({
+        type: 'analysis',
+        trackParams: ['_trackEvent', params[0], params[1], params[2]]
+      });
+    }
   })
   port.onMessage.addListener(function(msg) {
     if (msg.type == 'init') {
@@ -80,12 +96,10 @@ define("popup/1.0.0/view/popup-debug", ["backbone/1.1.2/backbone-debug", "unders
       'click #J-btn-delete': 'delete',
       'click #J-btn-channel': 'showChannels',
       'click #J-btn-history': 'showHistory',
+      'click #J-replay': 'replay',
+      'click .J-social-share': 'share',
       'mouseover .play-btn-wrapper': 'fadeOutCD',
       'mouseout .play-btn-wrapper': 'fadeInCD',
-      'mouseover #share': 'showShareList',
-      'mouseout  #share': 'hideShareList',
-      'click #shareList a': 'share',
-      'click #replay': 'replay',
       'input #range': 'volume'
     },
     initialize: function() {
@@ -181,20 +195,14 @@ define("popup/1.0.0/view/popup-debug", ["backbone/1.1.2/backbone-debug", "unders
         $('#J-toggle-play').hide();
       }
     },
-    showShareList: function() {
-      $("#shareList").show();
-    },
-    hideShareList: function() {
-      $("#shareList").hide();
-    },
-    share: function(o) {
-      share[$(o.target).attr('id')](this.model.get('currentSong'));
+    share: function(e) {
+      share[$(e.target).attr('share_target')](this.model.get('currentSong'));
     },
     replay: function() {
       this.model.set({
         isReplay: !this.model.get('isReplay')
       });
-      $('#replay').toggleClass('fn-hover-fadein');
+      $('#J-replay').toggleClass('fn-hover-fadein');
       this.port.postMessage({
         type: 'toggleReplay'
       });
@@ -240,13 +248,13 @@ define("popup/1.0.0/view/popup-debug", ["backbone/1.1.2/backbone-debug", "unders
 });
 define("popup/1.0.0/share-debug", [], function(require, exports, module) {
   var share = {
-    shareWeibo: function(song) {
+    weibo: function(song) {
       url = "http://douban.fm/?start=" + song.sid + "g" + song.ssid + "g0&cid=0";
       var pic = song.picture && song.picture.replace(/mpic|spic/, "lpic");
       var content = "分享" + song.artist + "的单曲《" + song.title + "》(来自@豆瓣FM)";
       window.open("http://service.weibo.com/share/share.php?url=" + encodeURIComponent(url) + "&appkey=694135578" + "&title=" + encodeURIComponent(content) + "&pic=" + encodeURIComponent(pic) + "&language=zh-cn", "_blank", "width=615,height=505");
     },
-    shareDouban: function(song) {
+    douban: function(song) {
       url = "http://douban.fm/?start=" + song.sid + "g" + song.ssid + "g0&cid=0";
       var pic = song.picture && song.picture.replace(/mpic|spic/, "lpic");
       var content = "分享" + song.artist + "的单曲《" + song.title + "》(来自@豆瓣FM)";

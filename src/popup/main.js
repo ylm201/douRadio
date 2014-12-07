@@ -6,6 +6,18 @@ var ChannelsView=require("./view/channels");
 var HistoryView=require("./view/history");
 var player,popupView;
 var port=chrome.extension.connect({name:"douRadio"})
+
+//引用ga会影响popup弹出速度，使用port转发消息给background
+$('body').on('click','[seed]',function(){
+	var seed=$(this).attr("seed");
+	var params=seed.split("_");
+	if(params.length==2){
+		port.postMessage({type:'analysis',trackParams:['_trackEvent', params[0], params[1]]});
+	}else if(params.length==3){
+		port.postMessage({type:'analysis',trackParams:['_trackEvent', params[0], params[1],params[2]]});
+	}
+})
+
 port.onMessage.addListener(function(msg){
 
 	if(msg.type=='init'){

@@ -1,6 +1,5 @@
 var Radio=require("./radio");
 var radio=Radio.init("#radio");
-var tracker=require("./analysis");
 window.port=null;
 var prevNotification=null;
 
@@ -35,8 +34,8 @@ var checkLogin=function(){
 
 var checkVersion=function(){
 	if(localStorage.version!=chrome.app.getDetails().version){
-		//if(localStorage.version!='3.0.2') window.open('options.html');
-		tracker&&tracker.trackEvent('update',chrome.app.getDetails().version,localStorage.version?localStorage.version:'--');
+		window.open('options.html');
+		_gaq.push(['_trackEvent', 'update', chrome.app.getDetails().version,localStorage.version?localStorage.version:'--']);
 		localStorage.version=chrome.app.getDetails().version;
 	}
 }
@@ -45,7 +44,7 @@ checkVersion();
 checkLogin();
 
 radio.on("songEnded",function(currentSong){
-	tracker&&tracker.trackEvent('play',this.kind=="session"?"session":"normal",currentSong&&currentSong.kbps);
+	_gaq.push(['_trackEvent', 'play', this.kind=="session"?"session":"normal",currentSong&&currentSong.kbps]);
 })
 
 //歌曲切换
@@ -135,9 +134,11 @@ chrome.extension.onConnect.addListener(function(port){
 		}
 		if(request.type=='toggleReplay'){
 			radio.isReplay=!radio.isReplay;
+			return;
 		}
 		if(request.type=="changeVolume"){
 			radio.audio.volume=request.value
+			localStorage.volume=request.value;
 			return
 		}
 		if(request.type=='changeChannel'){
@@ -145,12 +146,19 @@ chrome.extension.onConnect.addListener(function(port){
 			localStorage['channelName']=request.channel.channelName;
 			localStorage['channelCollected']=request.channel.channelCollected;
 			radio.powerOn();
+			return;
 		}
 		if(request.type=='directPlay'){
 			radio.directPlay(request.sid);
+			return;
 		}
 		if(request.type=='directToggleLike'){
 			radio.directToggleLike(request.sid);
+			return;
+		}
+		if(request.type=='analysis'){
+			_gaq.push(request.trackParams);
+			return;
 		}
 		return;
 	})

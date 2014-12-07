@@ -14,12 +14,10 @@
             'click #J-btn-delete':'delete',
             'click #J-btn-channel':'showChannels',
             'click #J-btn-history':'showHistory',
+            'click #J-replay':'replay',
+            'click .J-social-share':'share',
             'mouseover .play-btn-wrapper':'fadeOutCD',
             'mouseout .play-btn-wrapper':'fadeInCD',
-            'mouseover #share':'showShareList',
-            'mouseout  #share':'hideShareList',
-            'click #shareList a':'share',
-            'click #replay':'replay',
             'input #range':'volume'
         },
         initialize:function () {
@@ -103,18 +101,12 @@
                 $('#J-toggle-play').hide();
             }
         },
-        showShareList:function(){
-            $("#shareList").show();
-        },
-        hideShareList:function(){
-            $("#shareList").hide();
-        },
-        share:function(o){
-            share[$(o.target).attr('id')](this.model.get('currentSong'));
+        share:function(e){
+            share[$(e.target).attr('share_target')](this.model.get('currentSong'));
         },
         replay:function(){
             this.model.set({isReplay:!this.model.get('isReplay')});
-            $('#replay').toggleClass('fn-hover-fadein');
+            $('#J-replay').toggleClass('fn-hover-fadein');
             this.port.postMessage({type:'toggleReplay'});
         },
         volume:function(o){

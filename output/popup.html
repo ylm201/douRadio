@@ -2,7 +2,7 @@
 <html>
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-		<link rel="stylesheet" type="text/css" href="css/popup.css">		
+		<link rel="stylesheet" type="text/css" href="static/popup/1.0.0/popup.css">		
 	</head>
 	<body>
 		<div id="notify">
@@ -17,9 +17,9 @@
 					<h4  id="currentChannel" class="fn-overflow-ellipsis"></h4>
 					<a id="J-fav-channel"  href="#" class='star button fn-overflow-ellipsis'></a>
 				</div>
-				<div id="channelList" class="scroll">
-					<div id="private-channel">加载中。。。客观莫急~</div>
-					<div id="public-channel">加载中。。。客观莫急~</div>
+				<div class="scroll">
+					<div id="private-channel"></div>
+					<div id="public-channel"></div>
 				</div>
 			</div>
 		</div>
@@ -44,12 +44,16 @@
 				<%}%>
 				<input id="range" class="fn-hover-fadein" type="range" value="<%=volume*100%>"/>
 				<span id="timer" class="bottom-left"></span>
-				<a id="replay"  href="#" class="bottom-right button replay <% if (!isReplay) { %>fn-hover-fadein<%}%>" seed="click_replay" ></a>
+				<div class="bottom-right">	
+					<a  href="#" class="iconfont weibo fn-hover-fadein J-social-share" seed="click_share_weibo" share_target="weibo"></a>
+					<a  href="#" class="iconfont douban fn-hover-fadein J-social-share" seed="click_share_douban" share_target="douban"></a>
+					<a id="J-replay"  href="#" class="button replay <% if (!isReplay) { %>fn-hover-fadein<%}%>" seed="click_replay" ></a>
+				</div>
 				<div id="played"></div>
 			</div>
 			<div id="controller" class="clear">
 				<ul>	
-					<li><a href="#" id="J-btn-history" class="fn-hover-fadeout button history" seed="click_delete"></a></li>	
+					<li><a href="#" id="J-btn-history" class="fn-hover-fadeout button history" seed="click_history"></a></li>	
 					<li><a href="#" id="J-btn-delete" class="fn-hover-fadeout button delete" seed="click_delete"></a></li>
 					<% if (currentSong.like) { %>
 						<li><a href="#" id="J-btn-like" class="fn-hover-fadeout button like" seed="click_unlike"></a></li>
@@ -82,7 +86,7 @@
 			<div class="channel-group" id="fav_channels">
 				<h5>我的兆赫</h5>
 				<ul class="item-list">
-					<li class="<%if(00100==localStorage.channelId){%> item-selected<%}%>">
+					<li class="<%if(0==localStorage.channelId){%> item-selected<%}%>">
 						<a  class="fn-overflow-ellipsis J-channel-item" href="#" cid="0" collected="disabled" title="私人" >
 							私人
 						</a>
@@ -115,13 +119,13 @@
 				<%}%>
 				<% _.forEach(historyList,function(song){%>
 				<li>
-					<a class="J-direct-play fn-overflow-ellipsis song-item" href="#" sid='<%=song.sid%>' title="<%=song.title%>--<%=song.artist%>">
+					<a class="J-direct-play fn-overflow-ellipsis song-item" href="#" sid='<%=song.sid%>' title="<%=song.title%>--<%=song.artist%>" seed="click_directPlay">
 						<%=song.title%>
 					</a>
 					<% if (song.like==1) { %>
-					<a href="#" class='like button J-direct-toggle-like'  sid='<%=song.sid%>'></a>
+					<a href="#" class='like button J-direct-toggle-like' seed="click_directLike" sid='<%=song.sid%>'></a>
 					<% }else{ %>
-					<a href="#" class='unlike button J-direct-toggle-like' sid='<%=song.sid%>'></a>
+					<a href="#" class='unlike button J-direct-toggle-like' seed="click_directLike" sid='<%=song.sid%>'></a>
 					<%}%>
 				</li>
 				<%})%>

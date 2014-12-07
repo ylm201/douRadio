@@ -5,4 +5,5 @@
 douRadio.iml
 dist/
 spm_modules
-.DD_Store
+.DS_Store
+dist

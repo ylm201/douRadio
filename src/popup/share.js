@@ -1,5 +1,5 @@
 var  share={
-	shareWeibo:function(song){
+	weibo:function(song){
 		url="http://douban.fm/?start="+song.sid+"g"+song.ssid+"g0&cid=0";
 		var pic=song.picture&&song.picture.replace(/mpic|spic/,"lpic");
 		var content="分享"+song.artist+"的单曲《"+song.title+"》(来自@豆瓣FM)";
@@ -8,7 +8,7 @@ var  share={
 		+ "&title=" + encodeURIComponent(content) + "&pic=" + encodeURIComponent(pic) 
 		+ "&language=zh-cn", "_blank", "width=615,height=505");
 	},
-	shareDouban:function(song){
+	douban:function(song){
 		url="http://douban.fm/?start="+song.sid+"g"+song.ssid+"g0&cid=0";
 		var pic=song.picture&&song.picture.replace(/mpic|spic/,"lpic");
 		var content="分享"+song.artist+"的单曲《"+song.title+"》(来自@豆瓣FM)";
