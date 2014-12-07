@@ -5,7 +5,7 @@
 ## Normal usage
 
 ````javascript
-seajs.use('popup', function(popup) {
+seajs.use('index', function(douradioPopup) {
 
 });
 ````

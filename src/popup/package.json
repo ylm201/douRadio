@@ -1,26 +1,28 @@
 {
-  "family": "douRadio",
   "name": "popup",
   "version": "1.0.0",
-  "description": "popuo for douban.fm chrome extension",
-  "homepage": "https://github.com/ylm201/douRadio",
+  "description": "popup of douban fm chrome extension",
+  "keywords": [],
+  "homepage": "",
   "author": "liming.yang",
-  "maintainers": [
-    "liming.yang"
-  ],
   "repository": {
     "type": "git",
-    "url": "git://github.com/ylm201/douRadio.git"
+    "url": ""
   },
   "bugs": {
     "url": ""
   },
-  "keywords": [],
   "licenses": "MIT",
   "spm": {
-    "output": ["main.js"],
-    "alias": {},
-    "devAlias": {},
-    "engines": {}
+    "output": ["main.js","popup.css"],
+    "dependencies": {
+      "jquery":"1.10.1",
+      "underscore":"1.6.0",
+      "backbone":"1.1.2"
+    },
+    "devDependencies": {
+      "expect.js": "0.3.1"
+    },
+    "buildArgs": "-O ../../output/static --with-deps"
   }
 }

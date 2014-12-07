@@ -3,3 +3,7 @@
 .project
 .idea/
 douRadio.iml
+dist/
+spm_modules
+.DS_Store
+dist

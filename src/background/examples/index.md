@@ -5,7 +5,7 @@
 ## Normal usage
 
 ````javascript
-seajs.use('radio', function(radio) {
+seajs.use('index', function(background) {
 
 });
 ````
