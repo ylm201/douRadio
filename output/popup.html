@@ -15,7 +15,7 @@
 			<div id="channels" class="component">
 				<div class="header">
 					<h4  id="currentChannel" class="fn-overflow-ellipsis"></h4>
-					<a id="J-fav-channel"  href="#" class='star button fn-overflow-ellipsis'></a>
+					<a id="J-fav-channel"  href="#" class='star button fn-overflow-ellipsis' seed="click_favChannel"></a>
 				</div>
 				<div class="scroll">
 					<div id="private-channel"></div>
@@ -87,21 +87,21 @@
 				<h5>我的兆赫</h5>
 				<ul class="item-list">
 					<li class="<%if(0==localStorage.channelId){%> item-selected<%}%>">
-						<a  class="fn-overflow-ellipsis J-channel-item" href="#" cid="0" collected="disabled" title="私人" >
+						<a  class="fn-overflow-ellipsis J-channel-item" href="#" cid="0" collected="disabled" title="私人" seed="click_changeChannel">
 							私人
 						</a>
 					</li>
 					<li class="<% if(-3==localStorage.channelId){%> item-selected<%}%>">
-						<a  class="fn-overflow-ellipsis J-channel-item" href="#" cid="-3" collected="disabled" title="红心">
+						<a  class="fn-overflow-ellipsis J-channel-item" href="#" cid="-3" collected="disabled" title="红心" seed="click_changeChannel">
 							红心
-						</a>
+						</a> 
 					</li>				
 				<%if(channels.length>0){%>
 				<% _.forEach(channels,function(ch){%>
 					<li class="<% if(ch.id==localStorage.channelId){%> item-selected<%}%>">
 					<a  class="fn-overflow-ellipsis J-channel-item" href="#" cid="<%=ch.id%>" collected="true" title="<%=ch.name%>" seed="click_changeChannel"><%=ch.name%>
 					</a>	
-					<a href="#" class="J-btn-unfav-channel button delete" cid="<%=ch.id%>"></a>
+					<a href="#" class="J-btn-unfav-channel button delete" cid="<%=ch.id%>" seed="click_unfavChannel"></a>
 					</li>
 				<%})%>
 				<%}%>

@@ -109,8 +109,8 @@
             $('#J-replay').toggleClass('fn-hover-fadein');
             this.port.postMessage({type:'toggleReplay'});
         },
-        volume:function(o){
-            this.port.postMessage({type:'changeVolume',value:o.target.value/100})
+        volume:function(e){
+            this.port.postMessage({type:'changeVolume',value:e.target.value/100})
         },
         showChannels:function(){
             if($("#J-btn-channel").attr('slided')=='true'){

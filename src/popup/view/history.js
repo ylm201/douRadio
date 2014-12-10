@@ -17,13 +17,13 @@ HistoryView = Backbone.View.extend({
         var html = this.template({historyList:this.model});
         this.$el.html(html);
     },
-    directPlay:function(o){
+    directPlay:function(e){
         console.debug("directPlay")
-        this.port.postMessage({type:'directPlay',sid:$(o.target).attr('sid')});
+        this.port.postMessage({type:'directPlay',sid:$(e.target).attr('sid')});
     },
     directToggleLike:function(e){
         $(e.target).toggleClass('like').toggleClass('unlike');
-        this.port.postMessage({type:'directToggleLike',sid:$(o.target).attr('sid')});
+        this.port.postMessage({type:'directToggleLike',sid:$(e.target).attr('sid')});
     }
 });
 module.exports = HistoryView;

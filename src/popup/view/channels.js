@@ -77,8 +77,8 @@
                 }
             })
         },
-        unfavChannel:function(o){
-            var ch=$(o.target);
+        unfavChannel:function(e){
+            var ch=$(e.target);
             $.get('http://douban.fm/j/explore/unfav_channel?cid='+ch.attr('cid'),function(data){
                 if(data.status==true) {
                     ch.parent().fadeOut(500);

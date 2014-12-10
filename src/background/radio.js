@@ -19,7 +19,7 @@ Radio.init=function(id){
 	if(!localStorage['channelId']){
 		localStorage.setItem('channelId','0');
 		localStorage.setItem('channelName','私人');
-		localStorage.setItem('channelCollected','disable');
+		localStorage.setItem('channelCollected','disabled');
 	}
 	radio.audio.addEventListener("ended",(function(){
 		this.trigger('songEnded',this.currentSong);
@@ -169,7 +169,7 @@ Radio.prototype.like=function(s){
 
 Radio.prototype.unlike=function(s){
 	s?s.like=0:this.currentSong.like=0;
-	this.kind=='session'?this.report('u',s):this.getPlayList(this.currentSong,'u');
+	this.kind=='session'?this.report('u',s):this.getPlayList(s?s:this.currentSong,'u');
 }
 
 Radio.prototype.del=function(){
@@ -215,4 +215,3 @@ Radio.prototype.powerOn=function(port){
 }
 
 module.exports=Radio;
-

@@ -42,6 +42,7 @@ define("background/1.0.0/background-debug", ["jquery/1.10.1/jquery-debug", "unde
   }
   checkVersion();
   checkLogin();
+  //统计脚本
   radio.on("songEnded", function(currentSong) {
       _gaq.push(['_trackEvent', 'play', this.kind == "session" ? "session" : "normal", currentSong && currentSong.kbps]);
     })
@@ -61,17 +62,17 @@ define("background/1.0.0/background-debug", ["jquery/1.10.1/jquery-debug", "unde
           buttons: [{
             title: '下一首'
           }],
-          isClickable: true
+          isClickable: true,
+          testParam: true
         }, function(id) {
           notification = id;
           setTimeout(function() {
             chrome.notifications.clear(id, function() {})
-          }, 5000)
+          }, 6000)
           chrome.notifications.onButtonClicked.addListener(function(clickId, index) {
-            if (clickId == id) {
-              if (index == 0) {
-                radio.skip()
-              }
+            if (clickId == id && index == 0) {
+              _gaq.push(['_trackEvent', 'click', 'skipFromNotify']);
+              radio.skip()
             }
           })
         })
@@ -199,7 +200,7 @@ define("background/1.0.0/radio-debug", ["jquery/1.10.1/jquery-debug", "underscor
     if (!localStorage['channelId']) {
       localStorage.setItem('channelId', '0');
       localStorage.setItem('channelName', '私人');
-      localStorage.setItem('channelCollected', 'disable');
+      localStorage.setItem('channelCollected', 'disabled');
     }
     radio.audio.addEventListener("ended", (function() {
       this.trigger('songEnded', this.currentSong);
@@ -342,7 +343,7 @@ define("background/1.0.0/radio-debug", ["jquery/1.10.1/jquery-debug", "underscor
   }
   Radio.prototype.unlike = function(s) {
     s ? s.like = 0 : this.currentSong.like = 0;
-    this.kind == 'session' ? this.report('u', s) : this.getPlayList(this.currentSong, 'u');
+    this.kind == 'session' ? this.report('u', s) : this.getPlayList(s ? s : this.currentSong, 'u');
   }
   Radio.prototype.del = function() {
     this.audio.pause();

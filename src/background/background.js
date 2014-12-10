@@ -43,6 +43,7 @@ var checkVersion=function(){
 checkVersion();
 checkLogin();
 
+//统计脚本
 radio.on("songEnded",function(currentSong){
 	_gaq.push(['_trackEvent', 'play', this.kind=="session"?"session":"normal",currentSong&&currentSong.kbps]);
 })
@@ -59,16 +60,16 @@ radio.on("songChanged",function(currentSong){
 				message:radio.currentSong.title,
 				type:'basic',
 				buttons:[{title:'下一首'}],
-				isClickable:true
+				isClickable:true,
+				testParam:true
 			},
 			function(id){
 				notification=id;
-				setTimeout(function(){chrome.notifications.clear(id,function(){})},5000)
+				setTimeout(function(){chrome.notifications.clear(id,function(){})},6000)
 				chrome.notifications.onButtonClicked.addListener(function(clickId,index){
-					if(clickId==id){
-						if(index==0){
-							radio.skip()
-						}
+					if(clickId==id&&index==0){
+						_gaq.push(['_trackEvent', 'click', 'skipFromNotify']);
+						radio.skip()
 					}
 				})
 			}

@@ -15,7 +15,6 @@ a,li,ul{text-decoration:none;color:#3B5343;list-style: none}
 
 .iconfont {
   font-family:"iconfont" ;
-  -webkit-text-stroke-width: 0.2px;
 }
 .weibo:before { content: "\f01af"; }
 .douban:before { content: "\f0082"; }

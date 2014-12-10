@@ -7,6 +7,9 @@ var HistoryView=require("./view/history");
 var player,popupView;
 var port=chrome.extension.connect({name:"douRadio"})
 
+
+port.postMessage({type:'analysis',trackParams:['_trackEvent', 'popup', '-']})
+
 //引用ga会影响popup弹出速度，使用port转发消息给background
 $('body').on('click','[seed]',function(){
 	var seed=$(this).attr("seed");
