@@ -8,9 +8,3 @@ window._gaq = window._gaq || [];
         s.parentNode.insertBefore(ga, s);
 })();
 _gaq.push(['_setAccount', 'UA-27166419-5']);
-
-
-window.onerror = function(message, url, line, col) {
-	console.log(message);
-	_gaq.push(['_trackEvent', 'JsError', url + ':' + line + ':'+col+':' + message]);
-}

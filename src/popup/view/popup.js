@@ -14,6 +14,7 @@
             'click #J-btn-delete':'delete',
             'click #J-btn-channel':'showChannels',
             'click #J-btn-history':'showHistory',
+            'click #J-notify-close':'closeNotify',
             'click #J-replay':'replay',
             'click .J-social-share':'share',
             'mouseover .play-btn-wrapper':'fadeOutCD',
@@ -46,7 +47,11 @@
             }
         },
         skip:function(e){
-            this.port.postMessage({type:'skip'})
+            this.port.postMessage({type:'skip'},function(){
+                if(chrome.runtime.lastError){
+                    console.info(chrome.runtime.lastError.message);
+                }
+            })
             $(e.target.parentNode).addClass('fn-rotating');
             $("#cover").addClass('fadeout').addClass('fn-rotating-paused');
         },
@@ -133,6 +138,9 @@
                     $("#J-btn-history").attr('slided','true')
                 });
             }
+        },
+        closeNotify:function(){
+            $('#notify').fadeOut();
         }
     });
     module.exports = PopupView;

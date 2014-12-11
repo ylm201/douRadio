@@ -141,7 +141,6 @@ Radio.prototype.reportEnd=function(){
 
 Radio.prototype.changeSong=function(b){
 	this.currentSong=this.songList.shift();
-	new Image().src=this.currentSong.picture;
 	this.audio.src=this.currentSong.url;
 	!b&&this.audio.play();
 	this.trigger("songChanged",this.currentSong);

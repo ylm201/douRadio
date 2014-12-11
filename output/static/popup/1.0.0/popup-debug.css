@@ -19,7 +19,6 @@ a,li,ul{text-decoration:none;color:#3B5343;list-style: none}
 .weibo:before { content: "\f01af"; }
 .douban:before { content: "\f0082"; }
 
-
 @-webkit-keyframes rotate
 {
 from {-webkit-transform: rotate(0deg);}
@@ -75,7 +74,6 @@ to {-webkit-transform: rotate(360deg);}
 .replay:before{content:'\e115';}
 .paused:before{content:"\e072";}
 .playing:before{content:"\e073";}
-
 
 #history{position:relative;top:0;left:0;width:180px;}
 #channels{width:180px;}
