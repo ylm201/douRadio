@@ -340,6 +340,8 @@ define("background/1.0.0/radio-debug", ["jquery/1.10.1/jquery-debug", "underscor
   }
   Radio.prototype.changeSong = function(b) {
     this.currentSong = this.songList.shift();
+    //预先加载，popup弹出能直接显示图片
+    new Image().src = this.currentSong.picture;
     this.audio.src = this.currentSong.url;
     !b && this.audio.play();
     this.trigger("songChanged", this.currentSong);
