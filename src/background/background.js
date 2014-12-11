@@ -50,7 +50,7 @@ checkLogin();
 //应用更新埋点
 chrome.runtime.onInstalled.addListener(function (details){
 	if(details.reason==='update'){
-		if(details.previousVersion.indexOf('3.1.')<0){//仅主版本号不一致才显示更新列表页面
+		if(details.previousVersion.indexOf('3\.1\.')<0){//仅主版本号不一致才显示更新列表页面
 			window.open('options.html')
 		}
 		_gaq.push(['_trackEvent', 'update', chrome.app.getDetails().version,details.previousVersion]);
@@ -68,7 +68,7 @@ radio.on("songChanged",function(currentSong){
 	//popup未弹出时才发起桌面通知;播放时才显示通知，防止extension刚加载时就弹出通知
 	if(!port&&!radio.audio.paused&&localStorage.enableNotify!='N'){
 		//当前已经有桌面通知则关闭
-		currentNotification&&chrome.notifications.clear(prevNotification,function(){})
+		currentNotification&&chrome.notifications.clear(currentNotification,function(){})
 		chrome.notifications.create('',
 			{
 				iconUrl:radio.currentSong.picture,
