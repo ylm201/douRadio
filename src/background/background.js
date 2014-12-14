@@ -1,7 +1,7 @@
 var Radio=require("./radio");
-var radio=Radio.init("#radio");
+var radio=Radio.init('#radio');
 window.port=null;
-var currentNotification=null;
+var currentNotification=undefined;
 
 function reportError(e){
 	var stack=e.stack;
@@ -9,8 +9,8 @@ function reportError(e){
 	for(i in stacks){
 		if(stacks[i].indexOf('chrome-extension://')>0){
 			var params=stacks[1].split('/');
-			console.log(params[params.length-1]+'_'+e.message);
-			_gaq.push(['_trackEvent', 'JsError',params[params.length-1]+'_'+e.message]);
+			console.log(e.message);
+			_gaq.push(['_trackEvent', 'JsError',params[params.length-1],chrome.app.getDetails().version]);
 			break;
 		}
 	}
@@ -46,6 +46,7 @@ var checkLogin=function(){
     })
 }
 checkLogin();
+_gaq.push(['_trackEvent', 'init', chrome.app.getDetails().version]);
 
 //应用更新埋点
 chrome.runtime.onInstalled.addListener(function (details){
@@ -58,9 +59,14 @@ chrome.runtime.onInstalled.addListener(function (details){
 })
 
 //统计脚本
-radio.on("songEnded",function(currentSong){
-	_gaq.push(['_trackEvent', 'play', this.kind=="session"?"session":"normal",currentSong&&currentSong.kbps]);
-})
+radio.on('songEnded',function(currentSong){
+	_gaq.push(['_trackEvent', 'play', this.kind=='session'?'session':'normal',currentSong&&currentSong.kbps]);
+});
+
+//列表载入异常监控
+radio.on('loadListError',function(err){
+	_gaq.push(['_trackEvent', 'loadListError', err]);	
+});
 
 //歌曲切换
 radio.on("songChanged",function(currentSong){

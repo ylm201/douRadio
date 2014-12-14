@@ -1,4 +1,7 @@
-
+/*
+ * 豆瓣电台插件核心模块
+ * @author lmyang.alex@gmail.com
+ */
 var $=require("jquery");
 var _ = require('underscore');
 var Backbone=require('backbone');
@@ -58,28 +61,27 @@ Radio.init=function(id){
 
 	//歌曲结束事件
 	radio.audio.addEventListener("error", function(e) {
-        radio.trigger("error","loadSongError_"+e.target.error.code+":"+radio.currentSong.retryTimes);
-        if(radio.currentSong.retryTimes<3){
-        	radio.currentSong.retryTimes++;
-        	radio.currentSong.revoverTime=this.currentTime;
-        	this.load();
-        }
+        _gaq.push(['_trackEvent', 'songError', e.target.error.code]);
+        //if(radio.currentSong.retryTimes<3){
+        //	radio.currentSong.retryTimes++;
+        //	radio.currentSong.recoverTime=this.currentTime;
+        //	this.load();
+        //}
     });
 
-    radio.audio.addEventListener("loadedmetadata",function(){
-		if(radio.currentSong.retryTimes>0&&radio.currentSong.retryTimes<=3&&radio.currentSong.revoverTime){
-    		this.currentTime=radio.currentSong.revoverTime;
-    		radio.trigger("error","revover:"+radio.currentSong.retryTimes);
-    	}
-    })
+    //radio.audio.addEventListener("loadedmetadata",function(){
+	//	if(radio.currentSong.retryTimes>0&&radio.currentSong.retryTimes<=3&&radio.currentSong.recoverTime){
+    //		_gaq.push(['_trackEvent', 'retrySong', radio.currentSong.retryTimes]);
+    //		this.currentTime=radio.currentSong.recoverTime;
+    //	}
+    //})
 	radio.getPlayList(undefined,'n',function(){
 		radio.changeSong(localStorage.autoPlay!='Y');
 	})
 	return radio;
 };
 
-Radio.prototype.getPlayList=function(s,t,fn){
-	this.trigger("songListLoading",t);
+Radio.prototype.getPlayList=function(s,t,fn,retry){
 	$.getJSON("http://douban.fm/j/mine/playlist",{
 			type:t,
 			channel:localStorage.channelId?localStorage.channelId:0,
@@ -91,10 +93,9 @@ Radio.prototype.getPlayList=function(s,t,fn){
 			from:"mainsite"
 		},(function(data){
 			if(data.err){
-				this.trigger("songListLoadError",t);
+				this.trigger("loadListError",data.err+',channel='+localStorage.channelId);
 				return;
 			}
-			this.trigger("songListLoaded");
 			var temp=[];
 			data.song.forEach(function(o){
 				//filter ad songs
@@ -103,13 +104,13 @@ Radio.prototype.getPlayList=function(s,t,fn){
 					o.retryTimes=0;
 					o.playTimes=0;
 					temp.push(o);
-				}else{
-					console.log("filter song"+JSON.stringify(o));
 				}
 			})
-			this.kind=data.kind;
-			if(temp.length>0) this.songList=temp;
-			fn&&(fn.bind(this))();
+			if(temp.length>0) {
+				this.kind=data.kind;
+				this.songList=temp;
+				fn&&(fn.bind(this))();
+			}
 	}).bind(this))
 }
 

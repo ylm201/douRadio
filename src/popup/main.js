@@ -10,7 +10,7 @@ var port=chrome.extension.connect({name:"douRadio"})
 //全局异常监控
 window.onerror = function(message, url, line, col, stack) {
 	var params=url.split('/');
-	_gaq.push(['_trackEvent', 'JsError', params[params.length-1] + ':' + line + ':'+col+':' + message]);
+	_gaq.push(['_trackEvent', 'JsErrorPopup', params[params.length-1] + ':' + line + ':'+col+':' + message]);
 }
 
 //引用ga会影响popup弹出速度，使用port转发消息给background
@@ -52,6 +52,7 @@ port.onMessage.addListener(function(msg){
 
 	//登录
 	if(msg.type=='login'){
+		player.set({needLogin:true});
 		$('#notify').show();
 	}
 });
