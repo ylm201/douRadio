@@ -61,7 +61,7 @@ PopupView = Backbone.View.extend({
         $("#cover").addClass('fadeout').removeClass('fn-rotating-paused');
     },
     changeSong:function(){
-        this.model.set({playing:!this.model.get('playing')});
+        this.model.set({playing:true});
         var currentSong=this.model.get('currentSong');
         var url=currentSong.picture;
         var cover=$("#cover");
