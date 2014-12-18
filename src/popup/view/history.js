@@ -4,8 +4,8 @@ Backbone = require('backbone');
 $ = require('jquery');
 _ = require('underscore');
 HistoryView = Backbone.View.extend({
-    el:"#history",
-    template:_.template($("#t_historyList").html()),
+    el:'#history',
+    template:_.template($('#t_historyList').html()),
     events: {
         'click .J-direct-play': 'directPlay',
         'click .J-direct-toggle-like':'directToggleLike'
@@ -18,7 +18,7 @@ HistoryView = Backbone.View.extend({
         this.$el.html(html);
     },
     directPlay:function(e){
-        console.debug("directPlay")
+        console.debug('directPlay')
         this.port.postMessage({type:'directPlay',sid:$(e.target).attr('sid')});
     },
     directToggleLike:function(e){
