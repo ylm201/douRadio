@@ -2,7 +2,7 @@
  * 豆瓣电台插件核心模块
  * @author lmyang.alex@gmail.com
  */
-var $=require("jquery");
+var $=require('jquery');
 var _ = require('underscore');
 var Backbone=require('backbone');
 var Radio=function(){
@@ -24,7 +24,7 @@ Radio.init=function(id){
 		localStorage.setItem('channelName','私人');
 		localStorage.setItem('channelCollected','disabled');
 	}
-	radio.audio.addEventListener("ended",(function(){
+	radio.audio.addEventListener('ended',(function(){
 		this.trigger('songEnded',this.currentSong);
 		//删除播放记录列表里同id歌曲重新放入队列首
 		for(id in this.heared){
@@ -51,17 +51,17 @@ Radio.init=function(id){
 		if(this.songList.length>1){
 			this.changeSong();
 		}else{//播放列表已空，再次拉取
-			this.getPlayList(this.currentSong,"p",this.changeSong);
+			this.getPlayList(this.currentSong,'p',this.changeSong);
 		}
 	}).bind(radio));
 
-	radio.audio.addEventListener("timeupdate",(function(){
-		this.trigger("playing",{currentTime:this.audio.currentTime,duration:this.audio.duration});
+	radio.audio.addEventListener('timeupdate',(function(){
+		this.trigger('playing',{currentTime:this.audio.currentTime,duration:this.audio.duration});
 	}).bind(radio));
 
 	//歌曲结束事件
-	radio.audio.addEventListener("error", function(e) {
-        _gaq.push(['_trackEvent', 'songError', e.target.error.code]);
+	radio.audio.addEventListener('error', function(e) {
+        radio.trigger('playSongError',e.target.error.code);
         //if(radio.currentSong.retryTimes<3){
         //	radio.currentSong.retryTimes++;
         //	radio.currentSong.recoverTime=this.currentTime;
@@ -69,12 +69,12 @@ Radio.init=function(id){
         //}
     });
 
-    //radio.audio.addEventListener("loadedmetadata",function(){
-	//	if(radio.currentSong.retryTimes>0&&radio.currentSong.retryTimes<=3&&radio.currentSong.recoverTime){
-    //		_gaq.push(['_trackEvent', 'retrySong', radio.currentSong.retryTimes]);
-    //		this.currentTime=radio.currentSong.recoverTime;
-    //	}
-    //})
+    radio.audio.addEventListener('loadedmetadata',function(){
+		//if(radio.currentSong.retryTimes>0&&radio.currentSong.retryTimes<3&&radio.currentSong.recoverTime){
+    	//	this.currentTime=radio.currentSong.recoverTime;
+    	//}
+    })
+
 	radio.getPlayList(undefined,'n',function(){
 		radio.changeSong(localStorage.autoPlay!='Y');
 	})
@@ -82,7 +82,7 @@ Radio.init=function(id){
 };
 
 Radio.prototype.getPlayList=function(s,t,fn,retry){
-	$.getJSON("http://douban.fm/j/mine/playlist",{
+	$.getJSON('http://douban.fm/j/mine/playlist',{
 			type:t,
 			channel:localStorage.channelId?localStorage.channelId:0,
 			pb:localStorage.bitrate?localStorage.bitrate:64,
@@ -90,17 +90,17 @@ Radio.prototype.getPlayList=function(s,t,fn,retry){
 			pt:this.audio.currentTime,
 			r:Math.random(),
 			kbps:localStorage.bitrate?localStorage.bitrate:64,
-			from:"mainsite"
+			from:'mainsite'
 		},(function(data){
 			if(data.err){
-				this.trigger("loadListError",data.err+',channel='+localStorage.channelId);
+				this.trigger('loadListError',data.err+',channel='+localStorage.channelId);
 				return;
 			}
 			var temp=[];
 			data.song.forEach(function(o){
 				//filter ad songs
 				if(!o.adtype||localStorage.filterAd!='Y'){
-					o.picture=o.picture.replace("mpic","lpic");
+					o.picture=o.picture.replace('mpic','lpic');
 					o.retryTimes=0;
 					o.playTimes=0;
 					temp.push(o);
@@ -115,7 +115,7 @@ Radio.prototype.getPlayList=function(s,t,fn,retry){
 }
 
 Radio.prototype.report=function(t,s){
-	$.getJSON("http://douban.fm/j/mine/playlist",{
+	$.getJSON('http://douban.fm/j/mine/playlist',{
 			type:t,
 			channel:localStorage.channelId?localStorage.channelId:0,
 			pb:localStorage.bitrate?localStorage.bitrate:64,
@@ -123,7 +123,7 @@ Radio.prototype.report=function(t,s){
 			pt:this.audio.currentTime,
 			r:Math.random(),
 			kbps:localStorage.bitrate?localStorage.bitrate:64,
-			from:"mainsite"
+			from:'mainsite'
 		},(function(data){
 			if(data.err){
 				return;
@@ -132,11 +132,11 @@ Radio.prototype.report=function(t,s){
 }
 
 Radio.prototype.reportEnd=function(){
-	$.get("http://douban.fm/j/mine/playlist",{
+	$.get('http://douban.fm/j/mine/playlist',{
 			type:'e',
 			sid:this.currentSong.sid,
 			channel:localStorage['channel']?localStorage['channel'].channelId:61,
-			from:"mainsite"
+			from:'mainsite'
 	})
 }
 
@@ -146,7 +146,7 @@ Radio.prototype.changeSong=function(b){
 	new Image().src=this.currentSong.picture;
 	this.audio.src=this.currentSong.url;
 	!b&&this.audio.play();
-	this.trigger("songChanged",this.currentSong);
+	this.trigger('songChanged',this.currentSong);
 }
 
 Radio.prototype.skip=function(){
@@ -154,13 +154,13 @@ Radio.prototype.skip=function(){
 	if(this.kind=='session'){
 		this.report('s');
 		if(this.songList.length<=1){
-			this.trigger("songListLoading","s");
-			this.getPlayList(this.currentSong,"p",this.changeSong);
+			this.trigger('songListLoading','s');
+			this.getPlayList(this.currentSong,'p',this.changeSong);
 		}else{
 			this.changeSong();
 		}
 	}else{
-		this.getPlayList(this.currentSong,"s",this.changeSong);
+		this.getPlayList(this.currentSong,'s',this.changeSong);
 	}
 }
 
@@ -179,13 +179,13 @@ Radio.prototype.del=function(){
 	if(this.kind=='session'){
 		this.report('b');
 		if(this.songList.length<=1){
-			this.trigger("songListLoading","b");
-			this.getPlayList(this.currentSong,"p",this.changeSong);
+			this.trigger('songListLoading','b');
+			this.getPlayList(this.currentSong,'p',this.changeSong);
 		}else{
 			this.changeSong();
 		}
 	}else{
-		this.getPlayList(this.currentSong,"b",this.changeSong);
+		this.getPlayList(this.currentSong,'b',this.changeSong);
 	}
 }
 
@@ -213,7 +213,7 @@ Radio.prototype.directToggleLike=function(sid){
 
 Radio.prototype.powerOn=function(port){
 	this.audio.pause()
-	this.getPlayList(this.currentSong,"n",this.changeSong)
+	this.getPlayList(this.currentSong,'n',this.changeSong)
 }
 
 module.exports=Radio;

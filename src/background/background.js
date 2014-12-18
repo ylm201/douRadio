@@ -1,4 +1,4 @@
-var Radio=require("./radio");
+var Radio=require('./radio');
 var radio=Radio.init('#radio');
 window.port=null;
 var currentNotification=undefined;
@@ -19,13 +19,13 @@ function reportError(e){
 //校验是否登录douban.com，并把douban.com session cookie 设置到douban.fm域
 var checkLogin=function(){
 	chrome.cookies.get({
-    url:"http://douban.com",
-    name:"dbcl2"
+    url:'http://douban.com',
+    name:'dbcl2'
     },function(cookie){
         if(cookie){
             chrome.cookies.set({
-                url:"http://douban.fm",
-                name:"dbcl2",
+                url:'http://douban.fm',
+                name:'dbcl2',
                 value:cookie.value
             })
         }else{
@@ -33,20 +33,19 @@ var checkLogin=function(){
         }
     })
     chrome.cookies.get({
-        url:"http://douban.com",
-        name:"ck"
+        url:'http://douban.com',
+        name:'ck'
     },function(cookie){
         if(cookie){
             chrome.cookies.set({
-                url:"http://douban.fm",
-                name:"ck",
+                url:'http://douban.fm',
+                name:'ck',
                 value:cookie.value
             })
         }
     })
 }
 checkLogin();
-_gaq.push(['_trackEvent', 'init', chrome.app.getDetails().version]);
 
 //应用更新埋点
 chrome.runtime.onInstalled.addListener(function (details){
@@ -68,8 +67,14 @@ radio.on('loadListError',function(err){
 	_gaq.push(['_trackEvent', 'loadListError', err]);	
 });
 
+// 播放歌曲异常
+radio.on('playSongError',function(err){
+	console.error('play song error,code=',err);
+	_gaq.push(['_trackEvent', 'playSongError', err.toString()]);	
+})
+
 //歌曲切换
-radio.on("songChanged",function(currentSong){
+radio.on('songChanged',function(currentSong){
 	port&&port.postMessage({type:'songChanged',obj:currentSong});
 	//popup未弹出时才发起桌面通知;播放时才显示通知，防止extension刚加载时就弹出通知
 	if(!port&&!radio.audio.paused&&localStorage.enableNotify!='N'){
@@ -95,16 +100,16 @@ radio.on("songChanged",function(currentSong){
 			}
 		)
 	}
-	chrome.browserAction.setTitle({title:radio.currentSong.artist+":"+radio.currentSong.title});
+	chrome.browserAction.setTitle({title:radio.currentSong.artist+':'+radio.currentSong.title});
 })
 
 //歌曲播放中
-radio.on("playing",function(time){
+radio.on('playing',function(time){
 	port&&port.postMessage({type:'playing',obj:{currentTime:time.currentTime,duration:time.duration}});
 })
 
 chrome.extension.onConnect.addListener(function(port){
-	if(port.name!="douRadio") return;
+	if(port.name!='douRadio') return;
 	window.port=port;
 	
 	//background与popup断开连接
@@ -117,7 +122,7 @@ chrome.extension.onConnect.addListener(function(port){
 	
 	port.postMessage(
 	{
-		type:"init",
+		type:'init',
 		obj:{
 			currentSong:radio.currentSong?radio.currentSong:{title:'--',artist:'--',picture:'/img/cd.jpg',like:0},
 			playing:!radio.audio.paused,
@@ -130,15 +135,15 @@ chrome.extension.onConnect.addListener(function(port){
 	port.onMessage.addListener(function(request){
 		
 		try{
-			if(request.type=="skip"){
+			if(request.type=='skip'){
 				radio.skip();
 				return
 			}
-			if(request.type=="delete"){
+			if(request.type=='delete'){
 				radio.del();
 				return
 			}
-			if(request.type=="toggleLike"){
+			if(request.type=='toggleLike'){
 				if(radio.currentSong.like==0){
 					radio.like()
 					radio.currentSong.like=1;
@@ -148,11 +153,11 @@ chrome.extension.onConnect.addListener(function(port){
 				}
 				return
 			}
-			if(request.type=="switch"){
+			if(request.type=='switch'){
 				radio.powerOn()
 				return
 			}
-			if(request.type=="togglePlay"){
+			if(request.type=='togglePlay'){
 				if(radio.currentSong==null){
 					radio.powerOn();
 				}else{
@@ -164,7 +169,7 @@ chrome.extension.onConnect.addListener(function(port){
 				radio.isReplay=!radio.isReplay;
 				return;
 			}
-			if(request.type=="changeVolume"){
+			if(request.type=='changeVolume'){
 				radio.audio.volume=request.value
 				localStorage.volume=request.value;
 				return
