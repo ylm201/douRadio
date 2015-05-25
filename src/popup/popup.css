@@ -77,8 +77,8 @@ to {-webkit-transform: rotate(360deg);}
 .playing:before{content:"\e073";}
 
 
-#history{position:relative;width:180px;}
-#channels{width:180px;}
+#history{position:relative;width:180px;opacity: 0.2}
+#channels{width:180px;display: none;}
 #main{width:220px;}
 .container{overflow: hidden;position:relative;width:600px;left:-180px;}
 .component{float:left;position: relative;overflow:hidden;background-color:#B7DDB7;height:259px;}

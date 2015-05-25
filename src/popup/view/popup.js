@@ -115,10 +115,12 @@ PopupView = Backbone.View.extend({
     },
     showChannels:function(){
         if($('#J-btn-channel').attr('slided')=='true'){
+            $('#channels').fadeOut(800);
             $('.container').animate({left: '-180px'},500,function(){
                 $('#J-btn-channel').attr('slided','false')
             });
         }else{
+            $('#channels').fadeIn(300);
             $('.container').animate({left: '-360px'},500,function(){
                 $('#J-btn-channel').attr('slided','true')
             });
@@ -126,10 +128,12 @@ PopupView = Backbone.View.extend({
     },
     showHistory:function(){
         if($('#J-btn-history').attr('slided')=='true'){
+            $('#history').fadeTo(800,0.2);
             $('.container').animate({left: '-180px'},500,function(){
                 $('#J-btn-history').attr('slided','false')
             });
         }else{
+            $('#history').fadeTo(300,1);
             $('.container').animate({left: '0px'},500,function(){
                 $('#J-btn-history').attr('slided','true')
             });
