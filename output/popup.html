@@ -73,7 +73,7 @@
 					<ul class="item-list">
 						<% _.forEach(group.chls,function(ch){%>
 							<li class="<% if(ch.id==localStorage.channelId){%> item-selected<%}%>">
-								<a class="J-channel-item" href="#" cid="<%=ch.id%>"  collected="<%=ch.collected%>" title="<%=ch.name%>" seed="click_changeChannel">
+								<a class="J-channel-item fn-overflow-ellipsis" href="#" cid="<%=ch.id%>"  collected="<%=ch.collected%>" title="<%=ch.name%>" seed="click_changeChannel">
 									<%=ch.name%>
 								</a>
 							</li>
